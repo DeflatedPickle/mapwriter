@@ -3,7 +3,6 @@ package mapwriter.gui;
 import java.awt.Point;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -24,9 +23,7 @@ import mapwriter.tasks.RebuildRegionsTask;
 import mapwriter.util.Logging;
 import mapwriter.util.Reference;
 import mapwriter.util.Utils;
-import mapwriter.util.VersionCheck;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiConfirmOpenLink;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
@@ -66,11 +63,9 @@ public class MwGui extends GuiScreen {
     private MwGuiLabel dimensionLabel;
     private MwGuiLabel groupLabel;
     private MwGuiLabel overlayLabel;
-    private MwGuiLabel updateLabel;
 
     private final MwGuiMarkerListOverlay MarkerOverlay;
     private MwGuiLabel helpTooltipLabel;
-    private MwGuiLabel updateTooltipLabel;
     private MwGuiLabel statusLabel;
 
     private MwGuiLabel markerLabel;
@@ -287,10 +282,8 @@ public class MwGui extends GuiScreen {
         this.dimensionLabel.setParentWidthAndHeight(this.width, this.height);
         this.groupLabel.setParentWidthAndHeight(this.width, this.height);
         this.overlayLabel.setParentWidthAndHeight(this.width, this.height);
-        this.updateLabel.setParentWidthAndHeight(this.width, this.height);
 
         this.helpTooltipLabel.setParentWidthAndHeight(this.width, this.height);
-        this.updateTooltipLabel.setParentWidthAndHeight(this.width, this.height);
         this.statusLabel.setParentWidthAndHeight(this.width, this.height);
         this.markerLabel.setParentWidthAndHeight(this.width, this.height);
 
@@ -304,11 +297,7 @@ public class MwGui extends GuiScreen {
         this.dimensionLabel = new MwGuiLabel(null, null, 0, 0, true, false, this.width, this.height);
         this.groupLabel = new MwGuiLabel(null, null, 0, 0, true, false, this.width, this.height);
         this.overlayLabel = new MwGuiLabel(null, null, 0, 0, true, false, this.width, this.height);
-        final String updateString = "[" + I18n.format("mw.gui.mwgui.newversion", VersionCheck.getLatestVersion()) + "]";
-        this.updateLabel = new MwGuiLabel(new String[] { updateString }, null, 0, 0, true, false, this.width, this.height);
         this.helpTooltipLabel = new MwGuiLabel(this.HelpText1, this.HelpText2, 0, 0, true, false, this.width, this.height);
-
-        this.updateTooltipLabel = new MwGuiLabel(new String[] { VersionCheck.getUpdateURL() }, null, 0, 0, true, false, this.width, this.height);
 
         this.statusLabel = new MwGuiLabel(null, null, 0, 0, true, false, this.width, this.height);
         this.markerLabel = new MwGuiLabel(null, null, 0, 0, true, true, this.width, this.height);
@@ -317,10 +306,8 @@ public class MwGui extends GuiScreen {
         this.dimensionLabel.drawToRightOf(this.optionsLabel);
         this.groupLabel.drawToRightOf(this.dimensionLabel);
         this.overlayLabel.drawToRightOf(this.groupLabel);
-        this.updateLabel.drawToRightOf(this.overlayLabel);
 
         this.helpTooltipLabel.drawToBelowOf(this.helpLabel);
-        this.updateTooltipLabel.drawToBelowOf(this.helpLabel);
     }
 
     public boolean isPlayerNearScreenPos (int x, int y) {
@@ -449,7 +436,7 @@ public class MwGui extends GuiScreen {
     // called every frame
     @Override
     public void updateScreen () {
-        
+
     }
 
     private void drawLabel (int mouseX, int mouseY, float f) {
@@ -468,17 +455,9 @@ public class MwGui extends GuiScreen {
         this.overlayLabel.setText(new String[] { overlayString }, null);
         this.overlayLabel.draw();
 
-        if (!VersionCheck.isLatestVersion()) {
-
-            this.updateLabel.draw();
-        }
-
         // help message on mouse over
         if (this.helpLabel.posWithin(mouseX, mouseY)) {
             this.helpTooltipLabel.draw();
-        }
-        if (this.updateLabel.posWithin(mouseX, mouseY)) {
-            this.updateTooltipLabel.draw();
         }
     }
 
@@ -516,7 +495,7 @@ public class MwGui extends GuiScreen {
     // called when a button is pressed
     @Override
     protected void actionPerformed (GuiButton button) {
-        
+
     }
 
     // c is the ascii equivalent of the key typed.
@@ -642,32 +621,6 @@ public class MwGui extends GuiScreen {
                     }
                     catch (final Exception e) {
                         Logging.logError("There was a critical issue trying to build the config GUI for %s", Reference.MOD_ID);
-                    }
-                }
-                else if (this.updateLabel.posWithin(x, y)) {
-                    URI uri;
-
-                    if (!this.mc.gameSettings.chatLinks) {
-                        return;
-                    }
-
-                    try {
-                        uri = new URI(VersionCheck.getUpdateURL());
-
-                        if (!Reference.PROTOCOLS.contains(uri.getScheme().toLowerCase())) {
-                            throw new URISyntaxException(uri.toString(), "Unsupported protocol: " + uri.getScheme().toLowerCase());
-                        }
-
-                        if (this.mc.gameSettings.chatLinksPrompt) {
-                            this.clickedLinkURI = uri;
-                            this.mc.displayGuiScreen(new GuiConfirmOpenLink(this, uri.toString(), 31102009, false));
-                        }
-                        else {
-                            Utils.openWebLink(uri);
-                        }
-                    }
-                    catch (final URISyntaxException urisyntaxexception) {
-                        Logging.logError("Can\'t open url for %s", urisyntaxexception);
                     }
                 }
                 else {

@@ -40,7 +40,7 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
 
     @Override
     protected void drawBackground () {
-        
+
     }
 
     @Override

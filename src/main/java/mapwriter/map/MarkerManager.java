@@ -34,7 +34,7 @@ public class MarkerManager {
     public Marker selectedMarker = null;
 
     public MarkerManager () {
-        
+
     }
 
     public void addMarker (Marker marker) {

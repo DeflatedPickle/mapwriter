@@ -145,7 +145,7 @@ public class OverlaySlime implements IMwDataProvider {
 
     @Override
     public void onDimensionChanged (int dimension, IMapView mapview) {
-        
+
     }
 
     @Override
@@ -160,7 +160,7 @@ public class OverlaySlime implements IMwDataProvider {
 
     @Override
     public void onMiddleClick (int dim, int bX, int bZ, IMapView mapview) {
-        
+
     }
 
     @Override

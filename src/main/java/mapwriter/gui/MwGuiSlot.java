@@ -404,7 +404,7 @@ public abstract class MwGuiSlot {
      * Handles drawing a list's header row.
      */
     protected void drawListHeader (int x, int y, Tessellator tess) {
-        
+
     }
 
     /**
@@ -461,11 +461,11 @@ public abstract class MwGuiSlot {
     protected abstract void elementClicked (int slotIndex, boolean isDoubleClick, int mouseX, int mouseY, int mouseButton);
 
     protected void func_148132_a (int p_148132_1_, int p_148132_2_) {
-        
+
     }
 
     protected void func_148142_b (int p_148142_1_, int p_148142_2_) {
-        
+
     }
 
     /**
@@ -515,6 +515,6 @@ public abstract class MwGuiSlot {
     }
 
     protected void slotOutOfBounds (int index, int p_178040_2_, int p_178040_3_) {
-        
+
     }
 }

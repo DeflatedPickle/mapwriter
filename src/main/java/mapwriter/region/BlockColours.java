@@ -55,7 +55,7 @@ public class BlockColours {
     private final LinkedHashMap<String, BlockData> bcMap = new LinkedHashMap<>();
 
     public BlockColours () {
-        
+
     }
 
     public static int getColourFromString (String s) {

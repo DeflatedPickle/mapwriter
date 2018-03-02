@@ -19,7 +19,7 @@ public class CloseRegionManagerTask extends Task {
 
     @Override
     public void onComplete () {
-        
+
     }
 
     @Override

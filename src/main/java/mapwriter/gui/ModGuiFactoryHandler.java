@@ -22,7 +22,7 @@ public class ModGuiFactoryHandler implements IModGuiFactory {
 
     @Override
     public void initialize (Minecraft minecraftInstance) {
-        
+
     }
 
     @Override
