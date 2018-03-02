@@ -2,30 +2,29 @@ package mapwriter.tasks;
 
 import mapwriter.region.RegionManager;
 
-public class CloseRegionManagerTask extends Task
-{
+public class CloseRegionManagerTask extends Task {
 
-	private final RegionManager regionManager;
+    private final RegionManager regionManager;
 
-	public CloseRegionManagerTask(RegionManager regionManager)
-	{
-		this.regionManager = regionManager;
-	}
+    public CloseRegionManagerTask (RegionManager regionManager) {
 
-	@Override
-	public boolean CheckForDuplicate()
-	{
-		return false;
-	}
+        this.regionManager = regionManager;
+    }
 
-	@Override
-	public void onComplete()
-	{
-	}
+    @Override
+    public boolean CheckForDuplicate () {
 
-	@Override
-	public void run()
-	{
-		this.regionManager.close();
-	}
+        return false;
+    }
+
+    @Override
+    public void onComplete () {
+        
+    }
+
+    @Override
+    public void run () {
+
+        this.regionManager.close();
+    }
 }

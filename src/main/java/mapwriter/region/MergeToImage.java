@@ -8,98 +8,89 @@ import javax.imageio.ImageIO;
 
 import mapwriter.util.Logging;
 
-public class MergeToImage
-{
-	public static final int MAX_WIDTH = 8192;
-	public static final int MAX_HEIGHT = 8192;
+public class MergeToImage {
+    public static final int MAX_WIDTH = 8192;
+    public static final int MAX_HEIGHT = 8192;
 
-	public static int merge(RegionManager regionManager, int xCentre, int zCentre, int w, int h, int dimension, File dir, String basename)
-	{
+    public static int merge (RegionManager regionManager, int xCentre, int zCentre, int w, int h, int dimension, File dir, String basename) {
 
-		// round up to nearest 512 block boundary
-		w = w + Region.SIZE - 1 & Region.MASK;
-		h = h + Region.SIZE - 1 & Region.MASK;
+        // round up to nearest 512 block boundary
+        w = w + Region.SIZE - 1 & Region.MASK;
+        h = h + Region.SIZE - 1 & Region.MASK;
 
-		// clamp to an integer between 512 and 8192 inclusive
-		w = Math.max(Region.SIZE, w);
-		h = Math.max(Region.SIZE, h);
+        // clamp to an integer between 512 and 8192 inclusive
+        w = Math.max(Region.SIZE, w);
+        h = Math.max(Region.SIZE, h);
 
-		int xMin = xCentre - w / 2;
-		int zMin = zCentre - h / 2;
+        int xMin = xCentre - w / 2;
+        int zMin = zCentre - h / 2;
 
-		// round to nearest region boundary
-		xMin = Math.round((float) xMin / (float) Region.SIZE) * Region.SIZE;
-		zMin = Math.round((float) zMin / (float) Region.SIZE) * Region.SIZE;
+        // round to nearest region boundary
+        xMin = Math.round((float) xMin / (float) Region.SIZE) * Region.SIZE;
+        zMin = Math.round((float) zMin / (float) Region.SIZE) * Region.SIZE;
 
-		int xMax = xMin + w;
-		int zMax = zMin + h;
+        final int xMax = xMin + w;
+        final int zMax = zMin + h;
 
-		Logging.logInfo("merging area starting at (%d,%d), %dx%d blocks", xMin, zMin, w, h);
+        Logging.logInfo("merging area starting at (%d,%d), %dx%d blocks", xMin, zMin, w, h);
 
-		int countZ = 0;
-		int count = 0;
-		for (int z = zMin; z < zMax; z += MAX_WIDTH)
-		{
-			int imgH = Math.min(zMax - z, MAX_HEIGHT);
-			int countX = 0;
-			for (int x = xMin; x < xMax; x += MAX_WIDTH)
-			{
-				int imgW = Math.min(xMax - x, MAX_WIDTH);
+        int countZ = 0;
+        int count = 0;
+        for (int z = zMin; z < zMax; z += MAX_WIDTH) {
+            final int imgH = Math.min(zMax - z, MAX_HEIGHT);
+            int countX = 0;
+            for (int x = xMin; x < xMax; x += MAX_WIDTH) {
+                final int imgW = Math.min(xMax - x, MAX_WIDTH);
 
-				String imgName = String.format("%s.%d.%d.png", basename, countX, countZ);
-				File f = new File(dir, imgName);
-				Logging.logInfo("merging regions to image %s", f);
+                final String imgName = String.format("%s.%d.%d.png", basename, countX, countZ);
+                final File f = new File(dir, imgName);
+                Logging.logInfo("merging regions to image %s", f);
 
-				BufferedImage img = mergeRegions(regionManager, x, z, imgW, imgH, dimension);
-				writeImage(img, f);
+                final BufferedImage img = mergeRegions(regionManager, x, z, imgW, imgH, dimension);
+                writeImage(img, f);
 
-				countX++;
-				count++;
-			}
-			countZ++;
-		}
+                countX++;
+                count++;
+            }
+            countZ++;
+        }
 
-		return count;
-	}
+        return count;
+    }
 
-	public static BufferedImage mergeRegions(RegionManager regionManager, int x, int z, int w, int h, int dimension)
-	{
-		// create the image and graphics context
-		// this is the most likely place to run out of memory
-		BufferedImage mergedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+    public static BufferedImage mergeRegions (RegionManager regionManager, int x, int z, int w, int h, int dimension) {
 
-		// copy region PNGs to the image
-		for (int zi = 0; zi < h; zi += Region.SIZE)
-		{
-			for (int xi = 0; xi < w; xi += Region.SIZE)
-			{
-				// MwUtil.log("merging region (%d,%d)", rX << Mw.REGION_SHIFT,
-				// rZ << Mw.REGION_SHIFT);
+        // create the image and graphics context
+        // this is the most likely place to run out of memory
+        final BufferedImage mergedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 
-				// get region pixels
-				Region region = regionManager.getRegion(x + xi, z + zi, 0, dimension);
-				int[] regionPixels = region.surfacePixels.getPixels();
-				if (regionPixels != null)
-				{
-					mergedImage.setRGB(xi, zi, Region.SIZE, Region.SIZE, regionPixels, 0, Region.SIZE);
-				}
-			}
-		}
+        // copy region PNGs to the image
+        for (int zi = 0; zi < h; zi += Region.SIZE) {
+            for (int xi = 0; xi < w; xi += Region.SIZE) {
+                // MwUtil.log("merging region (%d,%d)", rX << Mw.REGION_SHIFT,
+                // rZ << Mw.REGION_SHIFT);
 
-		return mergedImage;
-	}
+                // get region pixels
+                final Region region = regionManager.getRegion(x + xi, z + zi, 0, dimension);
+                final int[] regionPixels = region.surfacePixels.getPixels();
+                if (regionPixels != null) {
+                    mergedImage.setRGB(xi, zi, Region.SIZE, Region.SIZE, regionPixels, 0, Region.SIZE);
+                }
+            }
+        }
 
-	public static boolean writeImage(BufferedImage img, File f)
-	{
-		boolean error = true;
-		try
-		{
-			ImageIO.write(img, "png", f);
-			error = false;
-		}
-		catch (IOException e)
-		{
-		}
-		return error;
-	}
+        return mergedImage;
+    }
+
+    public static boolean writeImage (BufferedImage img, File f) {
+
+        boolean error = true;
+        try {
+            ImageIO.write(img, "png", f);
+            error = false;
+        }
+        catch (final IOException e) {
+        }
+        return error;
+    }
 }

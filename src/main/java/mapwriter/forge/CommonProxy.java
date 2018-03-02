@@ -2,17 +2,16 @@ package mapwriter.forge;
 
 import java.io.File;
 
-public class CommonProxy
-{
-	public void load()
-	{
-	}
+public class CommonProxy {
+    public void load () {
+        
+    }
 
-	public void postInit()
-	{
-	}
+    public void postInit () {
+        
+    }
 
-	public void preInit(File configFile)
-	{
-	}
+    public void preInit (File configFile) {
+        
+    }
 }

@@ -5,219 +5,197 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 
-public class MwGuiLabel
-{
-	private enum Side
-	{
-		left,
-		right,
-		top,
-		bottom,
-		none
-	}
+public class MwGuiLabel {
+    private enum Side {
+        left,
+        right,
+        top,
+        bottom,
+        none
+    }
 
-	static int spacingX = 4;
-	static int spacingY = 2;
-	int x = 0, y = 0, w = 1, h = 12;
-	private FontRenderer fontRendererObj = Minecraft.getMinecraft().fontRenderer;
-	private Boolean Background;
-	private Boolean AllowFlip;
-	private int parentWidth;
-	private int parentHeight;
-	private String str1;
-	private String str2;
-	private String[] s1;
+    static int spacingX = 4;
+    static int spacingY = 2;
+    int x = 0, y = 0, w = 1, h = 12;
+    private final FontRenderer fontRendererObj = Minecraft.getMinecraft().fontRenderer;
+    private Boolean Background;
+    private final Boolean AllowFlip;
+    private int parentWidth;
+    private int parentHeight;
+    private String str1;
+    private String str2;
+    private String[] s1;
 
-	private String[] s2;
-	private MwGuiLabel label;
+    private String[] s2;
+    private MwGuiLabel label;
 
-	private Side side = Side.none;
+    private Side side = Side.none;
 
-	public MwGuiLabel(String[] s1, String[] s2, int x, int y, Boolean Background, Boolean AllowFlip, int parentWidth, int parentHeight)
-	{
-		this.Background = Background;
-		this.AllowFlip = AllowFlip;
+    public MwGuiLabel (String[] s1, String[] s2, int x, int y, Boolean Background, Boolean AllowFlip, int parentWidth, int parentHeight) {
 
-		this.parentWidth = parentWidth;
-		this.parentHeight = parentHeight;
+        this.Background = Background;
+        this.AllowFlip = AllowFlip;
 
-		this.setCoords(x, y);
-		this.setText(s1, s2);
-	}
+        this.parentWidth = parentWidth;
+        this.parentHeight = parentHeight;
 
-	public void draw()
-	{
-		this.updateCoords();
-		if (this.str1 != null)
-		{
-			if (this.Background)
-			{
-				Gui.drawRect(this.x -
-								MwGuiLabel.spacingX, this.y -
-														MwGuiLabel.spacingY, this.x +	this.w +
-																				MwGuiLabel.spacingX, this.h +	this.y +
-																										MwGuiLabel.spacingY, 0x80000000);
-			}
+        this.setCoords(x, y);
+        this.setText(s1, s2);
+    }
 
-			this.fontRendererObj.drawSplitString(this.str1, this.x, this.y, this.w, 0xffffff);
+    public void draw () {
 
-			if (this.str2 != null)
-			{
-				this.fontRendererObj.drawSplitString(this.str2, this.x + 65, this.y, this.w, 0xffffff);
-			}
-		}
-	}
+        this.updateCoords();
+        if (this.str1 != null) {
+            if (this.Background) {
+                Gui.drawRect(this.x - MwGuiLabel.spacingX, this.y - MwGuiLabel.spacingY, this.x + this.w + MwGuiLabel.spacingX, this.h + this.y + MwGuiLabel.spacingY, 0x80000000);
+            }
 
-	public void drawToAboveOf(MwGuiLabel label)
-	{
-		this.label = label;
-		this.side = Side.top;
-	}
+            this.fontRendererObj.drawSplitString(this.str1, this.x, this.y, this.w, 0xffffff);
 
-	public void drawToBelowOf(MwGuiLabel label)
-	{
-		this.label = label;
-		this.side = Side.bottom;
-	}
+            if (this.str2 != null) {
+                this.fontRendererObj.drawSplitString(this.str2, this.x + 65, this.y, this.w, 0xffffff);
+            }
+        }
+    }
 
-	public void drawToLeftOf(MwGuiLabel label)
-	{
-		this.label = label;
-		this.side = Side.left;
-	}
+    public void drawToAboveOf (MwGuiLabel label) {
 
-	public void drawToRightOf(MwGuiLabel label)
-	{
-		this.label = label;
-		this.side = Side.right;
-	}
+        this.label = label;
+        this.side = Side.top;
+    }
 
-	public boolean getAllowFlip()
-	{
-		return this.Background;
-	}
+    public void drawToBelowOf (MwGuiLabel label) {
 
-	public boolean getDrawBackground()
-	{
-		return this.Background;
-	}
+        this.label = label;
+        this.side = Side.bottom;
+    }
 
-	public int getparentHeight()
-	{
-		return this.parentHeight;
-	}
+    public void drawToLeftOf (MwGuiLabel label) {
 
-	public int getparentWidth()
-	{
-		return this.parentWidth;
-	}
+        this.label = label;
+        this.side = Side.left;
+    }
 
-	public boolean posWithin(int x, int y)
-	{
-		return x >= this.x + MwGuiLabel.spacingX &&
-				y >= this.y + MwGuiLabel.spacingY &&
-				x <= this.x + this.w + MwGuiLabel.spacingX &&
-				y <= this.y + this.h + MwGuiLabel.spacingY;
-	}
+    public void drawToRightOf (MwGuiLabel label) {
 
-	public void setAllowFlip(boolean enable)
-	{
-		this.Background = enable;
-	}
+        this.label = label;
+        this.side = Side.right;
+    }
 
-	public void setCoords(int x, int y)
-	{
-		if (this.AllowFlip)
-		{
-			if (x + this.w + MwGuiLabel.spacingX > this.parentWidth)
-			{
-				this.x = x - this.w - MwGuiLabel.spacingX - 5;
-			}
-			else
-			{
-				this.x = x;
-			}
-			if (y + this.h + MwGuiLabel.spacingY > this.parentHeight)
-			{
-				this.y = y - this.h - MwGuiLabel.spacingY;
-			}
-			else
-			{
-				this.y = y;
-			}
-		}
-		else
-		{
-			this.x = x;
-			this.y = y;
-		}
-	}
+    public boolean getAllowFlip () {
 
-	public void setDrawBackground(boolean enable)
-	{
-		this.Background = enable;
-	}
+        return this.Background;
+    }
 
-	public void setParentWidthAndHeight(int width, int height)
-	{
-		this.parentWidth = width;
-		this.parentHeight = height;
+    public boolean getDrawBackground () {
 
-		this.updateWidthAndHeight();
-	}
+        return this.Background;
+    }
 
-	public void setText(String[] s1, String[] s2)
-	{
-		this.s1 = s1;
-		this.s2 = s2;
-		this.UpdateStrings();
-	}
+    public int getparentHeight () {
 
-	private void updateCoords()
-	{
-		switch (this.side)
-		{
-			case left:
-				this.setCoords(this.label.x - (this.w + 2 * MwGuiLabel.spacingX + 2), this.label.y);
-				break;
+        return this.parentHeight;
+    }
 
-			case right:
-				this.setCoords(this.label.x + this.label.w + 2 * MwGuiLabel.spacingX + 2, this.label.y);
-				break;
+    public int getparentWidth () {
 
-			case bottom:
-				this.setCoords(this.label.x, this.label.y + this.label.h + 2 * MwGuiLabel.spacingY + 2);
-				break;
+        return this.parentWidth;
+    }
 
-			case top:
-				this.setCoords(this.label.x, this.label.y - (this.h + 2 * MwGuiLabel.spacingY + 2));
-				break;
+    public boolean posWithin (int x, int y) {
 
-			default:
-				break;
-		}
-	}
+        return x >= this.x + MwGuiLabel.spacingX && y >= this.y + MwGuiLabel.spacingY && x <= this.x + this.w + MwGuiLabel.spacingX && y <= this.y + this.h + MwGuiLabel.spacingY;
+    }
 
-	private void UpdateStrings()
-	{
-		if (this.s1 != null && this.s1.length > 0)
-		{
-			this.str1 = Utils.stringArrayToString(this.s1);
-		}
-		if (this.s2 != null && this.s2.length > 0)
-		{
-			this.str2 = Utils.stringArrayToString(this.s2);
-		}
-		this.updateWidthAndHeight();
-	}
+    public void setAllowFlip (boolean enable) {
 
-	private void updateWidthAndHeight()
-	{
-		if (this.s1 != null)
-		{
-			int stringwidth = Utils.getMaxWidth(this.s1, this.s2);
-			this.w = stringwidth < this.parentWidth - 20 ? stringwidth : this.parentWidth - 20;
-			this.h = this.fontRendererObj.getWordWrappedHeight(this.str1, this.parentWidth > 0 ? this.parentWidth : 10);
-		}
-	}
+        this.Background = enable;
+    }
+
+    public void setCoords (int x, int y) {
+
+        if (this.AllowFlip) {
+            if (x + this.w + MwGuiLabel.spacingX > this.parentWidth) {
+                this.x = x - this.w - MwGuiLabel.spacingX - 5;
+            }
+            else {
+                this.x = x;
+            }
+            if (y + this.h + MwGuiLabel.spacingY > this.parentHeight) {
+                this.y = y - this.h - MwGuiLabel.spacingY;
+            }
+            else {
+                this.y = y;
+            }
+        }
+        else {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public void setDrawBackground (boolean enable) {
+
+        this.Background = enable;
+    }
+
+    public void setParentWidthAndHeight (int width, int height) {
+
+        this.parentWidth = width;
+        this.parentHeight = height;
+
+        this.updateWidthAndHeight();
+    }
+
+    public void setText (String[] s1, String[] s2) {
+
+        this.s1 = s1;
+        this.s2 = s2;
+        this.UpdateStrings();
+    }
+
+    private void updateCoords () {
+
+        switch (this.side) {
+            case left:
+                this.setCoords(this.label.x - (this.w + 2 * MwGuiLabel.spacingX + 2), this.label.y);
+                break;
+
+            case right:
+                this.setCoords(this.label.x + this.label.w + 2 * MwGuiLabel.spacingX + 2, this.label.y);
+                break;
+
+            case bottom:
+                this.setCoords(this.label.x, this.label.y + this.label.h + 2 * MwGuiLabel.spacingY + 2);
+                break;
+
+            case top:
+                this.setCoords(this.label.x, this.label.y - (this.h + 2 * MwGuiLabel.spacingY + 2));
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void UpdateStrings () {
+
+        if (this.s1 != null && this.s1.length > 0) {
+            this.str1 = Utils.stringArrayToString(this.s1);
+        }
+        if (this.s2 != null && this.s2.length > 0) {
+            this.str2 = Utils.stringArrayToString(this.s2);
+        }
+        this.updateWidthAndHeight();
+    }
+
+    private void updateWidthAndHeight () {
+
+        if (this.s1 != null) {
+            final int stringwidth = Utils.getMaxWidth(this.s1, this.s2);
+            this.w = stringwidth < this.parentWidth - 20 ? stringwidth : this.parentWidth - 20;
+            this.h = this.fontRendererObj.getWordWrappedHeight(this.str1, this.parentWidth > 0 ? this.parentWidth : 10);
+        }
+    }
 }

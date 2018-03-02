@@ -10,78 +10,69 @@ import org.apache.commons.io.IOUtils;
 
 import net.minecraftforge.fml.common.Loader;
 
-public class VersionCheck implements Runnable
-{
-	private static boolean isLatestVersion = true;
-	private static String latestVersion = "";
-	private static String updateURL = "";
+public class VersionCheck implements Runnable {
+    private static boolean isLatestVersion = true;
+    private static String latestVersion = "";
+    private static String updateURL = "";
 
-	public static String getLatestVersion()
-	{
-		return latestVersion;
-	}
+    public static String getLatestVersion () {
 
-	public static String getUpdateURL()
-	{
-		return updateURL;
-	}
+        return latestVersion;
+    }
 
-	public static boolean isLatestVersion()
-	{
-		return isLatestVersion;
-	}
+    public static String getUpdateURL () {
 
-	/**
-	 * @author jabelar
-	 * @link http://jabelarminecraft.blogspot.nl/p/minecraft-forge-1721710-
-	 *       making -mod.html
-	 */
+        return updateURL;
+    }
 
-	@Override
-	public void run()
-	{
-		InputStream in = null;
-		try
-		{
-			in = new URL(Reference.VersionURL).openStream();
-		}
-		catch (MalformedURLException e)
-		{
-		}
-		catch (IOException e)
-		{
-		}
+    public static boolean isLatestVersion () {
 
-		try
-		{
-			List<String> list = IOUtils.readLines(in);
-			int index = -1;
-			for (int i = 0; i < list.size(); i++)
-			{
-				if (list.get(i).contains(Loader.instance().getMCVersionString()))
-				{
-					index = i;
-					break;
-				}
-			}
+        return isLatestVersion;
+    }
 
-			String version = list.get(index + 1);
-			version = version.replace("\"modVersion\":\"", "");
-			version = version.replace("\",", "");
-			version = version.replace(" ", "");
-			latestVersion = version;
+    /**
+     * @author jabelar
+     * @link http://jabelarminecraft.blogspot.nl/p/minecraft-forge-1721710- making -mod.html
+     */
 
-			String updateURL = list.get(index + 3);
-			updateURL = updateURL.replace("\"updateURL\":\"", "");
-			updateURL = updateURL.replace("\",", "");
-			updateURL = updateURL.replace(" ", "");
-			VersionCheck.updateURL = updateURL;
+    @Override
+    public void run () {
 
-			isLatestVersion = Reference.VERSION.equals(version);
-		}
-		catch (IOException e)
-		{
-		}
+        InputStream in = null;
+        try {
+            in = new URL(Reference.VersionURL).openStream();
+        }
+        catch (final MalformedURLException e) {
+        }
+        catch (final IOException e) {
+        }
 
-	}
+        try {
+            final List<String> list = IOUtils.readLines(in);
+            int index = -1;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).contains(Loader.instance().getMCVersionString())) {
+                    index = i;
+                    break;
+                }
+            }
+
+            String version = list.get(index + 1);
+            version = version.replace("\"modVersion\":\"", "");
+            version = version.replace("\",", "");
+            version = version.replace(" ", "");
+            latestVersion = version;
+
+            String updateURL = list.get(index + 3);
+            updateURL = updateURL.replace("\"updateURL\":\"", "");
+            updateURL = updateURL.replace("\",", "");
+            updateURL = updateURL.replace(" ", "");
+            VersionCheck.updateURL = updateURL;
+
+            isLatestVersion = Reference.VERSION.equals(version);
+        }
+        catch (final IOException e) {
+        }
+
+    }
 }
