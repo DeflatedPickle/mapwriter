@@ -8,23 +8,33 @@ import mapwriter.util.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.ColorizerGrass;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.registries.IRegistryDelegate;
 
 public class BlockColours {
 
     private final Map<TextureAtlasSprite, Integer> averageSpriteColours = new HashMap<>();
     private final Map<IBlockState, Integer> stateColours = new HashMap<>();
     private final Map<Biome, BiomeColours> biomeColours = new HashMap<>();
+    private Map<IRegistryDelegate<Block>, IBlockColor> blockColorMap;
+    
+    public int getColorModifier (IBlockState state, World world, BlockPos pos) {
 
-    public int getBiomeColour (IBlockState state, Biome biome) {
-
-        // TODO see if block is plat, foliage, or whatever, and get the color accordingly.
+        if (blockColorMap.containsKey(state.getBlock().delegate)) {
+            
+            return blockColorMap.get(state.getBlock().delegate).colorMultiplier(state, world, pos, 0);
+        }
+        
+        // Default behavior is white, which doesn't change the color.
         return 0xffffff;
     }
 
@@ -52,6 +62,8 @@ public class BlockColours {
         time = System.currentTimeMillis();
         this.generateBiomeColours();
         MwForge.logger.info("Generating Biome colours. Took {}ms.", System.currentTimeMillis() - time);
+        
+        blockColorMap = TextureUtils.getBlockColours();
     }
 
     private void generateColourAverages () {

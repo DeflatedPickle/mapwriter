@@ -4,9 +4,14 @@ import java.util.Map;
 
 import mapwriter.util.Render;
 import mapwriter.util.Texture;
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.registries.IRegistryDelegate;
 
 public class TextureUtils {
 
@@ -14,6 +19,11 @@ public class TextureUtils {
 
         // TODO replace with AT or Bookshelf
         return ReflectionHelper.getPrivateValue(TextureMap.class, map, "mapRegisteredSprites");
+    }
+    
+    public static Map<IRegistryDelegate<Block>, IBlockColor> getBlockColours() {
+        
+        return ReflectionHelper.getPrivateValue(BlockColors.class, Minecraft.getMinecraft().getBlockColors(), "blockColorMap");
     }
 
     public static int getIconMapColour (TextureAtlasSprite icon, Texture terrainTexture) {

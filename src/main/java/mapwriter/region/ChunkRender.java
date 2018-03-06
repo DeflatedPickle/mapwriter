@@ -4,6 +4,8 @@ import com.jarhax.map.BlockColours;
 
 import mapwriter.config.Config;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 
 public class ChunkRender {
@@ -63,9 +65,7 @@ public class ChunkRender {
             // no need to process block if it is transparent
             if (alpha > 0) {
 
-                final int biome = chunk.getBiome(x, y, z);
-                // TODO using int id is bad mkay
-                final int c2 = bc.getBiomeColour(blockState, Biome.getBiome(biome));
+                final int c2 = bc.getColorModifier(blockState, Minecraft.getMinecraft().world, new BlockPos(x, y, z));
 
                 // extract colour components as normalized doubles
                 final double c1A = alpha / 255.0;
