@@ -23,10 +23,10 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class EventHandler {
+public class MapWriterEventHandler {
     Mw mw;
 
-    public EventHandler (Mw mw) {
+    public MapWriterEventHandler (Mw mw) {
 
         this.mw = mw;
     }
