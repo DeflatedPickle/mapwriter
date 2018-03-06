@@ -120,8 +120,6 @@ public class EventHandler {
                             final ArrayList list = (ArrayList) FieldUtils.readField(parrent, "realmsServers", true);
                             for (final Object item : list) {
                                 final RealmsServer server = (RealmsServer) item;
-                                final String Name = server.getName();
-                                final String Owner = server.owner;
                                 final StringBuilder builder = new StringBuilder();
                                 builder.append(server.owner);
                                 builder.append("_");

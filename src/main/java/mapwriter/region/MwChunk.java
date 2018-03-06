@@ -23,61 +23,8 @@ import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 public class MwChunk implements IChunk {
+
     public static final int SIZE = 16;
-
-    private static java.lang.reflect.Method CarpenterMethod = null;
-    private static java.lang.reflect.Method FMPMethodParts = null;
-    private static java.lang.reflect.Method FMPMethodMaterial = null;
-
-    private static java.lang.reflect.Field FMPFieldBlock = null;
-    private static java.lang.reflect.Field FMPFieldMeta = null;
-
-    public static void carpenterdata () {
-
-        try {
-            final Class<?> act = Class.forName("com.carpentersblocks.tileentity.TEBase");
-            MwChunk.CarpenterMethod = act.getMethod("getAttribute", byte.class);
-        }
-        catch (final SecurityException e) {
-            // ...
-        }
-        catch (final NoSuchMethodException e) {
-            // ...
-        }
-        catch (final ClassNotFoundException e) {
-            //
-        }
-    }
-
-    public static void FMPdata () {
-
-        try {
-            Class<?> act = Class.forName("codechicken.multipart.TileMultipart");
-            MwChunk.FMPMethodParts = act.getMethod("jPartList");
-            act = Class.forName("codechicken.microblock.Microblock");
-            MwChunk.FMPMethodMaterial = act.getMethod("getIMaterial");
-
-            act = Class.forName("codechicken.microblock.BlockMicroMaterial");
-            MwChunk.FMPFieldBlock = act.getDeclaredField("block");
-            MwChunk.FMPFieldBlock.setAccessible(true);
-
-            MwChunk.FMPFieldMeta = act.getDeclaredField("meta");
-            MwChunk.FMPFieldMeta.setAccessible(true);
-
-        }
-        catch (final SecurityException e) {
-            // ...
-        }
-        catch (final NoSuchMethodException e) {
-            // ...
-        }
-        catch (final ClassNotFoundException e) {
-            //
-        }
-        catch (final NoSuchFieldException e) {
-            //
-        }
-    }
 
     // load from anvil file
     public static MwChunk read (int x, int z, int dimension, RegionFileCache regionFileCache) {
@@ -337,7 +284,6 @@ public class MwChunk implements IChunk {
         compound.setInteger("zPos", this.z);
         final ExtendedBlockStorage[] aextendedblockstorage = this.dataArray;
         final NBTTagList nbttaglist = new NBTTagList();
-        final boolean flag = true;
 
         for (final ExtendedBlockStorage extendedblockstorage : aextendedblockstorage) {
             if (extendedblockstorage != Chunk.NULL_BLOCK_STORAGE) {
