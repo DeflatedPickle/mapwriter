@@ -2,6 +2,8 @@ package mapwriter;
 
 import java.io.File;
 
+import com.jarhax.map.BlockColours;
+
 import mapwriter.config.Config;
 import mapwriter.config.ConfigurationHandler;
 import mapwriter.config.WorldConfig;
@@ -18,7 +20,6 @@ import mapwriter.map.MiniMap;
 import mapwriter.map.Trail;
 import mapwriter.map.UndergroundTexture;
 import mapwriter.overlay.OverlaySlime;
-import mapwriter.region.BlockColours;
 import mapwriter.region.RegionManager;
 import mapwriter.tasks.CloseRegionManagerTask;
 import mapwriter.util.Reference;
@@ -222,25 +223,6 @@ public class Mw {
         // }
     }
 
-    public void loadBlockColourOverrides (BlockColours bc) {
-
-        final File f = new File(this.configDir, Reference.blockColourOverridesFileName);
-        if (f.isFile()) {
-            MwForge.logger.info("loading block colour overrides file {}", f);
-            bc.loadFromFile(f);
-        }
-        else {
-            MwForge.logger.info("recreating block colour overrides file {}", f);
-            BlockColours.writeOverridesFile(f);
-            if (f.isFile()) {
-                bc.loadFromFile(f);
-            }
-            else {
-                MwForge.logger.error("could not load block colour overrides from file {}", f);
-            }
-        }
-    }
-
     // add chunk to the set of loaded chunks
     public void onChunkLoad (Chunk chunk) {
 
@@ -392,22 +374,9 @@ public class Mw {
     public void reloadBlockColours () {
 
         final BlockColours bc = new BlockColours();
-        final File f = new File(this.configDir, Reference.blockColourSaveFileName);
-
-        if (Config.useSavedBlockColours && f.isFile() && bc.checkFileVersion(f)) {
-            // load block colours from file
-            MwForge.logger.info("loading block colours from {}", f);
-            bc.loadFromFile(f);
-            this.loadBlockColourOverrides(bc);
-        }
-        else {
-            // generate block colours from current texture pack
-            MwForge.logger.info("generating block colours");
-            BlockColourGen.genBlockColours(bc);
-            // load overrides again to override block and biome colours
-            this.loadBlockColourOverrides(bc);
-            this.saveBlockColours(bc);
-        }
+        bc.loadColourData();
+        // TODO overrides? -dh
+        // TODO save? -dh
         this.blockColours = bc;
     }
 
@@ -430,13 +399,6 @@ public class Mw {
         if (oldTexture != null) {
             this.undergroundMapTexture.close();
         }
-    }
-
-    public void saveBlockColours (BlockColours bc) {
-
-        final File f = new File(this.configDir, Reference.blockColourSaveFileName);
-        MwForge.logger.info("saving block colours to '{}'", f);
-        bc.saveToFile(f);
     }
 
     public void setTextureSize () {

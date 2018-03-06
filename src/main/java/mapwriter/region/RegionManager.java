@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.Logger;
 
+import com.jarhax.map.BlockColours;
+
 import mapwriter.forge.MwForge;
 
 public class RegionManager {

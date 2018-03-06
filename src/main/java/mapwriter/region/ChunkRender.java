@@ -1,7 +1,10 @@
 package mapwriter.region;
 
+import com.jarhax.map.BlockColours;
+
 import mapwriter.config.Config;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.biome.Biome;
 
 public class ChunkRender {
 
@@ -48,7 +51,7 @@ public class ChunkRender {
         double b = 0.0;
         for (; y > 0; y--) {
             final IBlockState blockState = chunk.getBlockState(x, y, z);
-            final int c1 = bc.getColour(blockState);
+            final int c1 = bc.getStateColour(blockState);
             int alpha = c1 >> 24 & 0xff;
 
             // this is the color that gets returned for air, so set aplha to 0
@@ -61,7 +64,8 @@ public class ChunkRender {
             if (alpha > 0) {
 
                 final int biome = chunk.getBiome(x, y, z);
-                final int c2 = bc.getBiomeColour(blockState, biome);
+                // TODO using int id is bad mkay
+                final int c2 = bc.getBiomeColour(blockState, Biome.getBiome(biome));
 
                 // extract colour components as normalized doubles
                 final double c1A = alpha / 255.0;
@@ -159,7 +163,7 @@ public class ChunkRender {
                 if (dimensionHasCeiling) {
                     for (y = 127; y >= 0; y--) {
                         final IBlockState blockState = chunk.getBlockState(x, y, z);
-                        final int color = bc.getColour(blockState);
+                        final int color = bc.getStateColour(blockState);
                         int alpha = color >> 24 & 0xff;
 
                         if (color == -8650628) {
@@ -199,7 +203,7 @@ public class ChunkRender {
                 int lastNonTransparentY = startY;
                 for (int y = startY; y < chunk.getMaxY(); y++) {
                     final IBlockState blockState = chunk.getBlockState(x, y, z);
-                    final int color = bc.getColour(blockState);
+                    final int color = bc.getStateColour(blockState);
                     int alpha = color >> 24 & 0xff;
 
                     if (color == -8650628) {

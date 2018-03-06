@@ -1,7 +1,8 @@
 package mapwriter.tasks;
 
+import com.jarhax.map.BlockColours;
+
 import mapwriter.Mw;
-import mapwriter.region.BlockColours;
 import mapwriter.region.RegionManager;
 import mapwriter.util.Utils;
 import net.minecraft.client.resources.I18n;
