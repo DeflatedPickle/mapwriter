@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import mapwriter.config.Config;
+import mapwriter.forge.MwForge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -293,7 +294,7 @@ public class Utils {
             oclass.getMethod("browse", new Class[] { URI.class }).invoke(object, new Object[] { p_175282_1_ });
         }
         catch (final Throwable throwable) {
-            Logging.logError("Couldn\'t open link %s", throwable.getStackTrace().toString());
+            MwForge.logger.error("Couldn\'t open link {}", throwable.getStackTrace().toString());
         }
     }
 
@@ -304,7 +305,7 @@ public class Utils {
         if (thePlayer != null) {
             thePlayer.sendMessage(new TextComponentString(msg));
         }
-        Logging.log("%s", msg);
+        MwForge.logger.info("{}", msg);
     }
 
     public static String stringArrayToString (String[] arr) {

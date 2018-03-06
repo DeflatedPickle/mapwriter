@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
-import mapwriter.util.Logging;
+import mapwriter.forge.MwForge;
 
 /*
  * Anvil region file reader/writer implementation. This code is very similar to
@@ -122,11 +122,11 @@ public class RegionFile {
                         dis = new DataInputStream(new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compressedChunkData))));
                     }
                     else {
-                        Logging.logError("data length (%d) or version (%d) invalid for chunk (%d, %d)", length, version, x, z);
+                        MwForge.logger.error("data length ({}) or version ({}) invalid for chunk ({}, {})", length, version, x, z);
                     }
                 }
                 catch (final Exception e) {
-                    Logging.logError("exception while reading chunk (%d, %d): %s", x, z, e);
+                    MwForge.logger.error("exception while reading chunk ({}, {}): {}", x, z, e);
                     dis = null;
                 }
             }
@@ -149,13 +149,13 @@ public class RegionFile {
         final File dir = this.file.getParentFile();
         if (dir.exists()) {
             if (!dir.isDirectory()) {
-                Logging.logError("path %s exists and is not a directory", dir);
+                MwForge.logger.error("path {} exists and is not a directory", dir);
                 return true;
             }
         }
         else {
             if (!dir.mkdirs()) {
-                Logging.logError("could not create directory %s", dir);
+                MwForge.logger.error("could not create directory {}", dir);
                 return true;
             }
         }
@@ -190,7 +190,7 @@ public class RegionFile {
                             this.setFilledSectorArray(section, true);
                         }
                         else {
-                            Logging.logError("chunk %d overlaps another chunk, file may be corrupt", i);
+                            MwForge.logger.error("chunk {} overlaps another chunk, file may be corrupt", i);
                         }
                     }
                 }
@@ -204,7 +204,7 @@ public class RegionFile {
         }
         catch (final Exception e) {
             this.fin = null;
-            Logging.logError("exception when opening region file '%s': %s", this.file, e);
+            MwForge.logger.error("exception when opening region file '{}': {}", this.file, e);
 
         }
 
@@ -224,7 +224,7 @@ public class RegionFile {
                 freeCount++;
             }
         }
-        Logging.logInfo("Region File %s: filled sectors = %d, free sectors = %d", this, filledCount, freeCount);
+        MwForge.logger.info("Region File {}: filled sectors = {}, free sectors = {}", this, filledCount, freeCount);
 
         String s = "";
         int i;
@@ -234,18 +234,18 @@ public class RegionFile {
             }
             s += this.filledSectorArray.get(i) ? '1' : '0';
             if ((i & 31) == 31) {
-                Logging.logInfo("%s", s);
+                MwForge.logger.info("{}", s);
             }
         }
         if ((i & 31) != 31) {
-            Logging.logInfo("%s", s);
+            MwForge.logger.info("{}", s);
         }
     }
 
     @Override
     public String toString () {
 
-        return String.format("%s", this.file);
+        return String.format("{}", this.file);
     }
 
     private boolean checkSectionOverlaps (Section section) {
@@ -324,7 +324,7 @@ public class RegionFile {
         }
         for (int i = section.startSector; i < endSector; i++) {
             if (filled && this.filledSectorArray.get(i)) {
-                Logging.logError("sector %d already filled, possible chunk overlap", i);
+                MwForge.logger.error("sector {} already filled, possible chunk overlap", i);
             }
             this.filledSectorArray.set(i, Boolean.valueOf(filled));
         }
@@ -376,7 +376,7 @@ public class RegionFile {
         // the file (append).
 
         if (length <= 0) {
-            Logging.logWarning("not writing chunk (%d, %d) with length %d", x, z, length);
+            MwForge.logger.warn("not writing chunk ({}, {}) with length {}", x, z, length);
             return true;
         }
 
@@ -391,8 +391,8 @@ public class RegionFile {
 
         if (currentSection != null && requiredSectors <= currentSection.length) {
             // if the chunk still fits in it's current location don't move
-            // RegionManager.logInfo("chunk (%d, %d) fits in current location
-            // %d",
+            // RegionManager.logInfo("chunk ({}, {}) fits in current location
+            // {}",
             // x, z, currentSection.startSector);
             newSection = new Section(currentSection.startSector, requiredSectors);
         }
@@ -406,8 +406,8 @@ public class RegionFile {
 
         boolean error = true;
         try {
-            // RegionManager.logInfo("writing %d bytes to sector %d for chunk
-            // (%d, %d)",
+            // RegionManager.logInfo("writing {} bytes to sector {} for chunk
+            // ({}, {})",
             // length, newSection.startSector, x, z);
             this.writeChunkDataToSection(newSection, compressedChunkData, length);
             // update the header
@@ -415,7 +415,7 @@ public class RegionFile {
             error = false;
         }
         catch (final IOException e) {
-            Logging.logError("could not write chunk (%d, %d) to region file: %s", x, z, e);
+            MwForge.logger.error("could not write chunk ({}, {}) to region file: {}", x, z, e);
         }
 
         return error;

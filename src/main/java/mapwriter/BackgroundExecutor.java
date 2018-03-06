@@ -8,8 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import mapwriter.forge.MwForge;
 import mapwriter.tasks.Task;
-import mapwriter.util.Logging;
 
 // @formatter:off
 /*
@@ -74,16 +74,16 @@ public class BackgroundExecutor {
             // bit for diagnostics on task left to optimize code
             if (this.tasksRemaining() > 500 && this.doDiag) {
                 this.doDiag = false;
-                Logging.logError("Taskque went over 500 starting diagnostic");
+                MwForge.logger.error("Taskque went over 500 starting diagnostic");
                 this.taskLeftPerType();
-                Logging.logError("End of diagnostic");
+                MwForge.logger.error("End of diagnostic");
             }
             else {
                 this.doDiag = true;
             }
         }
         else {
-            Logging.log("MwExecutor.addTask: error: cannot add task to closed executor");
+            MwForge.logger.info("MwExecutor.addTask: error: cannot add task to closed executor");
         }
         return this.closed;
     }
@@ -102,7 +102,7 @@ public class BackgroundExecutor {
             error = false;
         }
         catch (final InterruptedException e) {
-            Logging.log("error: IO task was interrupted during shutdown");
+            MwForge.logger.info("error: IO task was interrupted during shutdown");
             e.printStackTrace();
         }
         this.closed = true;
@@ -170,7 +170,7 @@ public class BackgroundExecutor {
             final String key = entry.getKey();
             final Object value = entry.getValue();
 
-            Logging.log("waiting for %d %s to finish...", value, key);
+            MwForge.logger.info("waiting for {} {} to finish...", value, key);
         }
     }
 }

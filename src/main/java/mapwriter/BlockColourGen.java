@@ -3,8 +3,8 @@ package mapwriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import mapwriter.forge.MwForge;
 import mapwriter.region.BlockColours;
-import mapwriter.util.Logging;
 import mapwriter.util.Render;
 import mapwriter.util.Texture;
 import net.minecraft.block.Block;
@@ -20,56 +20,56 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public class BlockColourGen {
-    
+
     public static final Map<TextureAtlasSprite, Integer> COLOUR_MAP = new HashMap<>();
-    
-    public static Map<String, TextureAtlasSprite> getTextures(TextureMap map) {
-        
+
+    public static Map<String, TextureAtlasSprite> getTextures (TextureMap map) {
+
         return ReflectionHelper.getPrivateValue(TextureMap.class, map, "mapRegisteredSprites");
     }
-    
+
     public static void genBlockColours (BlockColours bc) {
 
-        Logging.log("generating block map colours from textures");
-        
+        MwForge.logger.info("generating block map colours from textures");
+
         final int terrainTextureId = Minecraft.getMinecraft().renderEngine.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).getGlTextureId();
         final Texture terrainTexture = new Texture(terrainTextureId);
 
-        long preTime = System.currentTimeMillis();        
+        final long preTime = System.currentTimeMillis();
         int textures = 0;
-        
+
         for (final TextureAtlasSprite sprite : getTextures(Minecraft.getMinecraft().getTextureMapBlocks()).values()) {
-            
+
             COLOUR_MAP.put(sprite, getIconMapColour(sprite, terrainTexture));
             textures++;
         }
-        
-        Logging.log("Processed %d textures. Took %dms", textures, System.currentTimeMillis() - preTime);
 
-        long start = System.currentTimeMillis();
+        MwForge.logger.info("Processed {} textures. Took {}ms", textures, System.currentTimeMillis() - preTime);
+
+        final long start = System.currentTimeMillis();
         int blocks = 0;
         int exceptions = 0;
-        
+
         for (final Block block : Block.REGISTRY) {
 
-            for (IBlockState state : block.getBlockState().getValidStates()) {
-                
+            for (final IBlockState state : block.getBlockState().getValidStates()) {
+
                 if (state != null && state.getRenderType() != EnumBlockRenderType.INVISIBLE) {
-                    
+
                     try {
-                        
+
                         final TextureAtlasSprite icon = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state);
-                        
+
                         if (icon != null) {
 
-                            final int blockColour = COLOUR_MAP.get(icon);                            
+                            final int blockColour = COLOUR_MAP.get(icon);
                             bc.setColour(block.delegate.name().toString(), String.valueOf(block.getMetaFromState(state)), blockColour);
                             blocks++;
                         }
                     }
-                    
-                    catch (Exception e) {
-                        
+
+                    catch (final Exception e) {
+
                         exceptions++;
                         e.printStackTrace();
                     }
@@ -77,7 +77,7 @@ public class BlockColourGen {
             }
         }
 
-        Logging.log("Processed %d blocks. Had %d exceptions. Took %dms", blocks, exceptions, System.currentTimeMillis() - start);
+        MwForge.logger.info("Processed {} blocks. Had {} exceptions. Took {}ms", blocks, exceptions, System.currentTimeMillis() - start);
         System.out.println("Time: " + (System.currentTimeMillis() - start));
 
         genBiomeColours(bc);

@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
-import mapwriter.util.Logging;
+import mapwriter.forge.MwForge;
 
 public class SurfacePixels {
 
@@ -45,7 +45,7 @@ public class SurfacePixels {
                 img.getRGB(0, 0, w, h, pixels, 0, w);
             }
             else {
-                Logging.logWarning("loadImage: image '%s' does not match expected dimensions (got %dx%d expected %dx%d)", filename, img.getWidth(), img.getHeight(), w, h);
+                MwForge.logger.warn("loadImage: image '{}' does not match expected dimensions (got {}x{} expected {}x{})", filename, img.getWidth(), img.getHeight(), w, h);
             }
         }
         return pixels;
@@ -57,11 +57,11 @@ public class SurfacePixels {
         img.setRGB(0, 0, w, h, pixels, 0, w);
 
         try {
-            // MwUtil.log("writing region %s to %s", this, this.imageFile);
+            // MwUtil.log("writing region {} to {}", this, this.imageFile);
             ImageIO.write(img, "png", filename);
         }
         catch (final IOException e) {
-            Logging.logError("saveImage: error: could not write image to %s", filename);
+            MwForge.logger.error("saveImage: error: could not write image to {}", filename);
         }
     }
 

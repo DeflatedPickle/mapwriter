@@ -2,7 +2,7 @@ package mapwriter.config;
 
 import java.io.File;
 
-import mapwriter.util.Logging;
+import mapwriter.forge.MwForge;
 import mapwriter.util.Reference;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -88,7 +88,7 @@ public class ConfigurationHandler {
                 Config.smallMap.loadConfig();
             }
             else {
-                Logging.logError("Unknown config id: %s", event.getConfigID());
+                MwForge.logger.error("Unknown config id: {}", event.getConfigID());
             }
 
             if (configuration.hasChanged()) {

@@ -8,8 +8,8 @@ import org.lwjgl.opengl.GL11;
 
 import mapwriter.config.Config;
 import mapwriter.config.WorldConfig;
+import mapwriter.forge.MwForge;
 import mapwriter.map.mapmode.MapMode;
-import mapwriter.util.Logging;
 import mapwriter.util.Reference;
 import mapwriter.util.Utils;
 import net.minecraft.client.Minecraft;
@@ -362,7 +362,7 @@ public class MarkerManager {
                         this.addMarker(marker);
                     }
                     else {
-                        Logging.log("error: could not load " + key + " from config file");
+                        MwForge.logger.info("error: could not load {} from config file", key);
                     }
                 }
             }
@@ -472,7 +472,7 @@ public class MarkerManager {
             }
         }
         else {
-            Logging.log("Marker.stringToMarker: invalid marker '%s'", s);
+            MwForge.logger.info("Marker.stringToMarker: invalid marker '{}'", s);
         }
         return marker;
     }

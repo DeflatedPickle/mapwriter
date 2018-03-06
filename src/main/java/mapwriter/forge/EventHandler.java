@@ -12,7 +12,6 @@ import com.mojang.realmsclient.gui.screens.RealmsLongRunningMcoTaskScreen;
 import mapwriter.Mw;
 import mapwriter.config.Config;
 import mapwriter.overlay.OverlaySlime;
-import mapwriter.util.Logging;
 import mapwriter.util.Utils;
 import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -87,7 +86,7 @@ public class EventHandler {
             }
         }
         catch (final Exception e) {
-            Logging.logError("Something went wrong getting the seed. %s", new Object[] { e.toString() });
+            MwForge.logger.error("Something went wrong getting the seed. {}", new Object[] { e.toString() });
         }
     }
 
@@ -144,7 +143,7 @@ public class EventHandler {
     public void onTextureStitchEventPost (TextureStitchEvent.Post event) {
 
         if (Config.reloadColours) {
-            Logging.logInfo("Skipping the first generation of blockcolours, models are not loaded yet", (Object[]) null);
+            MwForge.logger.info("Skipping the first generation of blockcolours, models are not loaded yet");
         }
         else {
             this.mw.reloadBlockColours();

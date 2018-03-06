@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import mapwriter.util.Logging;
+import mapwriter.forge.MwForge;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Biomes;
@@ -133,7 +133,7 @@ public class MwChunk implements IChunk {
                 final int zNbt = level.getInteger("zPos");
 
                 if (xNbt != x || zNbt != z) {
-                    Logging.logWarning("chunk (%d, %d) has NBT coords (%d, %d)", x, z, xNbt, zNbt);
+                    MwForge.logger.warn("chunk ({}, {}) has NBT coords ({}, {})", x, z, xNbt, zNbt);
                 }
 
                 final NBTTagList sections = level.getTagList("Sections", 10);
@@ -172,21 +172,21 @@ public class MwChunk implements IChunk {
 
             }
             catch (final IOException e) {
-                Logging.logError("%s: could not read chunk (%d, %d) from region file\n", e, x, z);
+                MwForge.logger.error("{}: could not read chunk ({}, {}) from region file\n", e, x, z);
             }
             finally {
                 try {
                     dis.close();
                 }
                 catch (final IOException e) {
-                    Logging.logError("MwChunk.read: %s while closing input stream", e);
+                    MwForge.logger.error("MwChunk.read: {} while closing input stream", e);
                 }
             }
-            // this.log("MwChunk.read: chunk (%d, %d) empty=%b", this.x, this.z,
+            // this.log("MwChunk.read: chunk ({}, {}) empty=%b", this.x, this.z,
             // empty);
         }
         else {
-            // this.log("MwChunk.read: chunk (%d, %d) input stream is null",
+            // this.log("MwChunk.read: chunk ({}, {}) input stream is null",
             // this.x, this.z);
         }
 
@@ -278,7 +278,7 @@ public class MwChunk implements IChunk {
     @Override
     public String toString () {
 
-        return String.format("(%d, %d) dim%d", this.x, this.z, this.dimension);
+        return String.format("({}, {}) dim{}", this.x, this.z, this.dimension);
     }
 
     public synchronized boolean write (RegionFileCache regionFileCache) {
@@ -293,7 +293,7 @@ public class MwChunk implements IChunk {
             if (dos != null) {
                 // Nbt chunkNbt = this.getNbt();
                 try {
-                    // RegionManager.logInfo("writing chunk (%d, %d) to region
+                    // RegionManager.logInfo("writing chunk ({}, {}) to region
                     // file",
                     // this.x, this.z);
                     // chunkNbt.writeElement(dos);
@@ -302,7 +302,7 @@ public class MwChunk implements IChunk {
                     CompressedStreamTools.write(this.writeChunkToNBT(), dos);
                 }
                 catch (final IOException e) {
-                    Logging.logError("%s: could not write chunk (%d, %d) to region file", e, this.x, this.z);
+                    MwForge.logger.error("{}: could not write chunk ({}, {}) to region file", e, this.x, this.z);
                     error = true;
                 }
                 finally {
@@ -310,16 +310,16 @@ public class MwChunk implements IChunk {
                         dos.close();
                     }
                     catch (final IOException e) {
-                        Logging.logError("%s while closing chunk data output stream", e);
+                        MwForge.logger.error("{} while closing chunk data output stream", e);
                     }
                 }
             }
             else {
-                Logging.logError("error: could not get output stream for chunk (%d, %d)", this.x, this.z);
+                MwForge.logger.error("error: could not get output stream for chunk ({}, {})", this.x, this.z);
             }
         }
         else {
-            Logging.logError("error: could not open region file for chunk (%d, %d)", this.x, this.z);
+            MwForge.logger.error("error: could not open region file for chunk ({}, {})", this.x, this.z);
         }
 
         return error;

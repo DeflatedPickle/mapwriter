@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import mapwriter.util.Logging;
+import mapwriter.forge.MwForge;
 
 public class MergeToImage {
     public static final int MAX_WIDTH = 8192;
@@ -32,7 +32,7 @@ public class MergeToImage {
         final int xMax = xMin + w;
         final int zMax = zMin + h;
 
-        Logging.logInfo("merging area starting at (%d,%d), %dx%d blocks", xMin, zMin, w, h);
+        MwForge.logger.info("merging area starting at ({},{}), {}x{} blocks", xMin, zMin, w, h);
 
         int countZ = 0;
         int count = 0;
@@ -44,7 +44,7 @@ public class MergeToImage {
 
                 final String imgName = String.format("%s.%d.%d.png", basename, countX, countZ);
                 final File f = new File(dir, imgName);
-                Logging.logInfo("merging regions to image %s", f);
+                MwForge.logger.info("merging regions to image {}", f);
 
                 final BufferedImage img = mergeRegions(regionManager, x, z, imgW, imgH, dimension);
                 writeImage(img, f);

@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import mapwriter.util.Logging;
+import mapwriter.forge.MwForge;
 import mapwriter.util.Reference;
 import mapwriter.util.Render;
 import net.minecraft.block.Block;
@@ -90,7 +90,7 @@ public class BlockColours {
             // + "blocktype 3258 * opaque # natura sakura leaves\n"
         }
         catch (final IOException e) {
-            Logging.logError("saving block overrides: could not write to '%s'", f);
+            MwForge.logger.error("saving block overrides: could not write to '{}'", f);
 
         }
         finally {
@@ -191,7 +191,7 @@ public class BlockColours {
             blockType = BlockType.OPAQUE;
         }
         else {
-            Logging.logWarning("unknown block type '%s'", typeString);
+            MwForge.logger.warn("unknown block type '{}'", typeString);
         }
         return blockType;
     }
@@ -354,11 +354,11 @@ public class BlockColours {
         final int meta = block.getMetaFromState(BlockState);
 
         if (block.delegate == null) {
-            Logging.logError("Delegate was Null when getting colour, Block in: %s", block.toString());
+            MwForge.logger.error("Delegate was Null when getting colour, Block in: {}", block.toString());
             return 0;
         }
         else if (block.delegate.name() == null) {
-            Logging.logError("Block Name was Null when getting colour, Block in: %s, Delegate: %s", block.toString(), block.delegate.toString());
+            MwForge.logger.error("Block Name was Null when getting colour, Block in: {}, Delegate: {}", block.toString(), block.delegate.toString());
             return 0;
         }
         return this.getColour(block.delegate.name().toString(), meta);
@@ -408,13 +408,13 @@ public class BlockColours {
 
                     }
                     else {
-                        Logging.logWarning("invalid map colour line '%s'", line);
+                        MwForge.logger.warn("invalid map colour line '{}'", line);
                     }
                 }
             }
         }
         catch (final IOException e) {
-            Logging.logError("loading block colours: no such file '%s'", f);
+            MwForge.logger.error("loading block colours: no such file '{}'", f);
 
         }
         finally {
@@ -507,7 +507,7 @@ public class BlockColours {
 
         }
         catch (final IOException e) {
-            Logging.logError("saving block colours: could not write to '%s'", f);
+            MwForge.logger.error("saving block colours: could not write to '{}'", f);
 
         }
         finally {
@@ -606,7 +606,7 @@ public class BlockColours {
         }
 
         catch (final NumberFormatException e) {
-            Logging.logWarning("invalid biome colour line '%s %s %s %s %s'", split[0], split[1], split[2], split[3], split[4]);
+            MwForge.logger.warn("invalid biome colour line '{} {} {} {} {}'", split[0], split[1], split[2], split[3], split[4]);
         }
     }
 
@@ -625,7 +625,7 @@ public class BlockColours {
 
         }
         catch (final NumberFormatException e) {
-            Logging.logWarning("invalid block colour line '%s %s %s %s'", split[0], split[1], split[2], split[3]);
+            MwForge.logger.error("invalid block colour line '{} {} {} {}'", split[0], split[1], split[2], split[3]);
         }
     }
 
@@ -637,7 +637,7 @@ public class BlockColours {
             this.setBlockType(split[1], split[2], type);
         }
         catch (final NumberFormatException e) {
-            Logging.logWarning("invalid block colour line '%s %s %s %s'", split[0], split[1], split[2], split[3]);
+            MwForge.logger.warn("invalid block colour line '{} {} {} {}'", split[0], split[1], split[2], split[3]);
         }
     }
 }

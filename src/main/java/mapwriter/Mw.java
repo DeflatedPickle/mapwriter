@@ -21,7 +21,6 @@ import mapwriter.overlay.OverlaySlime;
 import mapwriter.region.BlockColours;
 import mapwriter.region.RegionManager;
 import mapwriter.tasks.CloseRegionManagerTask;
-import mapwriter.util.Logging;
 import mapwriter.util.Reference;
 import mapwriter.util.Render;
 import mapwriter.util.Utils;
@@ -106,7 +105,7 @@ public class Mw {
 
     public void close () {
 
-        Logging.log("Mw.close: closing...");
+        MwForge.logger.info("Mw.close: closing...");
 
         if (this.ready) {
             this.ready = false;
@@ -119,11 +118,11 @@ public class Mw {
             this.executor.addTask(new CloseRegionManagerTask(this.regionManager));
             this.regionManager = null;
 
-            Logging.log("waiting for %d tasks to finish...", this.executor.tasksRemaining());
+            MwForge.logger.info("waiting for {} tasks to finish...", this.executor.tasksRemaining());
             if (this.executor.close()) {
-                Logging.log("error: timeout waiting for tasks to finish");
+                MwForge.logger.info("error: timeout waiting for tasks to finish");
             }
-            Logging.log("done");
+            MwForge.logger.info("done");
 
             this.playerTrail.close();
 
@@ -154,11 +153,11 @@ public class Mw {
         }
 
         if (this.mc.world == null || this.mc.player == null) {
-            Logging.log("Mw.load: world or player is null, cannot load yet");
+            MwForge.logger.info("Mw.load: world or player is null, cannot load yet");
             return;
         }
 
-        Logging.log("Mw.load: loading...");
+        MwForge.logger.info("Mw.load: loading...");
 
         // get world and image directories
         File saveDir = this.saveDir;
@@ -168,7 +167,7 @@ public class Mw {
                 saveDir = d;
             }
             else {
-                Logging.log("error: no such directory %s", Config.saveDirOverride);
+                MwForge.logger.info("error: no such directory {}", Config.saveDirOverride);
             }
         }
 
@@ -187,7 +186,7 @@ public class Mw {
             this.imageDir.mkdirs();
         }
         if (!this.imageDir.isDirectory()) {
-            Logging.log("Mapwriter: ERROR: could not create images directory '%s'", this.imageDir.getPath());
+            MwForge.logger.info("Mapwriter: ERROR: could not create images directory '{}'", this.imageDir.getPath());
         }
 
         this.tickCounter = 0;
@@ -227,17 +226,17 @@ public class Mw {
 
         final File f = new File(this.configDir, Reference.blockColourOverridesFileName);
         if (f.isFile()) {
-            Logging.logInfo("loading block colour overrides file %s", f);
+            MwForge.logger.info("loading block colour overrides file {}", f);
             bc.loadFromFile(f);
         }
         else {
-            Logging.logInfo("recreating block colour overrides file %s", f);
+            MwForge.logger.info("recreating block colour overrides file {}", f);
             BlockColours.writeOverridesFile(f);
             if (f.isFile()) {
                 bc.loadFromFile(f);
             }
             else {
-                Logging.logError("could not load block colour overrides from file %s", f);
+                MwForge.logger.error("could not load block colour overrides from file {}", f);
             }
         }
     }
@@ -251,7 +250,7 @@ public class Mw {
                 this.chunkManager.addChunk(chunk);
             }
             else {
-                Logging.logInfo("missed chunk (%d, %d)", chunk.x, chunk.z);
+                MwForge.logger.info("missed chunk ({}, {})", chunk.x, chunk.z);
             }
         }
     }
@@ -397,13 +396,13 @@ public class Mw {
 
         if (Config.useSavedBlockColours && f.isFile() && bc.CheckFileVersion(f)) {
             // load block colours from file
-            Logging.logInfo("loading block colours from %s", f);
+            MwForge.logger.info("loading block colours from {}", f);
             bc.loadFromFile(f);
             this.loadBlockColourOverrides(bc);
         }
         else {
             // generate block colours from current texture pack
-            Logging.logInfo("generating block colours");
+            MwForge.logger.info("generating block colours");
             BlockColourGen.genBlockColours(bc);
             // load overrides again to override block and biome colours
             this.loadBlockColourOverrides(bc);
@@ -436,7 +435,7 @@ public class Mw {
     public void saveBlockColours (BlockColours bc) {
 
         final File f = new File(this.configDir, Reference.blockColourSaveFileName);
-        Logging.logInfo("saving block colours to '%s'", f);
+        MwForge.logger.info("saving block colours to '{}'", f);
         bc.saveToFile(f);
     }
 
@@ -450,9 +449,9 @@ public class Mw {
             }
             textureSize /= 2;
 
-            Logging.log("GL reported max texture size = %d", maxTextureSize);
-            Logging.log("texture size from config = %d", Config.configTextureSize);
-            Logging.log("setting map texture size to = %d", textureSize);
+            MwForge.logger.info("GL reported max texture size = {}", maxTextureSize);
+            MwForge.logger.info("texture size from config = {}", Config.configTextureSize);
+            MwForge.logger.info("setting map texture size to = {}", textureSize);
 
             this.textureSize = textureSize;
             if (this.ready) {

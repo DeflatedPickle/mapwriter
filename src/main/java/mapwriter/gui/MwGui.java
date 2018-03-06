@@ -13,6 +13,7 @@ import mapwriter.api.IMwDataProvider;
 import mapwriter.api.MwAPI;
 import mapwriter.config.Config;
 import mapwriter.config.WorldConfig;
+import mapwriter.forge.MwForge;
 import mapwriter.forge.MwKeyHandler;
 import mapwriter.map.MapRenderer;
 import mapwriter.map.MapView;
@@ -20,7 +21,6 @@ import mapwriter.map.Marker;
 import mapwriter.map.mapmode.MapMode;
 import mapwriter.tasks.MergeTask;
 import mapwriter.tasks.RebuildRegionsTask;
-import mapwriter.util.Logging;
 import mapwriter.util.Reference;
 import mapwriter.util.Utils;
 import net.minecraft.client.gui.GuiButton;
@@ -620,7 +620,7 @@ public class MwGui extends GuiScreen {
                         this.mc.displayGuiScreen(newScreen);
                     }
                     catch (final Exception e) {
-                        Logging.logError("There was a critical issue trying to build the config GUI for %s", Reference.MOD_ID);
+                        MwForge.logger.error("There was a critical issue trying to build the config GUI for {}", Reference.MOD_ID);
                     }
                 }
                 else {

@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.Logger;
 
-import mapwriter.util.Logging;
+import mapwriter.forge.MwForge;
 
 public class RegionManager {
 
@@ -96,17 +96,17 @@ public class RegionManager {
 
     public void printLoadedRegionStats () {
 
-        Logging.logInfo("loaded region listing:");
+        MwForge.logger.info("loaded region listing:");
         final Map<String, Integer> stats = new HashMap<>();
         for (final Region region : this.regionMap.values()) {
-            Logging.logInfo("  %s", region);
-            incrStatsCounter(stats, String.format("dim%d", region.dimension));
-            incrStatsCounter(stats, String.format("zoom%d", region.zoomLevel));
+            MwForge.logger.info("  {}", region);
+            incrStatsCounter(stats, String.format("dim{}", region.dimension));
+            incrStatsCounter(stats, String.format("zoom{}", region.zoomLevel));
             incrStatsCounter(stats, "total");
         }
-        Logging.logInfo("loaded region stats:");
+        MwForge.logger.info("loaded region stats:");
         for (final Entry<String, Integer> e : stats.entrySet()) {
-            Logging.logInfo("  %s: %d", e.getKey(), e.getValue());
+            MwForge.logger.info("  {}: {}", e.getKey(), e.getValue());
         }
     }
 
@@ -119,7 +119,7 @@ public class RegionManager {
         w = w + Region.SIZE & Region.MASK;
         h = h + Region.SIZE & Region.MASK;
 
-        Logging.logInfo("rebuilding regions from (%d, %d) to (%d, %d)", xStart, zStart, xStart + w, zStart + h);
+        MwForge.logger.info("rebuilding regions from ({}, {}) to ({}, {})", xStart, zStart, xStart + w, zStart + h);
 
         for (int rX = xStart; rX < xStart + w; rX += Region.SIZE) {
             for (int rZ = zStart; rZ < zStart + h; rZ += Region.SIZE) {

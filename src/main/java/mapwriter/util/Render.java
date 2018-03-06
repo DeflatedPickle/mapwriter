@@ -3,6 +3,7 @@ package mapwriter.util;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import mapwriter.forge.MwForge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -184,7 +185,7 @@ public class Render {
             GlStateManager.disableBlend();
         }
         catch (final NullPointerException e) {
-            Logging.log("MwRender.drawTexturedRect: null pointer exception");
+            MwForge.logger.info("MwRender.drawTexturedRect: null pointer exception");
         }
     }
 
@@ -300,7 +301,7 @@ public class Render {
         final int h = getTextureHeight();
         final int depth = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL12.GL_TEXTURE_DEPTH);
         final int format = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_INTERNAL_FORMAT);
-        Logging.log("texture %d parameters: width=%d, height=%d, depth=%d, format=%08x", texture, w, h, depth, format);
+        MwForge.logger.info("texture {} parameters: width={}, height={}, depth={}, format=%08x", texture, w, h, depth, format);
     }
 
     public static void resetColour () {
