@@ -11,15 +11,11 @@ import com.mojang.realmsclient.gui.screens.RealmsLongRunningMcoTaskScreen;
 
 import mapwriter.Mw;
 import mapwriter.config.Config;
-import mapwriter.overlay.OverlaySlime;
 import mapwriter.util.Utils;
 import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreenRealmsProxy;
 import net.minecraft.realms.RealmsScreen;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;

@@ -593,7 +593,7 @@ public class MwGui extends GuiScreen {
                     this.mw.markerManager.update();
                 }
                 else if (key == MwKeyHandler.keyUndergroundMode.getKeyCode()) {
-                    this.mw.toggleUndergroundMode();
+                    Mw.toggleUndergroundMode();
                 }
                 break;
         }
