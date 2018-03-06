@@ -205,7 +205,7 @@ public class UndergroundTexture extends Texture {
                     final WorldClient world = this.mw.mc.world;
                     final IBlockState state = world.getBlockState(new BlockPos(x, y, z));
                     final Block block = state.getBlock();
-                    if (block == null || !block.isOpaqueCube(state)) {
+                    if (block == null || !state.isOpaqueCube()) {
                         // if block is not opaque
                         this.updateFlags[chunkOffset][columnOffset] = ChunkRender.FLAG_NON_OPAQUE;
                         this.processBlock(xi + 1, y, zi);
