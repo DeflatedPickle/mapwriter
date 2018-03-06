@@ -13,10 +13,10 @@ public class ChunkRender {
     public static final byte FLAG_OPAQUE = 2;
 
     // values that change how height shading algorithm works
-    public static final double brightenExponent = 0.35;
-    public static final double darkenExponent = 0.35;
-    public static final double brightenAmplitude = 0.7;
-    public static final double darkenAmplitude = 1.4;
+    public static final double BRIGHTEN_EXP = 0.35;
+    public static final double DARKEN_EXP = 0.35;
+    public static final double BRIGHTEN_AMP = 0.7;
+    public static final double DARKEN_AMP = 1.4;
 
     // calculate the colour of a pixel by alpha blending the colour of each
     // block
@@ -90,13 +90,6 @@ public class ChunkRender {
             }
         }
 
-        /*
-         * // darken blocks depending on how far away they are from this depth slice if (depth
-         * != 0) { int bottomOfSlice = maxHeight - ((depth + 1) * maxHeight / Mw.HEIGHT_LEVELS)
-         * - 1; if (yRange[0] < bottomOfSlice) { shading *= 1.0 - 2.0 * ((double)
-         * (bottomOfSlice - yRange[0]) / (double) maxHeight); } }
-         */
-
         final double heightShading = getHeightShading(y, heightW, heightN);
         final int lightValue = chunk.getLightValue(x, y + 1, z);
         final double lightShading = lightValue / 15.0;
@@ -146,7 +139,7 @@ public class ChunkRender {
             return Math.atan(heightDiffFactor) * 0.3;
         }
 
-        return heightDiffFactor >= 0.0 ? Math.pow(heightDiffFactor * (1 / 255.0), brightenExponent) * brightenAmplitude : -Math.pow(-(heightDiffFactor * (1 / 255.0)), darkenExponent) * darkenAmplitude;
+        return heightDiffFactor >= 0.0 ? Math.pow(heightDiffFactor * (1 / 255.0), BRIGHTEN_EXP) * BRIGHTEN_AMP : -Math.pow(-(heightDiffFactor * (1 / 255.0)), DARKEN_EXP) * DARKEN_AMP;
     }
 
     public static void renderSurface (BlockColours bc, IChunk chunk, int[] pixels, int offset, int scanSize, boolean dimensionHasCeiling) {
