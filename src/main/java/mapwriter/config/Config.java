@@ -3,7 +3,8 @@ package mapwriter.config;
 import mapwriter.util.Reference;
 
 public class Config {
-    public static final String[] backgroundModeStringArray = { "mw.config.backgroundTextureMode.none", "mw.config.backgroundTextureMode.static", "mw.config.backgroundTextureMode.panning" };
+
+    public static final String[] BACKGROUND_MODES = { "mw.config.backgroundTextureMode.none", "mw.config.backgroundTextureMode.static", "mw.config.backgroundTextureMode.panning" };
 
     // configuration options
     public static boolean linearTextureScalingDef = true;
@@ -40,7 +41,7 @@ public class Config {
     public static boolean regionFileOutputEnabledSP = regionFileOutputEnabledSPDef;
     public static boolean regionFileOutputEnabledMPDef = true;
     public static boolean regionFileOutputEnabledMP = regionFileOutputEnabledMPDef;
-    public static String backgroundTextureModeDef = backgroundModeStringArray[0];
+    public static String backgroundTextureModeDef = BACKGROUND_MODES[0];
     public static String backgroundTextureMode = backgroundTextureModeDef;
     public static boolean moreRealisticMapDef = false;
     public static boolean moreRealisticMap = moreRealisticMapDef;

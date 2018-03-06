@@ -47,7 +47,7 @@ public class ConfigurationHandler {
         Config.undergroundMode = configuration.getBoolean("undergroundMode", Reference.catOptions, Config.undergroundModeDef, "", "mw.config.undergroundMode");
         Config.regionFileOutputEnabledSP = configuration.getBoolean("regionFileOutputEnabledSP", Reference.catOptions, Config.regionFileOutputEnabledSPDef, "", "mw.config.regionFileOutputEnabledSP");
         Config.regionFileOutputEnabledMP = configuration.getBoolean("regionFileOutputEnabledMP", Reference.catOptions, Config.regionFileOutputEnabledMPDef, "", "mw.config.regionFileOutputEnabledMP");
-        Config.backgroundTextureMode = configuration.getString("backgroundTextureMode", Reference.catOptions, Config.backgroundTextureModeDef, "", Config.backgroundModeStringArray, "mw.config.backgroundTextureMode");
+        Config.backgroundTextureMode = configuration.getString("backgroundTextureMode", Reference.catOptions, Config.backgroundTextureModeDef, "", Config.BACKGROUND_MODES, "mw.config.backgroundTextureMode");
         Config.zoomOutLevels = configuration.getInt("zoomOutLevels", Reference.catOptions, Config.zoomOutLevelsDef, 1, 256, "", "mw.config.zoomOutLevels");
         Config.zoomInLevels = -configuration.getInt("zoomInLevels", Reference.catOptions, -Config.zoomInLevelsDef, 1, 256, "", "mw.config.zoomInLevels");
 

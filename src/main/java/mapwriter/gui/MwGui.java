@@ -312,7 +312,7 @@ public class MwGui extends GuiScreen {
 
     public boolean isPlayerNearScreenPos (int x, int y) {
 
-        final Point.Double p = this.map.playerArrowScreenPos;
+        final Point.Double p = this.map.getPlayerArrowScreenPos();
         return p.distanceSq(x, y) < 9.0;
     }
 

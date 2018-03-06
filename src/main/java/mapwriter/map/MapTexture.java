@@ -34,7 +34,6 @@ public class MapTexture extends Texture {
 
     // accessed from both render and background thread.
     // make sure all methods using it are synchronized.
-    // private int[] regionModifiedArray;
 
     private final Region[] regionArray;
 
@@ -72,8 +71,6 @@ public class MapTexture extends Texture {
 
     public boolean loadRegion (RegionManager regionManager, int x, int z, int zoomLevel, int dimension) {
 
-        // MwUtil.log("mapTexture.loadRegion %d %d %d %d", x, z, zoomLevel,
-        // dimension);
         boolean loaded = false;
         final int index = this.getRegionIndex(x, z, zoomLevel);
         final Region currentRegion = this.regionArray[index];
@@ -81,7 +78,6 @@ public class MapTexture extends Texture {
             final Region newRegion = regionManager.getRegion(x, z, zoomLevel, dimension);
             this.regionArray[index] = newRegion;
             this.updateTextureFromRegion(newRegion, newRegion.x, newRegion.z, newRegion.size, newRegion.size);
-            // regionManager.logInfo("regionArray[%d] = %s", index, newRegion);
             loaded = true;
         }
         return loaded;
@@ -109,8 +105,6 @@ public class MapTexture extends Texture {
 
         synchronized (this.textureUpdateQueue) {
             for (final Rect rect : this.textureUpdateQueue) {
-                // MwUtil.log("MwMapTexture.processTextureUpdates: %d %d %d %d",
-                // rect.x, rect.y, rect.w, rect.h);
                 this.updateTextureArea(rect.x, rect.y, rect.w, rect.h);
             }
             this.textureUpdateQueue.clear();

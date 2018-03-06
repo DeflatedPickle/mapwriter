@@ -16,9 +16,16 @@ public class MapViewRequest {
         this.dimension = view.getDimension();
     }
 
-    public boolean equals (MapViewRequest req) {
+    @Override
+    public boolean equals (Object o) {
 
-        return req != null && req.zoomLevel == this.zoomLevel && req.dimension == this.dimension && req.xMin == this.xMin && req.xMax == this.xMax && req.zMin == this.zMin && req.zMax == this.zMax;
+        if (!(o instanceof MapViewRequest)) {
+
+            return false;
+        }
+
+        final MapViewRequest req = (MapViewRequest) o;
+        return req.zoomLevel == this.zoomLevel && req.dimension == this.dimension && req.xMin == this.xMin && req.xMax == this.xMax && req.zMin == this.zMin && req.zMax == this.zMax;
     }
 
     public boolean mostlyEquals (MapViewRequest req) {

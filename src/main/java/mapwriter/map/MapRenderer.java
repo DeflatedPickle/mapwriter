@@ -53,7 +53,7 @@ public class MapRenderer {
     private final MapView mapView;
     // accessed by the MwGui to check whether the mouse cursor is near the
     // player arrow on the rendered map
-    public Point.Double playerArrowScreenPos = new Point.Double(0, 0);
+    private Point.Double playerArrowScreenPos = new Point.Double(0, 0);
     private int textOffset = 12;
     private int textY = 0;
 
@@ -103,7 +103,11 @@ public class MapRenderer {
         // translate to center of minimap
         GlStateManager.translate(this.mapMode.getXTranslation(), this.mapMode.getYTranslation(), 1000.0);
 
-        double u, v, w, h;
+        double u;
+        double v;
+        double w;
+        double h;
+
         if (!this.mapMode.getConfig().circular) {
             u = 0.0;
             v = 0.0;
@@ -121,7 +125,7 @@ public class MapRenderer {
 
         GlStateManager.pushMatrix();
 
-        if (this.mapMode.getConfig().rotate && this.mapMode.getConfig().circular == true) {
+        if (this.mapMode.getConfig().rotate && this.mapMode.getConfig().circular) {
             GlStateManager.rotate(0.0f, 0.0f, 0.0f, 1.0f);
         }
         if (this.mapMode.getConfig().circular) {
@@ -144,7 +148,7 @@ public class MapRenderer {
 
         GlStateManager.pushMatrix();
 
-        if (this.mapMode.getConfig().rotate && this.mapMode.getConfig().circular == true) {
+        if (this.mapMode.getConfig().rotate && this.mapMode.getConfig().circular) {
             GlStateManager.rotate(0.0f, 0.0f, 0.0f, 1.0f);
         }
         // draw north arrow
@@ -168,12 +172,12 @@ public class MapRenderer {
 
     private void drawBackground (double tSize, double u, double v, double w, double h) {
 
-        if (!Config.backgroundTextureMode.equals(Config.backgroundModeStringArray[0])) {
+        if (!Config.backgroundTextureMode.equals(Config.BACKGROUND_MODES[0])) {
             double bu1 = 0.0;
             double bu2 = 1.0;
             double bv1 = 0.0;
             double bv2 = 1.0;
-            if (Config.backgroundTextureMode.equals(Config.backgroundModeStringArray[2])) {
+            if (Config.backgroundTextureMode.equals(Config.BACKGROUND_MODES[2])) {
                 // background moves with map if mode is 2
                 final double bSize = tSize / 256.0;
                 bu1 = u * bSize;
@@ -239,7 +243,7 @@ public class MapRenderer {
 
         GlStateManager.pushMatrix();
 
-        if (this.mapMode.getConfig().rotate && this.mapMode.getConfig().circular == true) {
+        if (this.mapMode.getConfig().rotate && this.mapMode.getConfig().circular) {
             GlStateManager.rotate(this.mw.mapRotationDegrees, 0.0f, 0.0f, 1.0f);
         }
 
@@ -274,7 +278,11 @@ public class MapRenderer {
         // 'snap' to texture
         // pixel boundaries when zoomed in.
 
-        double u, v, w, h;
+        double u;
+        double v;
+        double w;
+        double h;
+
         if (!this.mapMode.getConfig().circular && Config.mapPixelSnapEnabled && this.mapView.getZoomLevel() >= 0) {
             u = Math.round(this.mapView.getMinX() / zoomScale) / tSize % 1.0;
             v = Math.round(this.mapView.getMinZ() / zoomScale) / tSize % 1.0;
@@ -290,7 +298,7 @@ public class MapRenderer {
         }
         GlStateManager.pushMatrix();
 
-        if (this.mapMode.getConfig().rotate && this.mapMode.getConfig().circular == true) {
+        if (this.mapMode.getConfig().rotate && this.mapMode.getConfig().circular) {
             GlStateManager.rotate(this.mw.mapRotationDegrees, 0.0f, 0.0f, 1.0f);
         }
         if (this.mapMode.getConfig().circular) {
@@ -353,7 +361,6 @@ public class MapRenderer {
     private IMwDataProvider drawOverlay () {
 
         // draw overlays from registered providers
-        // for (IMwDataProvider provider : MwAPI.getDataProviders())
         final IMwDataProvider provider = MwAPI.getCurrentDataProvider();
         if (provider != null) {
             final ArrayList<IMwChunkOverlay> overlays = provider.getChunksOverlay(this.mapView.getDimension(), this.mapView.getX(), this.mapView.getZ(), this.mapView.getMinX(), this.mapView.getMinZ(), this.mapView.getMaxX(), this.mapView.getMaxZ());
@@ -375,7 +382,7 @@ public class MapRenderer {
 
         // the arrow only needs to be rotated if the map is NOT rotated
         GlStateManager.translate(p.x, p.y, 0.0);
-        if (!this.mapMode.getConfig().rotate || this.mapMode.getConfig().circular == false) {
+        if (!this.mapMode.getConfig().rotate || !this.mapMode.getConfig().circular) {
             GlStateManager.rotate(-this.mw.mapRotationDegrees, 0.0f, 0.0f, 1.0f);
         }
 
@@ -407,5 +414,15 @@ public class MapRenderer {
             this.textY += this.textOffset;
             GlStateManager.popMatrix();
         }
+    }
+
+    public Point.Double getPlayerArrowScreenPos () {
+
+        return this.playerArrowScreenPos;
+    }
+
+    public void setPlayerArrowScreenPos (Point.Double playerArrowScreenPos) {
+
+        this.playerArrowScreenPos = playerArrowScreenPos;
     }
 }

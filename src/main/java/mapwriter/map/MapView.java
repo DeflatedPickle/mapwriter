@@ -38,12 +38,12 @@ public class MapView implements IMapView {
     private boolean undergroundMode;
     private final boolean fullscreenMap;
 
-    public MapView (Mw mw, boolean FullscreenMap) {
+    public MapView (Mw mw, boolean fullscreenMap) {
 
         this.minZoom = Config.zoomInLevels;
         this.maxZoom = Config.zoomOutLevels;
         this.undergroundMode = Config.undergroundMode;
-        this.fullscreenMap = FullscreenMap;
+        this.fullscreenMap = fullscreenMap;
         if (this.fullscreenMap) {
             this.setZoomLevel(Config.fullScreenZoomLevel);
         }
@@ -159,10 +159,10 @@ public class MapView implements IMapView {
             inside = bX > this.getMinX() || bX < this.getMaxX() || bZ > this.getMinZ() || bZ < this.getMaxZ();
         }
         else {
-            final double x = bX - this.x;
-            final double z = bZ - this.z;
-            final double r = this.getHeight() / 2;
-            inside = x * x + z * z < r * r;
+            final double dX = bX - this.x;
+            final double dZ = bZ - this.z;
+            final double dR = this.getHeight() / 2;
+            inside = dX * dX + dZ * dZ < dR * dR;
         }
         return inside;
     }
@@ -173,8 +173,8 @@ public class MapView implements IMapView {
         int i = dimensionList.indexOf(this.dimension);
         i = Math.max(0, i);
         final int size = dimensionList.size();
-        final int dimension = dimensionList.get((i + size + n) % size);
-        this.setDimensionAndAdjustZoom(dimension);
+        final int nextDim = dimensionList.get((i + size + n) % size);
+        this.setDimensionAndAdjustZoom(nextDim);
     }
 
     @Override
@@ -245,11 +245,11 @@ public class MapView implements IMapView {
     @Override
     public void setUndergroundMode (boolean enabled) {
 
-        if (enabled) {
-            if (this.zoomLevel >= 0) {
-                this.setZoomLevel(-1);
-            }
+        if (enabled && this.zoomLevel >= 0) {
+
+            this.setZoomLevel(-1);
         }
+
         this.undergroundMode = enabled;
     }
 
@@ -275,7 +275,6 @@ public class MapView implements IMapView {
     @Override
     public int setZoomLevel (int zoomLevel) {
 
-        // MwUtil.log("MapView.setZoomLevel(%d)", zoomLevel);
         final int prevZoomLevel = this.zoomLevel;
         if (this.undergroundMode) {
             this.zoomLevel = Math.min(Math.max(this.minZoom, zoomLevel), 0);
@@ -309,23 +308,19 @@ public class MapView implements IMapView {
 
     private void updateBaseWH () {
 
-        int w = this.mapW;
-        int h = this.mapH;
+        int nW = this.mapW;
+        int nH = this.mapH;
         final int halfTextureSize = this.textureSize / 2;
 
         // if we cannot display the map at 1x1 pixel per block, then
         // try 2x2 pixels per block, then 4x4 and so on
-        while (w > halfTextureSize || h > halfTextureSize) {
-            w /= 2;
-            h /= 2;
+        while (nW > halfTextureSize || nH > halfTextureSize) {
+            nW /= 2;
+            nH /= 2;
         }
 
-        // MwUtil.log("MapView.updateBaseWH: map = %dx%d, tsize = %d, base =
-        // %dx%d",
-        // this.mapW, this.mapH, this.textureSize, w, h);
-
-        this.baseW = w;
-        this.baseH = h;
+        this.baseW = nW;
+        this.baseH = nH;
 
         this.updateZoom();
     }
