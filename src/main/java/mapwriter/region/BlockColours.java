@@ -31,8 +31,8 @@ public class BlockColours {
     }
 
     public class BlockData {
-        public int color = 0;
-        public BlockType type = BlockType.NORMAL;
+        private int color = 0;
+        private BlockType type = BlockType.NORMAL;
     }
 
     public enum BlockType {
@@ -46,17 +46,13 @@ public class BlockColours {
 
     public static final int MAX_META = 16;
 
-    public static final String biomeSectionString = "[biomes]";
+    public static final String SECTION_BIOMES = "[biomes]";
 
-    public static final String blockSectionString = "[blocks]";
+    public static final String SECTION_BLOCKS = "[blocks]";
 
     private final LinkedHashMap<String, BiomeData> biomeMap = new LinkedHashMap<>();
 
     private final LinkedHashMap<String, BlockData> bcMap = new LinkedHashMap<>();
-
-    public BlockColours () {
-
-    }
 
     public static int getColourFromString (String s) {
 
@@ -65,51 +61,23 @@ public class BlockColours {
 
     public static void writeOverridesFile (File f) {
 
-        Writer fout = null;
-        try {
-            fout = new OutputStreamWriter(new FileOutputStream(f));
-            fout.write(String.format("version: %s\n", Reference.VERSION));
+        try (Writer fout = new OutputStreamWriter(new FileOutputStream(f))) {
+            fout.write(String.format("version: %s%n", Reference.VERSION));
 
             fout.write("block minecraft:yellow_flower * 60ffff00	# make dandelions more yellow\n" + "block minecraft:red_flower 0 60ff0000		# make poppy more red\n" + "block minecraft:red_flower 1 601c92d6		# make Blue Orchid more red\n" + "block minecraft:red_flower 2 60b865fb		# make Allium more red\n" + "block minecraft:red_flower 3 60e4eaf2		# make Azure Bluet more red\n" + "block minecraft:red_flower 4 60d33a17		# make Red Tulip more red\n" + "block minecraft:red_flower 5 60e17124		# make Orange Tulip more red\n" + "block minecraft:red_flower 6 60ffffff		# make White Tulip more red\n" + "block minecraft:red_flower 7 60eabeea		# make Pink Tulip more red\n" + "block minecraft:red_flower 8 60eae6ad		# make Oxeye Daisy more red\n" + "block minecraft:double_plant 0 60ffff00		# make Sunflower more Yellow-orrange\n" + "block minecraft:double_plant 1 d09f78a4		# make Lilac more pink\n" + "block minecraft:double_plant 4 60ff0000		# make Rose Bush more red\n" + "block minecraft:double_plant 5 d0e3b8f7		# make Peony more red\n" + "blocktype minecraft:grass * grass			# grass block\n" + "blocktype minecraft:flowing_water * water	# flowing water block\n" + "blocktype minecraft:water * water			# still water block\n" + "blocktype minecraft:leaves * leaves    		# leaves block\n" + "blocktype minecraft:leaves2 * leaves    		# leaves block\n" + "blocktype minecraft:leaves 1 opaque    		# pine leaves (not biome colorized)\n" + "blocktype minecraft:leaves 2 opaque    		# birch leaves (not biome colorized)\n" + "blocktype minecraft:tallgrass * grass     	# tall grass block\n" + "blocktype minecraft:vine * foliage  			# vines block\n" + "blocktype biomesoplenty:grass * grass		# BOP grass block\n" + "blocktype biomesoplenty:plant_0 * grass		# BOP plant block\n" + "blocktype biomesoplenty:plant_1 * grass		# BOP plant block\n" + "blocktype biomesoplenty:leaves_0 * leaves	# BOP Leave block\n" + "blocktype biomesoplenty:leaves_1 * leaves	# BOP Leave block\n" + "blocktype biomesoplenty:leaves_2 * leaves	# BOP Leave block\n" + "blocktype biomesoplenty:leaves_3 * leaves	# BOP Leave block\n" + "blocktype biomesoplenty:leaves_4 * leaves	# BOP Leave block\n" + "blocktype biomesoplenty:leaves_5 * leaves	# BOP Leave block\n" + "blocktype biomesoplenty:tree_moss * foliage	# biomes o plenty tree moss\n");
-            // TODO: Find out the names and readd these
-            // overwrites
-            // + "blocktype 2164 * leaves # twilight forest
-            // leaves\n"
-            // +
-            // "blocktype 2177 * leaves # twilight forest magic
-            // leaves\n"
-
-            // + "blocktype 2204 * leaves # extrabiomesXL green leaves\n"
-            // +
-            // "blocktype 2200 * opaque # extrabiomesXL autumn leaves\n"
-
-            // + "blocktype 3257 * opaque # natura berry bush\n"
-            // + "blocktype 3272 * opaque # natura darkwood leaves\n"
-            // + "blocktype 3259 * leaves # natura flora leaves\n"
-            // + "blocktype 3278 * opaque # natura rare leaves\n"
-            // + "blocktype 3258 * opaque # natura sakura leaves\n"
         }
         catch (final IOException e) {
             MwForge.logger.error("saving block overrides: could not write to '{}'", f);
 
         }
-        finally {
-            if (fout != null) {
-                try {
-                    fout.close();
-                }
-                catch (final IOException e) {
-                }
-            }
-        }
     }
 
-    private static int adjustBlockColourFromType (String BlockName, String meta, BlockType type, int blockColour) {
+    private static int adjustBlockColourFromType (String blockName, String meta, BlockType type, int blockColour) {
 
         // for normal blocks multiply the block colour by the render colour.
         // for other blocks the block colour will be multiplied by the biome
         // colour.
-        final Block block = Block.getBlockFromName(BlockName);
+        final Block block = Block.getBlockFromName(blockName);
 
         switch (type) {
             case OPAQUE:
@@ -239,7 +207,7 @@ public class BlockColours {
 
         // only add a wildcard line if it actually saves lines.
         if (!mostOccurringItem.equals(defaultItem)) {
-            fout.write(String.format("%s * %s\n", lineStart, mostOccurringItem));
+            fout.write(String.format("%s * %s%n", lineStart, mostOccurringItem));
         }
 
         // add lines for items that don't match the wildcard line.
@@ -247,42 +215,39 @@ public class BlockColours {
         int meta = 0;
         for (final String s : items) {
             if (!s.equals(mostOccurringItem) && !s.equals(defaultItem)) {
-                fout.write(String.format("%s %d %s\n", lineStart, meta, s));
+                fout.write(String.format("%s %d %s%n", lineStart, meta, s));
             }
             meta++;
         }
     }
 
-    public boolean CheckFileVersion (File fn) {
+    public boolean checkFileVersion (File fn) {
 
         String lineData = "";
-        try {
-            final RandomAccessFile inFile = new RandomAccessFile(fn, "rw");
+
+        try (final RandomAccessFile inFile = new RandomAccessFile(fn, "rw")) {
+
             lineData = inFile.readLine();
-            inFile.close();
         }
+
         catch (final IOException ex) {
-            System.err.println(ex.getMessage());
+            MwForge.logger.trace(ex);
         }
 
-        if (lineData.equals(String.format("version: %s", Reference.VERSION))) {
-            return true;
-        }
-
-        return false;
+        return lineData.equals(String.format("version: %s", Reference.VERSION));
     }
 
-    public String CombineBlockMeta (String BlockName, int meta) {
+    public String combineBlockMeta (String blockName, int meta) {
 
-        return BlockName + " " + meta;
+        return blockName + " " + meta;
     }
 
-    public String CombineBlockMeta (String BlockName, String meta) {
+    public String combineBlockMeta (String blockName, String meta) {
 
-        return BlockName + " " + meta;
+        return blockName + " " + meta;
     }
 
-    public int getBiomeColour (IBlockState BlockState, int biomeId) {
+    public int getBiomeColour (IBlockState state, int biomeId) {
 
         String biomeName = "";
         Biome biome = Biome.getBiomeForId(biomeId);
@@ -295,18 +260,18 @@ public class BlockColours {
             biomeName = biome.getBiomeName();
         }
 
-        final Block block = BlockState.getBlock();
-        final int meta = block.getMetaFromState(BlockState);
+        final Block block = state.getBlock();
+        final int meta = block.getMetaFromState(state);
 
         return this.getBiomeColour(block.delegate.name().toString(), meta, biomeName);
     }
 
-    public int getBiomeColour (String BlockName, int meta, String biomeName) {
+    public int getBiomeColour (String blockName, int meta, String biomeName) {
 
         int colourMultiplier = 0xffffff;
 
-        if (this.bcMap.containsKey(this.CombineBlockMeta(BlockName, meta))) {
-            switch (this.bcMap.get(this.CombineBlockMeta(BlockName, meta)).type) {
+        if (this.bcMap.containsKey(this.combineBlockMeta(blockName, meta))) {
+            switch (this.bcMap.get(this.combineBlockMeta(blockName, meta)).type) {
                 case GRASS:
                     colourMultiplier = this.getGrassColourMultiplier(biomeName);
                     break;
@@ -325,22 +290,22 @@ public class BlockColours {
         return colourMultiplier;
     }
 
-    public BlockType getBlockType (int BlockAndMeta) {
+    public BlockType getBlockType (int blockAndMeta) {
 
-        final Block block = Block.getBlockById(BlockAndMeta >> 4);
-        final int meta = BlockAndMeta & 0xf;
+        final Block block = Block.getBlockById(blockAndMeta >> 4);
+        final int meta = blockAndMeta & 0xf;
         return this.getBlockType(block.delegate.name().toString(), meta);
     }
 
-    public BlockType getBlockType (String BlockName, int meta) {
+    public BlockType getBlockType (String blockName, int meta) {
 
-        final String BlockAndMeta = this.CombineBlockMeta(BlockName, meta);
-        final String BlockAndWildcard = this.CombineBlockMeta(BlockName, "*");
+        final String blockAndMeta = this.combineBlockMeta(blockName, meta);
+        final String BlockAndWildcard = this.combineBlockMeta(blockName, "*");
 
         BlockData data = new BlockData();
 
-        if (this.bcMap.containsKey(BlockAndMeta)) {
-            data = this.bcMap.get(BlockAndMeta);
+        if (this.bcMap.containsKey(blockAndMeta)) {
+            data = this.bcMap.get(blockAndMeta);
         }
         else if (this.bcMap.containsKey(BlockAndWildcard)) {
             data = this.bcMap.get(BlockAndWildcard);
@@ -348,10 +313,10 @@ public class BlockColours {
         return data.type;
     }
 
-    public int getColour (IBlockState BlockState) {
+    public int getColour (IBlockState state) {
 
-        final Block block = BlockState.getBlock();
-        final int meta = block.getMetaFromState(BlockState);
+        final Block block = state.getBlock();
+        final int meta = block.getMetaFromState(state);
 
         if (block.delegate == null) {
             MwForge.logger.error("Delegate was Null when getting colour, Block in: {}", block.toString());
@@ -364,15 +329,15 @@ public class BlockColours {
         return this.getColour(block.delegate.name().toString(), meta);
     }
 
-    public int getColour (String BlockName, int meta) {
+    public int getColour (String blockName, int meta) {
 
-        final String BlockAndMeta = this.CombineBlockMeta(BlockName, meta);
-        final String BlockAndWildcard = this.CombineBlockMeta(BlockName, "*");
+        final String blockAndMeta = this.combineBlockMeta(blockName, meta);
+        final String BlockAndWildcard = this.combineBlockMeta(blockName, "*");
 
         BlockData data = new BlockData();
 
-        if (this.bcMap.containsKey(BlockAndMeta)) {
-            data = this.bcMap.get(BlockAndMeta);
+        if (this.bcMap.containsKey(blockAndMeta)) {
+            data = this.bcMap.get(blockAndMeta);
         }
         else if (this.bcMap.containsKey(BlockAndWildcard)) {
             data = this.bcMap.get(BlockAndWildcard);
@@ -386,9 +351,7 @@ public class BlockColours {
 
     public void loadFromFile (File f) {
 
-        Scanner fin = null;
-        try {
-            fin = new Scanner(new FileReader(f));
+        try (Scanner fin = new Scanner(new FileReader(f))) {
 
             while (fin.hasNextLine()) {
                 // get next line and remove comments (part of line after #)
@@ -404,9 +367,6 @@ public class BlockColours {
                     else if (lineSplit[0].equals("blocktype") && lineSplit.length == 4) {
                         this.loadBlockTypeLine(lineSplit);
                     }
-                    else if (lineSplit[0].equals("version:")) {
-
-                    }
                     else {
                         MwForge.logger.warn("invalid map colour line '{}'", line);
                     }
@@ -416,11 +376,6 @@ public class BlockColours {
         catch (final IOException e) {
             MwForge.logger.error("loading block colours: no such file '{}'", f);
 
-        }
-        finally {
-            if (fin != null) {
-                fin.close();
-            }
         }
     }
 
@@ -435,7 +390,7 @@ public class BlockColours {
 
             // don't add lines that are covered by the default.
             if (data.waterMultiplier != 0xffffff || data.grassMultiplier != 0xffffff || data.foliageMultiplier != 0xffffff) {
-                fout.write(String.format("biome %s %06x %06x %06x\n", biomeName, data.waterMultiplier, data.grassMultiplier, data.foliageMultiplier));
+                fout.write(String.format("biome %s %06x %06x %06x%n", biomeName, data.waterMultiplier, data.grassMultiplier, data.foliageMultiplier));
             }
         }
     }
@@ -444,24 +399,24 @@ public class BlockColours {
 
         fout.write("block * * 00000000\n");
 
-        String LastBlock = "";
+        String lastBlock = "";
         final List<String> colours = new ArrayList<>();
 
         for (final Map.Entry<String, BlockData> entry : this.bcMap.entrySet()) {
-            final String[] BlockAndMeta = entry.getKey().split(" ");
-            final String block = BlockAndMeta[0];
+            final String[] blockAndMeta = entry.getKey().split(" ");
+            final String block = blockAndMeta[0];
 
             final String color = String.format("%08x", entry.getValue().color);
 
-            if (!LastBlock.equals(block) && !LastBlock.isEmpty()) {
-                final String lineStart = String.format("block %s", LastBlock);
+            if (!lastBlock.equals(block) && !lastBlock.isEmpty()) {
+                final String lineStart = String.format("block %s", lastBlock);
                 writeMinimalBlockLines(fout, lineStart, colours, "00000000");
 
                 colours.clear();
             }
 
             colours.add(color);
-            LastBlock = block;
+            lastBlock = block;
         }
     }
 
@@ -469,24 +424,24 @@ public class BlockColours {
 
         fout.write("blocktype * * normal\n");
 
-        String LastBlock = "";
+        String lastBlock = "";
         final List<String> blockTypes = new ArrayList<>();
 
         for (final Map.Entry<String, BlockData> entry : this.bcMap.entrySet()) {
-            final String[] BlockAndMeta = entry.getKey().split(" ");
-            final String block = BlockAndMeta[0];
+            final String[] blockAndMeta = entry.getKey().split(" ");
+            final String block = blockAndMeta[0];
 
             final String Type = getBlockTypeAsString(entry.getValue().type);
 
-            if (!LastBlock.equals(block) && !LastBlock.isEmpty()) {
-                final String lineStart = String.format("blocktype %s", LastBlock);
+            if (!lastBlock.equals(block) && !lastBlock.isEmpty()) {
+                final String lineStart = String.format("blocktype %s", lastBlock);
                 writeMinimalBlockLines(fout, lineStart, blockTypes, getBlockTypeAsString(BlockType.NORMAL));
 
                 blockTypes.clear();
             }
 
             blockTypes.add(Type);
-            LastBlock = block;
+            lastBlock = block;
         }
     }
 
@@ -497,10 +452,8 @@ public class BlockColours {
     // save block colours and biome colour multipliers to a file.
     public void saveToFile (File f) {
 
-        Writer fout = null;
-        try {
-            fout = new OutputStreamWriter(new FileOutputStream(f));
-            fout.write(String.format("version: %s\n", Reference.VERSION));
+        try (Writer fout = new OutputStreamWriter(new FileOutputStream(f))) {
+            fout.write(String.format("version: %s%n", Reference.VERSION));
             this.saveBiomes(fout);
             this.saveBlockTypes(fout);
             this.saveBlocks(fout);
@@ -509,15 +462,6 @@ public class BlockColours {
         catch (final IOException e) {
             MwForge.logger.error("saving block colours: could not write to '{}'", f);
 
-        }
-        finally {
-            if (fout != null) {
-                try {
-                    fout.close();
-                }
-                catch (final IOException e) {
-                }
-            }
         }
     }
 
@@ -530,47 +474,47 @@ public class BlockColours {
         this.biomeMap.put(biomeName, data);
     }
 
-    public void setBlockType (String BlockName, String meta, BlockType type) {
+    public void setBlockType (String blockName, String meta, BlockType type) {
 
-        final String BlockAndMeta = this.CombineBlockMeta(BlockName, meta);
+        final String blockAndMeta = this.combineBlockMeta(blockName, meta);
 
         if (meta.equals("*")) {
             for (int i = 0; i < 16; i++) {
-                this.setBlockType(BlockName, String.valueOf(i), type);
+                this.setBlockType(blockName, String.valueOf(i), type);
             }
             return;
         }
 
-        if (this.bcMap.containsKey(BlockAndMeta)) {
-            final BlockData data = this.bcMap.get(BlockAndMeta);
+        if (this.bcMap.containsKey(blockAndMeta)) {
+            final BlockData data = this.bcMap.get(blockAndMeta);
             data.type = type;
-            data.color = adjustBlockColourFromType(BlockName, meta, type, data.color);
+            data.color = adjustBlockColourFromType(blockName, meta, type, data.color);
         }
         else {
             final BlockData data = new BlockData();
             data.type = type;
-            this.bcMap.put(BlockAndMeta, data);
+            this.bcMap.put(blockAndMeta, data);
         }
     }
 
-    public void setColour (String BlockName, String meta, int colour) {
+    public void setColour (String blockName, String meta, int colour) {
 
-        final String BlockAndMeta = this.CombineBlockMeta(BlockName, meta);
+        final String blockAndMeta = this.combineBlockMeta(blockName, meta);
 
         if (meta.equals("*")) {
             for (int i = 0; i < 16; i++) {
-                this.setColour(BlockName, String.valueOf(i), colour);
+                this.setColour(blockName, String.valueOf(i), colour);
             }
         }
 
-        if (this.bcMap.containsKey(BlockAndMeta)) {
-            final BlockData data = this.bcMap.get(BlockAndMeta);
+        if (this.bcMap.containsKey(blockAndMeta)) {
+            final BlockData data = this.bcMap.get(blockAndMeta);
             data.color = colour;
         }
         else {
             final BlockData data = new BlockData();
             data.color = colour;
-            this.bcMap.put(BlockAndMeta, data);
+            this.bcMap.put(blockAndMeta, data);
         }
     }
 

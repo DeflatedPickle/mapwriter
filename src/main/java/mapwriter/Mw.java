@@ -394,7 +394,7 @@ public class Mw {
         final BlockColours bc = new BlockColours();
         final File f = new File(this.configDir, Reference.blockColourSaveFileName);
 
-        if (Config.useSavedBlockColours && f.isFile() && bc.CheckFileVersion(f)) {
+        if (Config.useSavedBlockColours && f.isFile() && bc.checkFileVersion(f)) {
             // load block colours from file
             MwForge.logger.info("loading block colours from {}", f);
             bc.loadFromFile(f);
