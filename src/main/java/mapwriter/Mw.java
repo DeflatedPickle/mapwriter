@@ -17,7 +17,6 @@ import mapwriter.map.MapView;
 import mapwriter.map.Marker;
 import mapwriter.map.MarkerManager;
 import mapwriter.map.MiniMap;
-import mapwriter.map.Trail;
 import mapwriter.map.UndergroundTexture;
 import mapwriter.region.RegionManager;
 import mapwriter.tasks.CloseRegionManagerTask;
@@ -83,8 +82,6 @@ public class Mw {
 
     public ChunkManager chunkManager = null;
 
-    public Trail playerTrail = null;
-
     private Mw () {
 
         // client only initialization
@@ -120,8 +117,6 @@ public class Mw {
                 MwForge.logger.info("error: timeout waiting for tasks to finish");
             }
             MwForge.logger.info("done");
-
-            this.playerTrail.close();
 
             this.markerManager.save(WorldConfig.getInstance().worldConfiguration, Reference.catMarkers);
             this.markerManager.clear();
@@ -186,8 +181,6 @@ public class Mw {
         // marker manager only depends on the config being loaded
         this.markerManager = new MarkerManager();
         this.markerManager.load(WorldConfig.getInstance().worldConfiguration, Reference.catMarkers);
-
-        this.playerTrail = new Trail(this, Reference.PlayerTrailName);
 
         // executor does not depend on anything
         this.executor = new BackgroundExecutor();
@@ -340,8 +333,6 @@ public class Mw {
 
             // update GL texture of mapTexture if updated
             this.mapTexture.processTextureUpdates();
-
-            this.playerTrail.onTick();
 
             this.tickCounter++;
         }

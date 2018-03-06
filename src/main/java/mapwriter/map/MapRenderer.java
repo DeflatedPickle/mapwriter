@@ -246,11 +246,6 @@ public class MapRenderer {
         // draw markers
         this.mw.markerManager.drawMarkers(this.mapMode, this.mapView);
 
-        // draw player trail
-        if (this.mw.playerTrail.enabled) {
-            this.mw.playerTrail.draw(this.mapMode, this.mapView);
-        }
-
         // draw north arrow
         this.drawNorthArrow();
 
