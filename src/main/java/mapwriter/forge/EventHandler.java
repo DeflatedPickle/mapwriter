@@ -51,45 +51,6 @@ public class EventHandler {
         }
     }
 
-    @SubscribeEvent
-    public void onClientChat (ClientChatReceivedEvent event) {
-
-        if (OverlaySlime.seedFound || !OverlaySlime.seedAsked) {
-            return;
-        }
-        try { // I don't want to crash the game when we derp up in here
-            if (event.getMessage() instanceof TextComponentTranslation) {
-                final TextComponentTranslation component = (TextComponentTranslation) event.getMessage();
-                if (component.getKey().equals("commands.seed.success")) {
-                    Long lSeed = (long) 0;
-                    if (component.getFormatArgs()[0] instanceof Long) {
-                        lSeed = (Long) component.getFormatArgs()[0];
-                    }
-                    else {
-                        lSeed = Long.parseLong((String) component.getFormatArgs()[0]);
-                    }
-                    OverlaySlime.setSeed(lSeed);
-                    event.setCanceled(true); // Don't let the player see this
-                    // seed message, They didn't do
-                    // /seed, we did
-                }
-            }
-            else if (event.getMessage() instanceof TextComponentString) {
-                final TextComponentString component = (TextComponentString) event.getMessage();
-                final String msg = component.getUnformattedText();
-                if (msg.startsWith("Seed: ")) { // Because bukkit...
-                    OverlaySlime.setSeed(Long.parseLong(msg.substring(6)));
-                    event.setCanceled(true); // Don't let the player see this
-                    // seed message, They didn't do
-                    // /seed, we did
-                }
-            }
-        }
-        catch (final Exception e) {
-            MwForge.logger.error("Something went wrong getting the seed. {}", new Object[] { e.toString() });
-        }
-    }
-
     // a bit odd way to reload the blockcolours. if the models are not loaded
     // yet then the uv values and icons will be wrong.
     // this only happens if fml.skipFirstTextureLoad is enabled.
