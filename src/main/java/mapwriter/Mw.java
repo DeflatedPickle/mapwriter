@@ -19,7 +19,6 @@ import mapwriter.map.MarkerManager;
 import mapwriter.map.MiniMap;
 import mapwriter.map.Trail;
 import mapwriter.map.UndergroundTexture;
-import mapwriter.overlay.OverlaySlime;
 import mapwriter.region.RegionManager;
 import mapwriter.tasks.CloseRegionManagerTask;
 import mapwriter.util.Reference;
@@ -137,9 +136,6 @@ public class Mw {
             WorldConfig.getInstance().saveWorldConfig();
 
             this.tickCounter = 0;
-
-            OverlaySlime.reset(); // Reset the state so the seed will be asked
-            // again when we log in
         }
     }
 

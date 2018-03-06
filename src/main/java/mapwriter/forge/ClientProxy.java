@@ -6,7 +6,6 @@ import mapwriter.Mw;
 import mapwriter.api.MwAPI;
 import mapwriter.config.ConfigurationHandler;
 import mapwriter.overlay.OverlayGrid;
-import mapwriter.overlay.OverlaySlime;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy {
@@ -19,7 +18,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void postInit () {
 
-        MwAPI.registerDataProvider("Slime", new OverlaySlime());
         MwAPI.registerDataProvider("Grid", new OverlayGrid());
     }
 
