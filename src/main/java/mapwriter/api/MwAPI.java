@@ -73,10 +73,8 @@ public class MwAPI {
                 currentProvider = getDataProvider(nextKey);
             }
         }
-        else {
-            if (providerKeys.size() > 0) {
-                currentProvider = getDataProvider(providerKeys.get(0));
-            }
+        else if (!providerKeys.isEmpty()){
+            currentProvider = getDataProvider(providerKeys.get(0));
         }
         return currentProvider;
     }
@@ -93,10 +91,9 @@ public class MwAPI {
                 currentProvider = getDataProvider(prevKey);
             }
         }
-        else {
-            if (providerKeys.size() > 0) {
-                currentProvider = getDataProvider(providerKeys.get(providerKeys.size() - 1));
-            }
+        else if (!providerKeys.isEmpty()) {
+            
+            currentProvider = getDataProvider(providerKeys.get(providerKeys.size() - 1));
         }
         return currentProvider;
     }
