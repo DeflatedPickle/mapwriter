@@ -144,7 +144,7 @@ public class MapTexture extends Texture {
         }
     }
 
-    public void updateArea (RegionManager regionManager, int x, int z, int w, int h, int dimension) {
+    public void updateArea (int x, int z, int w, int h, int dimension) {
 
         for (final Region region : this.regionArray) {
             if (region != null && region.isAreaWithin(x, z, w, h, dimension)) {
@@ -163,10 +163,6 @@ public class MapTexture extends Texture {
         // make sure we don't write outside texture
         tw = Math.min(tw, this.w - tx);
         th = Math.min(th, this.h - th);
-
-        // MwUtil.log("updateTextureFromRegion: region %s, %d %d %d %d -> %d %d
-        // %d %d",
-        // region, x, z, w, h, tx, ty, tw, th);
 
         final int[] pixels = region.getPixels();
         if (pixels != null) {

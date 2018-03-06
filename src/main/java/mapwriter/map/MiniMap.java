@@ -71,13 +71,8 @@ public class MiniMap {
 
         final int size = this.mapList.size();
         Config.overlayModeIndex = (Config.overlayModeIndex + size + increment) % size;
-
         final MapRenderer newMap = this.mapList.get(Config.overlayModeIndex);
-
-        // if (newMap.getMapMode().config.enabled)
-        // {
         this.currentMap = newMap;
-        // }
         return this.currentMap;
     }
 }

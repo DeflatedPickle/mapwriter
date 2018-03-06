@@ -15,7 +15,7 @@ public class UpdateSurfaceChunksTask extends Task {
     private MwChunk chunk;
     private final RegionManager regionManager;
     private final MapTexture mapTexture;
-    private final AtomicBoolean Running = new AtomicBoolean();
+    private final AtomicBoolean running = new AtomicBoolean();
 
     public UpdateSurfaceChunksTask (Mw mw, MwChunk chunk) {
 
@@ -35,8 +35,8 @@ public class UpdateSurfaceChunksTask extends Task {
         }
         else {
             final UpdateSurfaceChunksTask task2 = UpdateSurfaceChunksTask.chunksUpdating.get(coords);
-            if (task2.Running.get() == false) {
-                task2.UpdateChunkData(this.chunk);
+            if (!task2.running.get()) {
+                task2.updateChunkData(this.chunk);
             }
             else {
                 UpdateSurfaceChunksTask.chunksUpdating.put(coords, this);
@@ -51,22 +51,22 @@ public class UpdateSurfaceChunksTask extends Task {
 
         final Long coords = this.chunk.getCoordIntPair();
         UpdateSurfaceChunksTask.chunksUpdating.remove(coords);
-        this.Running.set(false);
+        this.running.set(false);
     }
 
     @Override
     public void run () {
 
-        this.Running.set(true);
+        this.running.set(true);
         if (this.chunk != null) {
             // update the chunk in the region pixels
             this.regionManager.updateChunk(this.chunk);
             // copy updated region pixels to maptexture
-            this.mapTexture.updateArea(this.regionManager, this.chunk.x << 4, this.chunk.z << 4, MwChunk.SIZE, MwChunk.SIZE, this.chunk.dimension);
+            this.mapTexture.updateArea(this.chunk.x << 4, this.chunk.z << 4, MwChunk.SIZE, MwChunk.SIZE, this.chunk.dimension);
         }
     }
 
-    public void UpdateChunkData (MwChunk chunk) {
+    public void updateChunkData (MwChunk chunk) {
 
         this.chunk = chunk;
     }

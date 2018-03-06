@@ -33,14 +33,13 @@ public class MwChunk implements IChunk {
         final Boolean flag = true;
         byte[] biomeArray = null;
         final ExtendedBlockStorage[] data = new ExtendedBlockStorage[16];
-        final Map<BlockPos, TileEntity> TileEntityMap = new HashMap<>();
+        final Map<BlockPos, TileEntity> teMap = new HashMap<>();
 
         DataInputStream dis = null;
         final RegionFile regionFile = regionFileCache.getRegionFile(x << 4, z << 4, dimension);
-        if (!regionFile.isOpen()) {
-            if (regionFile.exists()) {
-                regionFile.open();
-            }
+        if (!regionFile.isOpen() && regionFile.exists()) {
+
+            regionFile.open();
         }
 
         if (regionFile.isOpen()) {
@@ -112,7 +111,7 @@ public class MwChunk implements IChunk {
                         final NBTTagCompound nbttagcompound4 = nbttaglist2.getCompoundTagAt(i1);
                         final TileEntity tileentity = TileEntity.create(null, nbttagcompound4);
                         if (tileentity != null) {
-                            TileEntityMap.put(tileentity.getPos(), tileentity);
+                            teMap.put(tileentity.getPos(), tileentity);
                         }
                     }
                 }
@@ -129,15 +128,9 @@ public class MwChunk implements IChunk {
                     MwForge.logger.error("MwChunk.read: {} while closing input stream", e);
                 }
             }
-            // this.log("MwChunk.read: chunk ({}, {}) empty=%b", this.x, this.z,
-            // empty);
-        }
-        else {
-            // this.log("MwChunk.read: chunk ({}, {}) input stream is null",
-            // this.x, this.z);
         }
 
-        return new MwChunk(x, z, dimension, data, biomeArray, TileEntityMap);
+        return new MwChunk(x, z, dimension, data, biomeArray, teMap);
     }
 
     public final int x;
@@ -154,13 +147,13 @@ public class MwChunk implements IChunk {
 
     public final int maxY;
 
-    public MwChunk (int x, int z, int dimension, ExtendedBlockStorage[] data, byte[] biomeArray, Map<BlockPos, TileEntity> TileEntityMap) {
+    public MwChunk (int x, int z, int dimension, ExtendedBlockStorage[] data, byte[] biomeArray, Map<BlockPos, TileEntity> teMap) {
 
         this.x = x;
         this.z = z;
         this.dimension = dimension;
         this.biomeArray = biomeArray;
-        this.tileentityMap = TileEntityMap;
+        this.tileentityMap = teMap;
         this.dataArray = data;
         int maxY = 0;
         for (int y = 0; y < 16; y++) {
@@ -182,7 +175,6 @@ public class MwChunk implements IChunk {
             final Biome biome = Minecraft.getMinecraft().world.getBiomeProvider().getBiome(new BlockPos(k, k, k), Biomes.PLAINS);
             k = Biome.getIdForBiome(biome);
         }
-        ;
         return k;
     }
 
@@ -201,13 +193,7 @@ public class MwChunk implements IChunk {
 
     @Override
     public int getLightValue (int x, int y, int z) {
-        // int yi = (y >> 4) & 0xf;
-        // int offset = ((y & 0xf) << 8) | ((z & 0xf) << 4) | (x & 0xf);
 
-        // int light = ((this.lightingArray != null) && (this.lightingArray[yi]
-        // != null)) ? this.lightingArray[yi][offset >> 1] : 15;
-
-        // return ((offset & 1) == 1) ? ((light >> 4) & 0xf) : (light & 0xf);
         return 15;
     }
 
@@ -225,7 +211,7 @@ public class MwChunk implements IChunk {
     @Override
     public String toString () {
 
-        return String.format("({}, {}) dim{}", this.x, this.z, this.dimension);
+        return String.format("(%d, %d) dim %d", this.x, this.z, this.dimension);
     }
 
     public synchronized boolean write (RegionFileCache regionFileCache) {
@@ -238,14 +224,8 @@ public class MwChunk implements IChunk {
         if (!error) {
             final DataOutputStream dos = regionFile.getChunkDataOutputStream(this.x & 31, this.z & 31);
             if (dos != null) {
-                // Nbt chunkNbt = this.getNbt();
                 try {
-                    // RegionManager.logInfo("writing chunk ({}, {}) to region
-                    // file",
-                    // this.x, this.z);
-                    // chunkNbt.writeElement(dos);
-                    // use minecraft build in save tool for saving the Anvil
-                    // Data
+
                     CompressedStreamTools.write(this.writeChunkToNBT(), dos);
                 }
                 catch (final IOException e) {
