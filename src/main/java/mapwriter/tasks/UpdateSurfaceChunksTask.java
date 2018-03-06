@@ -11,7 +11,7 @@ import mapwriter.region.RegionManager;
 import net.minecraft.util.math.ChunkPos;
 
 public class UpdateSurfaceChunksTask extends Task {
-    private static Map chunksUpdating = new HashMap<Long, UpdateSurfaceChunksTask>();
+    private static Map<Long, UpdateSurfaceChunksTask> chunksUpdating = new HashMap<>();
     private MwChunk chunk;
     private final RegionManager regionManager;
     private final MapTexture mapTexture;
@@ -34,7 +34,7 @@ public class UpdateSurfaceChunksTask extends Task {
             return false;
         }
         else {
-            final UpdateSurfaceChunksTask task2 = (UpdateSurfaceChunksTask) UpdateSurfaceChunksTask.chunksUpdating.get(coords);
+            final UpdateSurfaceChunksTask task2 = UpdateSurfaceChunksTask.chunksUpdating.get(coords);
             if (task2.Running.get() == false) {
                 task2.UpdateChunkData(this.chunk);
             }

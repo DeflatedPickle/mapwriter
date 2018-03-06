@@ -1,6 +1,6 @@
 package mapwriter.forge;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
@@ -117,14 +117,20 @@ public class EventHandler {
                     if (parrent != null) {
                         final long id = (Long) FieldUtils.readField(parrent, "selectedServerId", true);
                         if (id > 0) {
-                            final ArrayList list = (ArrayList) FieldUtils.readField(parrent, "realmsServers", true);
-                            for (final Object item : list) {
-                                final RealmsServer server = (RealmsServer) item;
-                                final StringBuilder builder = new StringBuilder();
-                                builder.append(server.owner);
-                                builder.append("_");
-                                builder.append(server.getName());
-                                Utils.RealmsWorldName = builder.toString();
+
+                            final Object realmsServersObj = FieldUtils.readField(parrent, "realmsServers", true);
+
+                            if (realmsServersObj instanceof List<?>) {
+
+                                final List<RealmsServer> list = (List<RealmsServer>) realmsServersObj;
+                                for (final Object item : list) {
+                                    final RealmsServer server = (RealmsServer) item;
+                                    final StringBuilder builder = new StringBuilder();
+                                    builder.append(server.owner);
+                                    builder.append("_");
+                                    builder.append(server.getName());
+                                    Utils.RealmsWorldName = builder.toString();
+                                }
                             }
                         }
                     }
