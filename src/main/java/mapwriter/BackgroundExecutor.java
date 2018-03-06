@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import mapwriter.forge.MwForge;
 import mapwriter.tasks.Task;
@@ -52,7 +51,7 @@ public class BackgroundExecutor {
 
     private final ExecutorService executor;
     private final LinkedList<Task> taskQueue;
-    public boolean closed = false;
+    private boolean closed = false;
     private boolean doDiag = true;
 
     public BackgroundExecutor () {
@@ -97,13 +96,11 @@ public class BackgroundExecutor {
             this.executor.shutdown();
             // process remaining tasks
             this.processRemainingTasks(50, 5);
-            // should already be terminated, but just in case...
-            error = !this.executor.awaitTermination(10L, TimeUnit.SECONDS);
             error = false;
         }
-        catch (final InterruptedException e) {
+        catch (final Exception e) {
             MwForge.logger.info("error: IO task was interrupted during shutdown");
-            e.printStackTrace();
+            MwForge.logger.trace(e);
         }
         this.closed = true;
         return error;
@@ -111,12 +108,13 @@ public class BackgroundExecutor {
 
     public boolean processRemainingTasks (int attempts, int delay) {
 
-        while (this.taskQueue.size() > 0 && attempts > 0) {
+        while (!this.taskQueue.isEmpty() && attempts > 0) {
             if (this.processTaskQueue()) {
                 try {
                     Thread.sleep(delay);
                 }
                 catch (final Exception e) {
+                    MwForge.logger.trace(e);
                 }
                 attempts--;
             }
