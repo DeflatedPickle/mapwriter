@@ -1,7 +1,10 @@
-mapwriter
+MiniMap(Forked from MapWriter)
 =========
 
-MapWriter: A minimap mod for Minecraft
+Now You Can See Teammates!
+
+
+ A minimap mod for Minecraft
 
 
 Instructions for development:
@@ -17,20 +20,4 @@ Instructions for development:
 4) You should now be able to modify the code and test by using the "Client" Run
    Configuration.
 
-Reobfuscation and Packaging:
 
-1) Edit the version numbers in mapwriter.forge.MwForge and build.gradle.
-   The version numbers in mcmod.info should automatically be set to the same
-   versions as set in the build.gradle file.
-
-2) Run "gradlew reobf".
-
-3) The reobfuscated jar should be output to the mapwriter/build/libs folder.
-
-Acknowledgements:
-
-* Chrixian for the code to get death markers working.
-* ProfMobius for the overlay API.
-* taelnia for extrautils compatibility patch.
-* LoneStar144 for minimap border and arrow textures.
-* jk-5 for updating the mod to be compatible with Minecraft 1.7.
