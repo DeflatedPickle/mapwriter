@@ -1,16 +1,36 @@
 [
-{
-  "modid": "MapWriter",
-  "name": "MapWriter",
-  "description": "An open source mini map mod",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "http://www.minecraftforum.net/topic/1570989-/",
-  "updateUrl": "http://www.curse.com/mc-mods/Minecraft/231387-mapwriter-2",
-  "authorList": ["mapwriter"],
-  "credits": "chrixian, ProfMobius, taelnia, jk-5, Vectron",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
-}
+  {
+    "modid": "minimap",
+    "name": "minimap",
+    "description": "An mini map mod",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "Cabchinoe"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+
+  },
+  {
+    "modid": "gotcha",
+    "name": "gotcha",
+    "description": "tell you what you see",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "Cabchinoe"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+
+  }
 ]

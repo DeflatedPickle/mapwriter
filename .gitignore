@@ -1,3 +1,5 @@
+.git
+.svn
 .gradle
 build
 out
@@ -9,13 +11,3 @@ runtime
 .classpath
 .project
 .settings
-bin
-Build.bat
-Clean.bat
-Deploy.bat
-FixDependicies.bat
-Install Forge.bat
-eclipse
-/Run.bat
-/mapwriter_Client.launch
-/mapwriter_Server.launch
