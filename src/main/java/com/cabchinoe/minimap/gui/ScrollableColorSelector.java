@@ -2,6 +2,8 @@ package com.cabchinoe.minimap.gui;
 
 import com.cabchinoe.minimap.MwUtil;
 
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
@@ -88,7 +90,7 @@ public class ScrollableColorSelector extends ScrollableField
 		this.ScrollableNumericTextBoxColourRed.textField.setFocused(focus);
 	}
 
-	public Boolean isFocused()
+	public boolean isFocused()
 	{
 		if (this.ScrollableNumericTextBoxColourRed.textField.isFocused() || this.ScrollableNumericTextBoxColourGreen.textField.isFocused() || this.ScrollableNumericTextBoxColourBlue.textField.isFocused())
 		{

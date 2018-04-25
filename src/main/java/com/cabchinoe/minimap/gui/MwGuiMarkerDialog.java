@@ -1,15 +1,19 @@
 package com.cabchinoe.minimap.gui;
 
+import java.io.IOException;
+
 import com.cabchinoe.minimap.MwUtil;
 import com.cabchinoe.minimap.api.MwAPI;
 import com.cabchinoe.minimap.map.Marker;
 import com.cabchinoe.minimap.map.MarkerManager;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -129,7 +133,7 @@ public class MwGuiMarkerDialog extends GuiScreen
 	public void initGui() {
 		parentScreen.setWorldAndResolution(mc,width,height);
 		offset =0;
-		int labelsWidth = this.fontRendererObj.getStringWidth("Group");
+		int labelsWidth = this.fontRenderer.getStringWidth("Group");
 		int width = this.width * dialogWidthPercent / 100 - labelsWidth;
 		int x = (this.width - width) / 2 + labelsWidth;
 		int y = (this.height - elementVSpacing * 7) / 2;
@@ -191,7 +195,7 @@ public class MwGuiMarkerDialog extends GuiScreen
 						+ this.elementVSpacing * (offset +4),
 				0x80000000);
 		this.drawCenteredString(
-				this.fontRendererObj,
+				this.fontRenderer,
 				I18n.format(this.title),
 				(this.width) / 2,
 				(this.height - this.elementVSpacing * 8) / 2
@@ -205,7 +209,7 @@ public class MwGuiMarkerDialog extends GuiScreen
 			this.scrollableNumericTextBoxZ.draw();
 		}
 		this.ScrollableColorSelectorColor.draw();
-		doneButton.drawButton(mc,mouseX,mouseY);
+		doneButton.drawButton(mc,mouseX,mouseY,f);
 		super.drawScreen(mouseX, mouseY, f);
 	}
 
@@ -213,7 +217,7 @@ public class MwGuiMarkerDialog extends GuiScreen
 	// the scroll wheel.
 
 	@Override
-	public void handleMouseInput() {
+	public void handleMouseInput() throws IOException {
 		if (MwAPI.getCurrentDataProvider() != null)
 			return;
 		int x = Mouse.getEventX() * this.width / this.mc.displayWidth;
@@ -237,7 +241,7 @@ public class MwGuiMarkerDialog extends GuiScreen
 		this.ScrollableColorSelectorColor.mouseDWheelScrolled(x, y, direction);
 	}
 
-	protected void mouseClicked(int x, int y, int button) {
+	protected void mouseClicked(int x, int y, int button) throws IOException {
 		super.mouseClicked(x, y, button);
 		if(showCood()) {
 			this.scrollableTextBoxName.mouseClicked(x, y, button);

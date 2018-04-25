@@ -9,8 +9,9 @@ public class SmallMapMode extends MapMode {
 		this.heightPercent = 30;
 		this.marginTop = 10;
 		this.marginBottom = -1;
-		this.marginLeft = -1;
-		this.marginRight = 10;
+		//for 1.12
+		this.marginLeft = 10;
+		this.marginRight = -1;
 		
 		this.playerArrowSize = 4;
 		this.markerSize = 3;

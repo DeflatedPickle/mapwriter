@@ -2,14 +2,15 @@ package com.cabchinoe.minimap.gui;
 
 import com.cabchinoe.minimap.Mw;
 import com.cabchinoe.minimap.map.MapView;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class MwGuiDimensionDialog extends GuiScreen {
 
 	public void initGui(){
 		parentScreen.setWorldAndResolution(mc,width,height);
-		int labelsWidth = this.fontRendererObj.getStringWidth("Group");
+		int labelsWidth = this.fontRenderer.getStringWidth("Group");
 		int width = this.width * dialogWidthPercent / 100 - labelsWidth;
 		int x = (this.width - width) / 2 + labelsWidth;
 		int y = (this.height - elementVSpacing * 5) / 2;
@@ -53,7 +54,7 @@ public class MwGuiDimensionDialog extends GuiScreen {
 		doneButton = new GuiButton(5,width+2*labelsWidth,y
 				+ this.elementVSpacing * 2,60,20,"OK");
 	}
-
+	@Override
 	public void drawScreen(int mouseX, int mouseY, float f) {
 		if (this.parentScreen != null) {
 			this.parentScreen.drawScreen(mouseX, mouseY, f);
@@ -70,14 +71,14 @@ public class MwGuiDimensionDialog extends GuiScreen {
 						+ this.elementVSpacing * (4+(this.showError?1:0)),
 				0x80000000);
 		this.drawCenteredString(
-				this.fontRendererObj,
+				this.fontRenderer,
 				I18n.format("mw.gui.mwguidimensiondialog.title"),
 				(this.width) / 2,
 				(this.height - this.elementVSpacing * 6) / 2
 						- this.elementVSpacing / 4,
 				0xffffff);
 		this.drawCenteredString(
-				this.fontRendererObj,
+				this.fontRenderer,
 				I18n.format("mw.gui.mwguidimensiondialog.note"),
 				this.width / 2,
 				y+ this.elementVSpacing * 1,
@@ -85,20 +86,20 @@ public class MwGuiDimensionDialog extends GuiScreen {
 
 		if (this.showError) {
 			this.drawCenteredString(
-					this.fontRendererObj,
+					this.fontRenderer,
 					I18n.format("mw.gui.mwguidimensiondialog.error"),
 					this.width / 2,
 					y+ this.elementVSpacing * 3,
 					0xffffff);
 		}
 		scrollableNumericTextBoxD.draw();
-		doneButton.drawButton(mc,mouseX,mouseY);
+		doneButton.drawButton(mc,mouseX,mouseY,f);
 		super.drawScreen(mouseX, mouseY, f);
 	}
 
 
 	@Override
-	public void handleMouseInput() {
+	public void handleMouseInput()throws IOException {
 		int x = Mouse.getEventX() * this.width / this.mc.displayWidth;
 		int y = this.height - Mouse.getEventY() * this.height
 				/ this.mc.displayHeight - 1;
@@ -109,7 +110,7 @@ public class MwGuiDimensionDialog extends GuiScreen {
 		super.handleMouseInput();
 	}
 
-	protected void mouseClicked(int x, int y, int button) {
+	protected void mouseClicked(int x, int y, int button)throws IOException {
 		super.mouseClicked(x, y, button);
 		this.scrollableNumericTextBoxD.mouseClicked(x, y, button);
 		if(doneButton.mousePressed(mc,x,y)){

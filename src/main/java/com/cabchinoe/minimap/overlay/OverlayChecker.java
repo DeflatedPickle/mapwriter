@@ -7,7 +7,7 @@ import com.cabchinoe.minimap.api.IMwChunkOverlay;
 import com.cabchinoe.minimap.api.IMwDataProvider;
 import com.cabchinoe.minimap.map.MapView;
 import com.cabchinoe.minimap.map.mapmode.MapMode;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 
 public class OverlayChecker implements IMwDataProvider {
 
@@ -45,12 +45,12 @@ public class OverlayChecker implements IMwDataProvider {
 		// We should pass the center of the map too to reduce the display like in this case
 		// and the zoom lvl, to provide higher level informations
 		
-		int minChunkX = (MathHelper.ceiling_double_int(minX) >> 4) - 1;
-		int minChunkZ = (MathHelper.ceiling_double_int(minZ) >> 4) - 1;
-		int maxChunkX = (MathHelper.ceiling_double_int(maxX) >> 4) + 1;
-		int maxChunkZ = (MathHelper.ceiling_double_int(maxZ) >> 4) + 1;
-		int cX = (MathHelper.ceiling_double_int(centerX) >> 4) + 1;
-		int cZ = (MathHelper.ceiling_double_int(centerZ) >> 4) + 1;
+		int minChunkX = (MathHelper.ceil(minX) >> 4) - 1;
+		int minChunkZ = (MathHelper.ceil(minZ) >> 4) - 1;
+		int maxChunkX = (MathHelper.ceil(maxX) >> 4) + 1;
+		int maxChunkZ = (MathHelper.ceil(maxZ) >> 4) + 1;
+		int cX = (MathHelper.ceil(centerX) >> 4) + 1;
+		int cZ = (MathHelper.ceil(centerZ) >> 4) + 1;
 		
 		int limitMinX = Math.max(minChunkX, cX - 100);
 		int limitMaxX = Math.min(maxChunkX, cX + 100);

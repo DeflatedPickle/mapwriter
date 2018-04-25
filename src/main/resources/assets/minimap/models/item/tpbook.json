@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "minimap:TPbook"
+    "layer0": "minimap:items/tpbook"
   }
 }

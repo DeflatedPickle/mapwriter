@@ -1,20 +1,22 @@
 package com.cabchinoe.minimap.map;
-
-import com.cabchinoe.common.Render;
 import com.cabchinoe.minimap.Mw;
+import com.cabchinoe.common.Render;
 import com.cabchinoe.minimap.api.IMwChunkOverlay;
 import com.cabchinoe.minimap.api.IMwDataProvider;
 import com.cabchinoe.minimap.api.MwAPI;
 import com.cabchinoe.minimap.map.mapmode.MapMode;
 import com.cabchinoe.minimap.map.mapmode.SmallMapMode;
 import com.cabchinoe.minimap.region.BiomeNameTransfer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
-
 import java.awt.Point;
 import java.util.ArrayList;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+@SideOnly(Side.CLIENT)
 public class MapRenderer {
 	private Mw mw;
 	private MapMode mapMode;
@@ -39,7 +41,6 @@ public class MapRenderer {
 	private void drawMap() {
 		
 		int regionZoomLevel = Math.max(0, this.mapView.getZoomLevel());
-
 		double tSize = (double) this.mw.textureSize;
 		if((this.mapView.getUndergroundMode()) && (regionZoomLevel == 0)){
 			tSize = (double) this.mw.utextureSize;
@@ -68,10 +69,10 @@ public class MapRenderer {
 			h = (this.mapView.getHeight() / tSizeInBlocks);
 		}
 		
-		GL11.glPushMatrix();
+		GlStateManager.pushMatrix();
 		
 		if (this.mapMode.rotate) {
-			GL11.glRotated(this.mw.mapRotationDegrees, 0.0f, 0.0f, 1.0f);
+			GlStateManager.rotate((float) this.mw.mapRotationDegrees, 0.0f, 0.0f, 1.0f);
 		}
 		if (this.mapMode.circular) {
 			Render.setCircularStencil(0, 0, this.mapMode.h / 2.0);
@@ -85,10 +86,7 @@ public class MapRenderer {
 			Render.drawRect(this.mapMode.x, this.mapMode.y, this.mapMode.w, this.mapMode.h);
 			Render.setColourWithAlphaPercent(0xffffff, this.mapMode.alphaPercent);
 			this.mw.undergroundMapTexture.bind();
-			Render.drawTexturedRect(
-					this.mapMode.x, this.mapMode.y, this.mapMode.w, this.mapMode.h,
-					u, v, u + w, v + h 
-			);
+			Render.drawTexturedRect(this.mapMode.x, this.mapMode.y, this.mapMode.w, this.mapMode.h, u, v, u + w, v + h);
 		} else {
 			// draw the surface map
 			MapViewRequest req = new MapViewRequest(this.mapView);
@@ -133,16 +131,15 @@ public class MapRenderer {
 		
 		// overlay onDraw event
 		if (provider != null) {
-			GL11.glPushMatrix();			
+			GlStateManager.pushMatrix();
 			provider.onDraw(this.mapView, this.mapMode);
-			GL11.glPopMatrix();			
+			GlStateManager.popMatrix();
 		}
 		
 		if (this.mapMode.circular) {
 			Render.disableStencil();
 		}
-		
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 	}
 	
 	private void drawBorder() {
@@ -160,15 +157,15 @@ public class MapRenderer {
 	}
 	
 	private void drawPlayerArrow() {
-		GL11.glPushMatrix();
+		GlStateManager.pushMatrix();
 		double scale = this.mapView.getDimensionScaling(this.mw.playerDimension);
 		Point.Double p = this.mapMode.getClampedScreenXY(this.mapView, this.mw.playerX * scale, this.mw.playerZ * scale);
 		this.playerArrowScreenPos.setLocation(p.x + this.mapMode.xTranslation, p.y + this.mapMode.yTranslation);
 		
 		// the arrow only needs to be rotated if the map is NOT rotated
-		GL11.glTranslated(p.x, p.y, 0.0);
+		GlStateManager.translate(p.x, p.y, 0.0);
 		if (!this.mapMode.rotate) {
-			GL11.glRotated(-this.mw.mapRotationDegrees, 0.0f, 0.0f, 1.0f);
+			GlStateManager.rotate((float)-this.mw.mapRotationDegrees, 0.0f, 0.0f, 1.0f);
 		}
 		
 		double arrowSize = this.mapMode.playerArrowSize;
@@ -178,14 +175,14 @@ public class MapRenderer {
 			-arrowSize, -arrowSize, arrowSize * 2, arrowSize * 2,
 			0.0, 0.0, 1.0, 1.0
 		);
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 	}
 	
 	private void drawIcons() {
-		GL11.glPushMatrix();
+		GlStateManager.pushMatrix();
 		
 		if (this.mapMode.rotate) {
-			GL11.glRotated(this.mw.mapRotationDegrees, 0.0f, 0.0f, 1.0f);
+			GlStateManager.rotate((float)this.mw.mapRotationDegrees, 0.0f, 0.0f, 1.0f);
 		}
 		
 		// draw markers
@@ -207,11 +204,8 @@ public class MapRenderer {
 				0.0, 0.0, 1.0, 1.0
 			);
 		}
+		GlStateManager.popMatrix();
 
-
-		
-		GL11.glPopMatrix();
-		
 		// outside of the matrix pop as theplayer arrow
 		// needs to be drawn without rotation
 		if(this.mapView.getDimension()==mw.playerDimension) {
@@ -221,12 +215,12 @@ public class MapRenderer {
 
     private void drawDirection() {
 //        GL11.glPushMatrix();
+
 		double angel = 0;
 		if(this.mapMode.rotate) {
 			angel = Math.toRadians(this.mw.mapRotationDegrees);
 		}
-
-		int x = (int)(Math.sin(angel) * this.mapMode.h/2.2);
+        int x = (int)(Math.sin(angel) * this.mapMode.h/2.2);
         int y = (int)(Math.cos(angel) * this.mapMode.h/2.2) ;
         Render.drawString(x -2, -y - 4 ,0xffffffff,"N");
         Render.drawString(y -2,  x - 4,0xffffffff,"E");
@@ -240,8 +234,8 @@ public class MapRenderer {
 	private void drawCoords() {
 		// draw coordinates
 		if (this.mapMode.coordsEnabled) {
-			GL11.glPushMatrix();
-			GL11.glTranslatef(this.mapMode.textX, this.mapMode.textY, 0);
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.mapMode.textX, this.mapMode.textY, 0);
 			int offset = 0;
 			if (this.mw.coordsMode > 0) {
 				Render.drawCentredString(0, 0, this.mapMode.textColour,
@@ -257,7 +251,7 @@ public class MapRenderer {
 					0, offset+12, this.mapMode.textColour, I18n.format("mw.gui.minimap.underground")
 				);
 			}
-			GL11.glPopMatrix();
+			GlStateManager.popMatrix();
 		}
 	}
 	
@@ -282,17 +276,18 @@ public class MapRenderer {
 	}
 
 	public void draw() {
+		
 		this.mapMode.setScreenRes();
 		this.mapView.setMapWH(this.mapMode);
 		this.mapView.setTextureSize(this.mw.textureSize);
 		
-		GL11.glPushMatrix();
-		GL11.glLoadIdentity();
+		GlStateManager.pushMatrix();
+		GlStateManager.loadIdentity();
 		
 		// translate to center of com.cabchinoe.minimap
 		// z is -2000 so that it is drawn above the 3D world, but below GUI
 		// elements which are typically at -3000
-		GL11.glTranslated(this.mapMode.xTranslation, this.mapMode.yTranslation, -2000.0);
+		GlStateManager.translate(this.mapMode.xTranslation, this.mapMode.yTranslation, -2000.0);
 		
 		// draw background, the map texture, and enabled overlays
 		this.drawMap();
@@ -306,10 +301,10 @@ public class MapRenderer {
 		}
 		if(this.mapMode instanceof SmallMapMode) {
             this.drawDirection();
-			if (this.mw.mc.theWorld != null) {
+			if (this.mw.mc.world != null) {
 				int X = (int)this.mw.playerX, Z = (int)this.mw.playerZ;
-				if (!this.mw.mc.theWorld.getChunkFromBlockCoords(X, Z).isEmpty()) {
-					String BiomeName = this.mw.mc.theWorld.getBiomeGenForCoords(X, Z).biomeName;
+				if (!this.mw.mc.world.getChunkFromBlockCoords(new BlockPos(X, 0, Z)).isEmpty()) {
+					String BiomeName = this.mw.mc.world.getBiome(new BlockPos(X, 0, Z)).getBiomeName();
 					String InBiomeName = biomeNameTransfer.getBiomeName(BiomeName);
 					String s = String.format(I18n.format("mw.gui.mwgui.status.biome", I18n.format(InBiomeName)));
 					Render.drawCentredString(0, this.mapMode.textY + 12, this.mapMode.textColour, s);
@@ -319,8 +314,8 @@ public class MapRenderer {
 		this.drawCoords();
 		
 		// some shader mods seem to need depth testing re-enabled
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glPopMatrix();
+		GlStateManager.enableDepth();
+		GlStateManager.popMatrix();
 	}
 	
 	private static void paintChunk(MapMode mapMode, MapView mapView, IMwChunkOverlay overlay){

@@ -2,6 +2,7 @@ package com.cabchinoe.minimap.gui;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class ScrollableTextBox extends ScrollableField {
     }
 
     public void init() {
-        this.textField = new GuiTextField(
+        this.textField = new GuiTextField(this.id,
                 this.fontRendererObj, this.textFieldX,
                 this.textFieldY, this.textFieldWidth, this.textFieldHeight);
         this.textField.setMaxStringLength(32);
@@ -89,7 +90,7 @@ public class ScrollableTextBox extends ScrollableField {
     }
 
     @Override
-    public Boolean isFocused() {
+    public boolean isFocused() {
         return this.textField.isFocused();
     }
 

@@ -1,70 +1,69 @@
 buildscript {
     repositories {
-        mavenCentral()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
+        jcenter()
+        maven { url = "http://files.minecraftforge.net/maven" }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'net.sf.proguard:proguard-gradle:5.2.1'
     }
 }
+apply plugin: 'net.minecraftforge.gradle.forge'
+//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
-apply plugin: 'forge'
+def svnversion =0
+def javaversion =0
 
-def svnversion = 0
-def javaversion = 0
-if (project.getProject().hasProperty("svnversion")) {
+if(project.getProject().hasProperty("svnversion")) {
+
     svnversion = project.getProperties()["svnversion"]
 }
-if (project.getProject().hasProperty("javaversion"))  {
+
+if(project.getProject().hasProperty("javaversion"))
+{
     javaversion = project.getProperties()["javaversion"]
 }
 
-version = svnversion + "-" + javaversion
+version = svnversion+"-"+javaversion
 group = "com.cabchinoe.MiniMap" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "MiniMap-1.7.10"
-
-minecraft {
-    version = "1.7.10-10.13.4.1614-1.7.10"
-    at 'src/main/resources/pubact.cfg'
-    runDir = "eclipse"
-    replace "@VERSION@", project.version
-}
-
-jar {
-    manifest {
-    }
-}
+archivesBaseName = "MiniMap-1.12"
 
 compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
     options.compilerArgs += ["-XDignore.symbol.file"]
     options.fork = true
     options.forkOptions.executable = 'javac'
 }
-
 tasks.withType(JavaCompile) {
     println "++++++++++++++++"
     options.encoding = "UTF-8"
-
     println 'Compiler args: ' + options.compilerArgs
 }
 
+minecraft {
+    version = "1.12-14.21.1.2415"
+    runDir = "run"
+    // the mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   snapshot are built nightly.
+    // stable_#            stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not always work.
+    // simply re-run your setup task after changing the mappings to update your workspace.
+    mappings = "snapshot_20170624"
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+}
 configurations {
     embed
     compile.extendsFrom(embed)
 }
 
 
-//Add dependencies to the JAR
 jar {
     from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+jar {
+    manifest {
+    }
 }
 
 processResources {
@@ -80,15 +79,8 @@ processResources {
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
         
-    // copy everything else, thats not the mcmod.info
+    // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
-    }
-}
-
-
-idea {
-    module {
-        inheritOutputDirs = true
     }
 }

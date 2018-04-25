@@ -7,7 +7,10 @@ import com.cabchinoe.minimap.Mw;
 import com.cabchinoe.minimap.map.mapmode.LargeMapMode;
 import com.cabchinoe.minimap.map.mapmode.MapMode;
 import com.cabchinoe.minimap.map.mapmode.SmallMapMode;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class MiniMap {
 	private Mw mw;
 	
@@ -28,7 +31,7 @@ public class MiniMap {
 	private MapRenderer currentMap = null;
 	
 	public int modeIndex = 0;
-	
+
 	public MiniMap(Mw mw) {
 		this.mw = mw;
 		

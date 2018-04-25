@@ -1,5 +1,8 @@
 package com.cabchinoe.minimap.region;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +11,7 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 
 import static com.cabchinoe.common.Render.getAverageOfPixelQuad;
-
+@SideOnly(Side.CLIENT)
 public class SurfacePixels {
 	
 	protected Region region;
@@ -94,7 +97,6 @@ public class SurfacePixels {
 		this.updateCount++;
 	}
 	
-	// get the averaged colour of a 2x2 pixel area in the given pixels
 
 	// update an area of pixels in this region from an area of pixels in srcPixels,
 	// scaling the pixels by 50%.

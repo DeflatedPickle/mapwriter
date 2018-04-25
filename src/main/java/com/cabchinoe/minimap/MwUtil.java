@@ -13,14 +13,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.cabchinoe.minimap.forge.MwForge;
 import com.cabchinoe.minimap.forge.server.MinimapMessage;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.chunk.Chunk;
 
-@SideOnly(Side.CLIENT)
 public class MwUtil {
 	public final static int ArgsRequestTP = 4;
 	public final static Pattern patternInvalidChars = Pattern.compile("[^\\p{IsAlphabetic}\\p{Digit}_]");
@@ -74,9 +71,9 @@ public class MwUtil {
 	}
 	
 	public static void printBoth(String msg) {
-		EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+		EntityPlayerSP thePlayer = Minecraft.getMinecraft().player;
 		if (thePlayer != null) {
-			thePlayer.addChatMessage(new ChatComponentText(msg));
+			thePlayer.sendMessage(new TextComponentString(msg));
 		}
 		MwUtil.log("%s", msg);
 	}
@@ -120,8 +117,8 @@ public class MwUtil {
 	}
 	
 	public static int distToChunkSq(int x, int z, Chunk chunk) {
-		int dx = (chunk.xPosition << 4) + 8 - x;
-		int dz = (chunk.zPosition << 4) + 8 - z;
+		int dx = (chunk.x << 4) + 8 - x;
+		int dz = (chunk.z << 4) + 8 - z;
 		return (dx * dx) + (dz * dz);
 	}
 	private static int[] colours = new int[]

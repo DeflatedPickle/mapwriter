@@ -2,16 +2,20 @@ package com.cabchinoe.gotcha.gui;
 
 import com.cabchinoe.common.Render;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.util.MovingObjectPosition;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.HashMap;
 
 /**
  * Created by n3212 on 2017/9/21.
  */
+@SideOnly(Side.CLIENT)
 public class EntityTip {
     public Minecraft mc;
     private HashMap<String,EntityDesc> entityDescMap = new HashMap<String, EntityDesc>();
@@ -31,9 +35,9 @@ public class EntityTip {
         }));
         entityDescMap.put("Skeleton",new EntityDesc(
             "Skeleton", EntityDesc.attackType.aggressive,new String[]{
-            "§c利用掩体!",
+            "§c举起盾牌!",
             "§f距离骷髅越近，骷髅射击越快,",
-            "§f被攻击时在掩体后等待伏击骷髅"
+            "§f盾牌能有效阻挡弓箭的伤害"
         }));
         entityDescMap.put("Shulker",new EntityDesc(
             "Shulker", EntityDesc.attackType.aggressive,new String[]{
@@ -182,31 +186,34 @@ public class EntityTip {
 
     }
 
-    public int picWidth = 50, picHeight = 75, marginY =4;
-    public int draw(MovingObjectPosition movingObjectPosition, int marginX){
+    public int picWidth = 50, picHeight = 75, marginY =40, marginX =4;
+    public int draw(RayTraceResult movingObjectPosition){
         Entity entity = movingObjectPosition.entityHit;
         String entityNameID = EntityList.getEntityString(entity);
         if(entityNameID != null){
             EntityDesc entityDesc = entityDescMap.get(entityNameID);
             if(entityDesc != null){
-                String entityName = "§l"+entity.getCommandSenderName();
+                String entityName = "§l"+entity.getName();
                 entityName = entityName.replace("蠹","蠹(dù)").replace("髑","髑(dú)");
-                GL11.glPushMatrix();
+                GlStateManager.pushMatrix();
                 try{
-                    Render.setColourWithAlphaPercent(0x656565,65);
                     int strWidth = 0;
                     for(String s : entityDesc.lines){
                         int fl = mc.fontRenderer.getStringWidth(s);
-                        if(fl >= strWidth)
+                        if(fl >= strWidth) {
                             strWidth = fl;
+                        }
                     }
-                    Render.drawRect(marginX,marginY,strWidth+picWidth +marginX*2,this.picHeight+marginY);
+                    ScaledResolution sRes = new ScaledResolution(mc);
+                    Render.setColourWithAlphaPercent(0x656565,65);
+                    int drawX = sRes.getScaledWidth() - (strWidth+picWidth +marginX*2 +9);
+                    Render.drawRect(drawX,marginY,strWidth+picWidth +marginX*2+5,this.picHeight+8);
                     Render.setColour(0xffffffff);
                     this.mc.renderEngine.bindTexture(entityDesc.resourceLocation);
-                    Render.drawTexturedRect(marginX+2,marginY+2,this.picWidth,this.picHeight);
-                    int TextX = this.picWidth + 5 + marginX ;
-                    Render.drawString(TextX, marginY*2, 0xffffff,entityName);
-                    int renderY = 25;
+                    Render.drawTexturedRect(drawX+2,marginY+2,this.picWidth,this.picHeight);
+                    int TextX = drawX + this.picWidth + marginX ;
+                    Render.drawString(TextX, marginY+15, 0xffffff,entityName);
+                    int renderY = 30+marginY;
                     if(entityDesc.entityAttackType ==  EntityDesc.attackType.aggressive){
                         Render.drawString(TextX, renderY, 0xff0000,"§c攻击型");
                     }else if(entityDesc.entityAttackType ==  EntityDesc.attackType.BOSS){
@@ -216,16 +223,16 @@ public class EntityTip {
                     }else if(entityDesc.entityAttackType ==  EntityDesc.attackType.ally){
                         Render.drawString(TextX, renderY, 0x00ff00,"效用型");
                     }
-                    renderY = 40;
+                    renderY += 15;
                     for(String s : entityDesc.lines){
                         Render.drawString(TextX, renderY, 0xffffff,s);
                         renderY += mc.fontRenderer.FONT_HEIGHT;
                     }
                 }catch (Exception e){}
                 finally {
-                    GL11.glEnable(GL11.GL_DEPTH_TEST);
-                    GL11.glPopMatrix();
-                    return this.picHeight + 10;
+                    GlStateManager.enableDepth();
+                    GlStateManager.popMatrix();
+                    return this.picHeight + 10+marginY;
                 }
             }
 

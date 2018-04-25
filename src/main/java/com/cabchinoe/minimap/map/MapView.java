@@ -5,7 +5,10 @@ import java.util.List;
 import com.cabchinoe.minimap.Mw;
 import com.cabchinoe.minimap.api.MwAPI;
 import com.cabchinoe.minimap.map.mapmode.MapMode;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class MapView {
 	
 	private int zoomLevel = 0;
@@ -79,10 +82,10 @@ public class MapView {
 	}
 	
 	public int setZoomLevel(int zoomLevel) {
-
+		//MwUtil.log("MapView.setZoomLevel(%d)", zoomLevel);
 		int prevZoomLevel = this.zoomLevel;
 		if (this.undergroundMode) {
-			this.zoomLevel = Math.min(Math.max(this.minZoom, zoomLevel),0);
+			this.zoomLevel = Math.min(Math.max(this.minZoom, zoomLevel), 0);
 		} else {
 			this.zoomLevel = Math.min(Math.max(this.minZoom, zoomLevel), this.maxZoom);
 		}
@@ -265,7 +268,7 @@ public class MapView {
 	public void setUndergroundMode(boolean enabled) {
 //		if (enabled) {
 //			if (this.zoomLevel >= 0) {
-//				this.setZoomLevel(0);
+//				this.setZoomLevel(-1);
 //			}
 //		}
 		if(this.getDimension() == this.mw.playerDimension){

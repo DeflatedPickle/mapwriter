@@ -6,8 +6,10 @@ import java.util.List;
 import com.cabchinoe.minimap.MwUtil;
 import com.cabchinoe.minimap.forge.MwConfig;
 import com.cabchinoe.minimap.map.mapmode.MapMode;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-
+@SideOnly(Side.CLIENT)
 public class MarkerManager {
 	
 	public List<Marker> markerList = new ArrayList<Marker>();
@@ -272,7 +274,6 @@ public class MarkerManager {
 	public void drawMarkers(MapMode mapMode, MapView mapView) {
 		for (Marker marker : this.visibleMarkerList) {
 	    	// only draw markers that were set in the current dimension
-//			System.out.println(String.format("%s : %s : %d---%d", marker.groupName,marker.name,marker.dimension,mapView.getDimension()));
 			if (mapView.getDimension() == marker.dimension) {
 				if(this.selectedMarker!=null && this.selectedMarker.equals(marker)){
 					marker.draw(mapMode, mapView, 0xffffffff);

@@ -1,12 +1,15 @@
 package com.cabchinoe.minimap.forge.server;
 
 
-import com.google.gson.JsonObject;
 import com.cabchinoe.minimap.MwUtil;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.cabchinoe.minimap.forge.MwForge;
 import com.cabchinoe.minimap.map.TeamManager;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 // The params of the IMessageHandler are <REQ, REPLY>
 // This means that the first param is the packet you are receiving, and the second is the packet you are returning.
@@ -17,7 +20,7 @@ public class MinimapMessageHandler implements IMessageHandler<MinimapMessage, Mi
     @Override
     public MinimapMessage onMessage(MinimapMessage message, MessageContext ctx) {
         // This is the player the packet was sent to the server from
-        MwUtil.log("%s %s",message.getJsonObjectString(),ctx.getServerHandler().playerEntity.getDisplayName());
+        //MwUtil.log("%s %s",message.getJsonObjectString(),ctx.getServerHandler().playerEntity.getDisplayName());
         JsonObject sendData = new JsonObject();
         sendData.addProperty("args",message.getArgs("args"));
         switch (message.getArgs("args")){
@@ -25,17 +28,17 @@ public class MinimapMessageHandler implements IMessageHandler<MinimapMessage, Mi
                 sendData = MwForge.TM.get_broadcast_data();
                 break;
             case TeamManager.ArgsRequestInvisible:
-                if(ctx.getServerHandler().playerEntity!=null) {
-                    MwForge.instance.TM.addInvisibleList(ctx.getServerHandler().playerEntity.getUniqueID().toString());
-                    MwForge.instance.TM.removeTeammate(ctx.getServerHandler().playerEntity.getUniqueID().toString());
+                if(ctx.getServerHandler().player!=null) {
+                    MwForge.instance.TM.addInvisibleList(ctx.getServerHandler().player.getUniqueID().toString());
+                    MwForge.instance.TM.removeTeammate(ctx.getServerHandler().player.getUniqueID().toString());
                 }
                 break;
             case TeamManager.ArgsRequestVisible:
-                MwForge.instance.TM.removeInvisibleList(ctx.getServerHandler().playerEntity.getUniqueID().toString());
+                MwForge.instance.TM.removeInvisibleList(ctx.getServerHandler().player.getUniqueID().toString());
                 break;
             case MwUtil.ArgsRequestTP:
                 JsonObject data = (JsonObject)message.getJsonObject().get("data");
-                ctx.getServerHandler().playerEntity.setPositionAndUpdate(data.get("x").getAsDouble(),data.get("y").getAsDouble(),data.get("z").getAsDouble());
+                ctx.getServerHandler().player.setPositionAndUpdate(data.get("x").getAsDouble(),data.get("y").getAsDouble(),data.get("z").getAsDouble());
                 break;
             default:
                 break;

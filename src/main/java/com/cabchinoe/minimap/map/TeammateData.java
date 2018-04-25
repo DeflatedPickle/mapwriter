@@ -7,6 +7,8 @@ import com.cabchinoe.minimap.Mw;
 import com.cabchinoe.minimap.map.mapmode.FullScreenMapMode;
 import com.cabchinoe.minimap.map.mapmode.MapMode;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Point;
@@ -58,7 +60,7 @@ public class TeammateData {
     public String getId(){
         return this.id;
     }
-
+    @SideOnly(Side.CLIENT)
     public void draw(MapMode mapMode, MapView mapView,Mw mw){
         double scale = mapView.getDimensionScaling(this.dim);
         Point.Double p = mapMode.getClampedScreenXY(mapView, this.x * scale, this.z * scale);
@@ -79,7 +81,7 @@ public class TeammateData {
         GL11.glPopMatrix();
 
         if(mapMode instanceof FullScreenMapMode && this.screenPos.y-7 > 0 ) {
-            ScaledResolution scaledResolution = new ScaledResolution(mw.mc, mw.mc.displayWidth, mw.mc.displayHeight);
+            ScaledResolution scaledResolution = new ScaledResolution(mw.mc);
 //            int screenW = mw.mc.displayWidth, screenH = mw.mc.displayHeight;
             int screenW = scaledResolution.getScaledWidth(), screenH = scaledResolution.getScaledHeight();
             if(this.screenPos.x + (float)screenW/100. +1 < screenW && this.screenPos.y +7 < screenH && this.screenPos.x -(float)screenW/100. -2 >0 ) {

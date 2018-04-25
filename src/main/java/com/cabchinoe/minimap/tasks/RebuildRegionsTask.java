@@ -4,7 +4,10 @@ import com.cabchinoe.minimap.Mw;
 import com.cabchinoe.minimap.MwUtil;
 import com.cabchinoe.minimap.region.BlockColours;
 import com.cabchinoe.minimap.region.RegionManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class RebuildRegionsTask extends Task {
 	
 	final RegionManager regionManager;

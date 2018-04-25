@@ -1,15 +1,20 @@
 package com.cabchinoe.minimap;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
 import com.cabchinoe.minimap.region.MwChunk;
 import com.cabchinoe.minimap.tasks.SaveChunkTask;
 import com.cabchinoe.minimap.tasks.UpdateSurfaceChunksTask;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class ChunkManager {
 	public Mw mw;
 	private boolean closed = false;
@@ -32,31 +37,18 @@ public class ChunkManager {
 	// only MwChunk's should be used in the background thread.
 	// make this a full copy of chunk data to prevent possible race conditions <-- done
 	public static MwChunk copyToMwChunk(Chunk chunk) {
-		
-		byte[][] msbArray = new byte[16][];
-		byte[][] lsbArray = new byte[16][];
-		byte[][] metaArray = new byte[16][];
-		byte[][] lightingArray = new byte[16][];
-		Map TileEntityMap = new HashMap();
-		TileEntityMap.putAll(chunk.chunkTileEntityMap);
-		
+
+		Map<BlockPos, TileEntity> TileEntityMap = Maps.newHashMap();
+		TileEntityMap.putAll(chunk.getTileEntityMap());
+		byte[] biomeArray = Arrays.copyOf(chunk.getBiomeArray(), chunk.getBiomeArray().length);
+
 		ExtendedBlockStorage[] storageArrays = chunk.getBlockStorageArray();
-		if (storageArrays != null) {
-			for (ExtendedBlockStorage storage : storageArrays) {
-				if (storage != null) {
-					int y = (storage.getYLocation() >> 4) & 0xf;
-					lsbArray[y] = Arrays.copyOf(storage.getBlockLSBArray(), storage.getBlockLSBArray().length);
-					msbArray[y] = (storage.getBlockMSBArray() != null) ? Arrays.copyOf(storage.getBlockMSBArray().data, storage.getBlockMSBArray().data.length)  : null;
-					metaArray[y] = (storage.getMetadataArray() != null) ? Arrays.copyOf(storage.getMetadataArray().data, storage.getMetadataArray().data.length) : null;
-					lightingArray[y] = (storage.getBlocklightArray() != null) ? Arrays.copyOf(storage.getBlocklightArray().data, storage.getBlocklightArray().data.length) : null;
-				}
-			}
-		}
-		
-		return new MwChunk(chunk.xPosition, chunk.zPosition, chunk.worldObj.provider.dimensionId,
-				msbArray, lsbArray, metaArray, lightingArray, Arrays.copyOf(chunk.getBiomeArray(),chunk.getBiomeArray().length),TileEntityMap);
+
+		return new MwChunk(chunk.x, chunk.z, chunk.getWorld().provider.getDimension(),
+				storageArrays, biomeArray,TileEntityMap);
 	}
-	
+
+
 	public synchronized void addChunk(Chunk chunk) {
 		if (!this.closed && (chunk != null)) {
 			this.chunkMap.put(chunk, 0);
@@ -90,7 +82,7 @@ public class ChunkManager {
 		MwChunk[] chunkArray = new MwChunk[9];
 		for (int z = 0; z < 3; z++) {
 			for (int x = 0; x < 3; x++) {
-				Chunk chunk = this.mw.mc.theWorld.getChunkFromChunkCoords(
+				Chunk chunk = this.mw.mc.world.getChunkFromChunkCoords(
 					chunkArrayX + x,
 					chunkArrayZ + z
 				);
@@ -146,9 +138,9 @@ public class ChunkManager {
 	public void forceChunks(MwChunk[] chunkArray){
 		this.mw.executor.addTask(new UpdateSurfaceChunksTask(this.mw, chunkArray));
 	}
-	
+
 	private void addSaveChunkTask(Chunk chunk) {
-		if ((this.mw.multiplayer && this.mw.regionFileOutputEnabledMP) || 
+		if ((this.mw.multiplayer && this.mw.regionFileOutputEnabledMP) ||
 			(!this.mw.multiplayer && this.mw.regionFileOutputEnabledSP)) {
 			if (!chunk.isEmpty()) {
 				this.mw.executor.addTask(new SaveChunkTask(copyToMwChunk(chunk), this.mw.regionManager));

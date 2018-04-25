@@ -6,21 +6,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSlot;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 public class MwGuiOptionSlot extends GuiSlot {
 	
 	private GuiScreen parentScreen;
 	private Minecraft mc;
 	private Mw mw;
-
+	
 	private int mouseX = 0;
 	private int mouseY = 0;
 	
-	private int miniMapPositionIndex = 0;
+	private int miniMapPositionIndex = 1;
 	private static final String[] miniMapPositionStringArray = {
 //		I18n.format("minimap.guislot.miniMapPosition.unchanged"),
 		I18n.format("minimap.guislot.miniMapPosition.topRight"),
@@ -247,6 +248,7 @@ public class MwGuiOptionSlot extends GuiSlot {
     public void drawScreen(int mouseX, int mouseY, float f) {
         this.mouseX = mouseX;
         this.mouseY = mouseY;
+//        super.handleMouseInput();
         super.drawScreen(mouseX, mouseY, f);
     }
 	
@@ -257,13 +259,103 @@ public class MwGuiOptionSlot extends GuiSlot {
 
 	@Override
 	protected void drawBackground() {
+        if (Mouse.isButtonDown(0) && this.getEnabled())
+        {
+            if (this.initialClickY == -1)
+            {
+                boolean flag1 = true;
+
+                if (this.mouseY >= this.top && this.mouseY <= this.bottom)
+                {
+                    int j2 = (this.width - this.getListWidth()) / 2;
+                    int k2 = (this.width + this.getListWidth()) / 2;
+                    int l2 = this.mouseY - this.top - this.headerPadding + (int)this.amountScrolled - 4;
+                    int i1 = l2 / this.slotHeight;
+
+                    if (i1 < this.getSize() && this.mouseX >= j2 && this.mouseX <= k2 && i1 >= 0 && l2 >= 0)
+                    {
+                        boolean flag = i1 == this.selectedElement && Minecraft.getSystemTime() - this.lastClicked < 250L;
+                        this.elementClicked(i1, flag, this.mouseX, this.mouseY);
+                        this.selectedElement = i1;
+                        this.lastClicked = Minecraft.getSystemTime();
+                    }
+                    else if (this.mouseX >= j2 && this.mouseX <= k2 && l2 < 0)
+                    {
+                        this.clickedHeader(this.mouseX - j2, this.mouseY - this.top + (int)this.amountScrolled - 4);
+                        flag1 = false;
+                    }
+
+                    int i3 = this.getScrollBarX();
+                    int j1 = i3 + 6;
+
+                    if (this.mouseX >= i3 && this.mouseX <= j1)
+                    {
+                        this.scrollMultiplier = -1.0F;
+                        int k1 = this.getMaxScroll();
+
+                        if (k1 < 1)
+                        {
+                            k1 = 1;
+                        }
+
+                        int l1 = (int)((float)((this.bottom - this.top) * (this.bottom - this.top)) / (float)this.getContentHeight());
+                        l1 = MathHelper.clamp(l1, 32, this.bottom - this.top - 8);
+                        this.scrollMultiplier /= (float)(this.bottom - this.top - l1) / (float)k1;
+                    }
+                    else
+                    {
+                        this.scrollMultiplier = 1.0F;
+                    }
+
+                    if (flag1)
+                    {
+                        this.initialClickY = this.mouseY;
+                    }
+                    else
+                    {
+                        this.initialClickY = -2;
+                    }
+                }
+                else
+                {
+                    this.initialClickY = -2;
+                }
+            }
+            else if (this.initialClickY >= 0)
+            {
+                this.amountScrolled -= (float)(this.mouseY - this.initialClickY) * this.scrollMultiplier;
+                this.initialClickY = this.mouseY;
+            }
+        }
+        else
+        {
+            this.initialClickY = -1;
+        }
+
+        int i2 = Mouse.getEventDWheel();
+
+        if (i2 != 0)
+        {
+            if (i2 > 0)
+            {
+                i2 = -1;
+            }
+            else if (i2 < 0)
+            {
+                i2 = 1;
+            }
+
+            this.amountScrolled += (float)(i2 * this.slotHeight / 2);
+        }
+
 	}
 
-    @Override
-    protected void drawSlot(int i, int x, int y, int i4, Tessellator tessellator, int i5, int i6){
-        GuiButton button = buttons[i];
-        button.xPosition = x;
-        button.yPosition = y;
-        button.drawButton(this.mc, this.mouseX, this.mouseY);
-    }
+	@Override
+	protected void drawSlot(int p_192637_1_, int p_192637_2_, int p_192637_3_, int p_192637_4_, int p_192637_5_, int p_192637_6_, float p_192637_7_) {
+		GuiButton button = buttons[p_192637_1_];
+		button.x = p_192637_2_;
+		button.y = p_192637_3_;
+		button.drawButton(this.mc, this.mouseX, this.mouseY,p_192637_7_);
+	}
+
 }

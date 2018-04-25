@@ -4,8 +4,8 @@ package com.cabchinoe.minimap.forge;
 import com.cabchinoe.minimap.region.MwChunk;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 
 public class ClientProxy extends CommonProxy {
 
@@ -16,11 +16,7 @@ public class ClientProxy extends CommonProxy {
 
 	public void load() {
 
-
-
-		Object eventhandler = new MwKeyHandler();
-		FMLCommonHandler.instance().bus().register(eventhandler);
-		MinecraftForge.EVENT_BUS.register(eventhandler);
+		MinecraftForge.EVENT_BUS.register(new MwKeyHandler());
 
 		// temporary workaround for user defined key bindings not being loaded
 		// at game start. see https://github.com/MinecraftForge/FML/issues/378

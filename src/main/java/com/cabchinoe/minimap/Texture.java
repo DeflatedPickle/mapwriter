@@ -2,12 +2,15 @@ package com.cabchinoe.minimap;
 
 import java.nio.IntBuffer;
 
-import com.cabchinoe.common.Render;
-import net.minecraft.util.IIcon;
 
+import com.cabchinoe.common.Render;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+@SideOnly(Side.CLIENT)
 public class Texture {
 	
 	private int id;
@@ -17,7 +20,7 @@ public class Texture {
 	
 	// allocate new texture and fill from IntBuffer
 	public Texture(int w, int h, int fillColour, int minFilter, int maxFilter, int textureWrap) {
-		this.id = GL11.glGenTextures();
+		this.id = GlStateManager.generateTexture();
 		this.w = w;
 		this.h = h;
 		this.pixelBuf = MwUtil.allocateDirectIntBuffer(w * h);
@@ -74,7 +77,7 @@ public class Texture {
 	}
 	
 	// Copy a rectangular sub-region of dimensions 'w' x 'h' from the pixel buffer to the array 'pixels'.
-	public synchronized void getRGB(int x, int y, int w, int h, int[] pixels, int offset, int scanSize, IIcon icon) {
+	public synchronized void getRGB(int x, int y, int w, int h, int[] pixels, int offset, int scanSize, TextureAtlasSprite icon) {
 		int bufOffset = (y * this.w) + x;
 		for (int i = 0; i < h; i++) {
 			try 
@@ -109,7 +112,9 @@ public class Texture {
 	}
 	
 	public void bind() {
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.id);
+		synchronized (net.minecraftforge.fml.client.SplashProgress.class){
+			GlStateManager.bindTexture(this.id);
+		}
 	}
 	
 	// set texture scaling and wrapping parameters
@@ -135,11 +140,13 @@ public class Texture {
 	// update texture from pixels in pixelBuf
 	public synchronized void updateTextureArea(int x, int y, int w, int h) {
 		try {
+//			GL11.glPushMatrix();
 			this.bind();
 			GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, this.w);
 			this.pixelBuf.position((y * this.w) + x);
 			GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, w, h, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, this.pixelBuf);
 			GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
+//			GL11.glPopMatrix();
 		} catch (NullPointerException e) {
 			MwUtil.log("MwTexture.updatePixels: null pointer exception (texture %d)", this.id);
 		}

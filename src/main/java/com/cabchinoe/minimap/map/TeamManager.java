@@ -6,9 +6,9 @@ import com.cabchinoe.minimap.Mw;
 import com.cabchinoe.minimap.MwUtil;
 import com.cabchinoe.minimap.forge.MwConfig;
 import com.cabchinoe.minimap.map.mapmode.MapMode;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,7 +82,7 @@ public class TeamManager {
     public synchronized void setTeamData(JsonArray ja){
         this.TeamData.clear();
         for(int j=0; j<ja.size();j++){
-            EntityPlayer player = Mw.instance.mc.thePlayer;
+            EntityPlayer player = Mw.instance.mc.player;
             TeammateData td = new TeammateData(ja.get(j).getAsJsonObject());
             if(td.getId().equals(player.getUniqueID().toString()) || td.entityID == player.getEntityId())
                 continue;
@@ -92,7 +92,7 @@ public class TeamManager {
 
     @SideOnly(Side.CLIENT)
     public synchronized void drawTeammate(MapMode mapMode, MapView mapView,Mw mw) {
-        EntityPlayer player = Mw.instance.mc.thePlayer;
+        EntityPlayer player = Mw.instance.mc.player;
         for (TeammateData tmptd: getTeamData()) {
 //            MwUtil.log("++++++++++++++ DATA  %s %s",tmptd.name,tmptd.getId());
 //            MwUtil.log("++++++++++++++ MY UUID %s %s %s",Mw.instance.mc.thePlayer.getDisplayName(),Mw.instance.mc.thePlayer.getUniqueID().toString(),Mw.instance.mc.thePlayer.getEntityId());
@@ -150,7 +150,7 @@ public class TeamManager {
                     this.colorMap.put(valuesp[0],Integer.parseInt(valuesp[1]));
                 }
             }
-            //MwUtil.log("++++++++++++++++++++++++  lalalala %s",colorMap.values().toString());
+//            MwUtil.log("++++++++++++++++++++++++  lalalala %s",colorMap.values().toString());
         }
     }
 

@@ -2,22 +2,27 @@ package com.cabchinoe.minimap;
 
 import com.cabchinoe.common.Render;
 import com.cabchinoe.minimap.region.BlockColours;
-import com.cabchinoe.minimap.region.BlockColours.BlockType;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.ColorizerFoliage;
+import net.minecraft.world.ColorizerGrass;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 // Static class to generate BlockColours.
 // This is separate from BlockColours because it needs to run in the GL rendering thread
 // whereas the generated BlockColours object is used only in the background thread.
 // So basically split to make it clear that BlockColourGen and the generated BlockColours
 // must not have any interaction after it is generated.
-
+@SideOnly(Side.CLIENT)
 public class BlockColourGen {
 	
-	private static int getIconMapColour(IIcon icon, Texture terrainTexture) {
+	private static int getIconMapColour(TextureAtlasSprite icon, Texture terrainTexture) {
 		// flipped icons have the U and V coords reversed (minU > maxU, minV > maxV).
 		// thanks go to taelnia for fixing this. 
 		int iconX = (int) Math.round(((float) terrainTexture.w) * Math.min(icon.getMinU(), icon.getMaxU()));
@@ -35,53 +40,27 @@ public class BlockColourGen {
 		// stop transparent pixel colours being included in the average.
 		return Render.getAverageColourOfArray(pixels);
 	}
-	
-	private static int adjustBlockColourFromType(BlockColours bc, int blockAndMeta, int blockColour) {
-		// for normal blocks multiply the block colour by the render colour.
-		// for other blocks the block colour will be multiplied by the biome colour.
-        int blockid = blockAndMeta >> 4;
-		Block block = (Block) Block.blockRegistry.getObjectById(blockid);
-		BlockType blockType = bc.getBlockType(blockAndMeta);
-		switch (blockType) {
-		
-		case OPAQUE:
-			blockColour |= 0xff000000;
-		case NORMAL:
-			// fix crash when mods don't implement getRenderColor for all
-			// block meta values.
-			try {
-				int renderColour = block.getRenderColor(blockAndMeta & 0xf);
-				if (renderColour != 0xffffff) {
-					blockColour = Render.multiplyColours(blockColour, 0xff000000 | renderColour);
-				}
-			} catch (RuntimeException e) {
-				// do nothing
-			}
-			break;
-		case LEAVES:
-			// leaves look weird on the map if they are not opaque.
-			// they also look too dark if the render colour is applied.
-			blockColour |= 0xff000000;
-			break;
-		default:
-			break;
-		}
-		return blockColour;
-	}
-	
-	private static void genBiomeColours(BlockColours bc) {
+
+	private static void genBiomeColours(BlockColours bc)
+	{
 		// generate array of foliage, grass, and water colour multipliers
 		// for each biome.
-		
-		for (int i = 0; i < BiomeGenBase.getBiomeGenArray().length; i++) {
-			if (BiomeGenBase.getBiomeGenArray()[i] != null) {
-				bc.setBiomeWaterShading(i, BiomeGenBase.getBiomeGenArray()[i].getWaterColorMultiplier() & 0xffffff);
-				bc.setBiomeGrassShading(i, BiomeGenBase.getBiomeGenArray()[i].getBiomeGrassColor(0,0,0) & 0xffffff); //FIXME 0,0,0?
-				bc.setBiomeFoliageShading(i, BiomeGenBase.getBiomeGenArray()[i].getBiomeFoliageColor(0,0,0) & 0xffffff); //FIXME 0,0,0?
-			} else {
-				bc.setBiomeWaterShading(i, 0xffffff);
-				bc.setBiomeGrassShading(i, 0xffffff);
-				bc.setBiomeFoliageShading(i, 0xffffff);
+
+		for (Biome biome : Biome.REGISTRY)
+		{
+			if (biome != null)
+			{
+				double temp = MathHelper.clamp(biome.getTemperature(), 0.0F, 1.0F);
+				double rain = MathHelper.clamp(biome.getRainfall(), 0.0F, 1.0F);
+				int grasscolor = ColorizerGrass.getGrassColor(temp, rain);
+				int foliagecolor = ColorizerFoliage.getFoliageColor(temp, rain);
+				int watercolor = biome.getWaterColorMultiplier();
+
+				bc.setBiomeData(
+						biome.getBiomeName(),
+						watercolor & 0xffffff,
+						grasscolor & 0xffffff,
+						foliagecolor & 0xffffff);
 			}
 		}
 	}
@@ -97,7 +76,7 @@ public class BlockColourGen {
 		// get the bound texture id
 		//int terrainTextureId = Render.getBoundTextureId();
 		
-		int terrainTextureId = Minecraft.getMinecraft().renderEngine.getTexture(TextureMap.locationBlocksTexture).getGlTextureId();
+		int terrainTextureId = Minecraft.getMinecraft().renderEngine.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).getGlTextureId();
 		
 		// create texture object from the currently bound GL texture
 		if (terrainTextureId == 0) {
@@ -115,20 +94,19 @@ public class BlockColourGen {
 		int b_count = 0;
 		int s_count = 0;
 
-		for (Object oblock : Block.blockRegistry){
+		for (Object oblock : Block.REGISTRY){
 			Block block = (Block)oblock;
 			int blockID = block.getIdFromBlock(block);
-			
-			for (int dv = 0; dv < 17; dv++) {
+			for (int dv = 0; dv < 16; dv++) {
 				
-				int blockAndMeta = ((blockID & 0xfff) << 4) | (dv & 0xf);
 				int blockColour = 0;
-				
-				if (block != null) {
-					
-					IIcon icon = null;
+
+				if (block != null && block.getRenderType(block.getDefaultState()) != EnumBlockRenderType.INVISIBLE ) {//&& block.getRenderType() != -1
+
+					TextureAtlasSprite icon = null;
 					try {
-						icon = block.getIcon(1, dv);
+						icon = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(block.getStateFromMeta(dv));
+						//block.getIcon(1, dv);
 					} catch (Exception e) {
 						//MwUtil.log("genFromTextures: exception caught when requesting block texture for %03x:%x", blockID, dv);
 						//e.printStackTrace();
@@ -149,11 +127,12 @@ public class BlockColourGen {
 							
 							//request icon with meta 16, carpenterblocks uses this method to get the real texture
 							//this makes the carpenterblocks render as brown blocks on the map
-							if (Block.blockRegistry.getNameForObject(block).contains("CarpentersBlocks"))
-							{
-								icon = block.getIcon(1, 16);	
-								blockColour = getIconMapColour(icon, terrainTexture);
-							}
+//							if (Block.REGISTRY.getNameForObject(block).getResourceDomain().contains("CarpentersBlocks"))
+//							{
+////								icon = block.getIcon(1, 16);
+//								icon = icon = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(block.getStateFromMeta(16));
+//								blockColour = getIconMapColour(icon, terrainTexture);
+//							}
 							u1Last = u1;
 							u2Last = u2;
 							v1Last = v1;
@@ -173,9 +152,7 @@ public class BlockColourGen {
 					//	}
 					//} catch (NullPointerException e) {
 					//}
-					
-					blockColour = adjustBlockColourFromType(bc, blockAndMeta, blockColour);
-					bc.setColour(blockAndMeta, blockColour);
+					bc.setColour(block.delegate.name().toString(), String.valueOf(dv), blockColour);
 				}
 
 			}

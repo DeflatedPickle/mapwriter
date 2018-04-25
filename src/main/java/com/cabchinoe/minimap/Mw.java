@@ -1,5 +1,8 @@
 package com.cabchinoe.minimap;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.cabchinoe.common.Render;
 import com.cabchinoe.minimap.forge.MwConfig;
 import com.cabchinoe.minimap.forge.MwForge;
@@ -18,6 +21,8 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -85,7 +90,6 @@ public class Mw {
 	// directories
 	public static File worldDir = null;
 	public static File saveDir = new File(new File(mc.mcDataDir, "saves"), "minimap");
-
 	public File imageDir = null;
 	
 	// configuration options
@@ -157,12 +161,11 @@ public class Mw {
 
 	public static Mw instance;
 	private boolean closing = false;
-
 	public Mw(MwConfig config) {
 		// client only initialization
 		// oops, no idea why I was using a ModLoader method to get the Minecraft instance before
 		this.mc = Minecraft.getMinecraft();
-
+		
 		// load config
 		this.config = config;
 		
@@ -189,7 +192,7 @@ public class Mw {
 		
 		// if something went wrong make sure the name is not blank
 		// (causes crash on start up due to empty configuration section)
-		if (this.worldName == "") {
+		if (this.worldName.equals("")) {
 			this.worldName = "default";
 		}
 		return this.worldName;
@@ -286,17 +289,17 @@ public class Mw {
 	// called every tick
 	public void updatePlayer() {
 		// get player pos
-		this.playerX = (double) this.mc.thePlayer.posX;
-		this.playerY = (double) this.mc.thePlayer.posY;
-		this.playerZ = (double) this.mc.thePlayer.posZ;
+		this.playerX =  this.mc.player.posX;
+		this.playerY =  this.mc.player.posY;
+		this.playerZ =  this.mc.player.posZ;
 		this.playerXInt = (int) Math.floor(this.playerX);
 		this.playerYInt = (int) Math.floor(this.playerY);
 		this.playerZInt = (int) Math.floor(this.playerZ);
 		
 		// rotationYaw of 0 points due north, we want it to point due east instead
 		// so add pi/2 radians (90 degrees)
-		this.playerHeading = Math.toRadians(this.mc.thePlayer.rotationYaw) + (Math.PI / 2.0D);
-		this.mapRotationDegrees = (-this.mc.thePlayer.rotationYaw + 180)%360.0;
+		this.playerHeading = Math.toRadians(this.mc.player.rotationYaw) + (Math.PI / 2.0D);
+		this.mapRotationDegrees = (-this.mc.player.rotationYaw + 180)%360.0;
 		
 		// set by onWorldLoad
 		//this.playerDimension = this.mc.theWorld.provider.dimensionId;
@@ -352,7 +355,6 @@ public class Mw {
 			// generate block colours from current texture pack
 			MwUtil.logInfo("generating block colours");
 			// block type overrides need to be loaded before the block colours are generated
-//			this.loadBlockColourOverrides(bc);
 			BlockColourGen.genBlockColours(bc);
 			// load overrides again to override block and biome colours
 			this.loadBlockColourOverrides(bc);
@@ -406,17 +408,17 @@ public class Mw {
 			return;
 		}
 		
-		if ((this.mc.theWorld == null) || (this.mc.thePlayer == null)) {
-			MwUtil.log("minimap load: world or player is null, cannot load yet");
+		if ((this.mc.world == null) || (this.mc.player == null)) {
+			MwUtil.log("minimap world or player is null, cannot load yet");
 			return;
 		}
 		
 		MwUtil.log("minimap loading...");
+		
 		this.multiplayer = !this.mc.isIntegratedServerRunning();
-
-
+		
 		this.loadConfig();
-
+		
 		this.worldName = this.getWorldName();
 		if (this.multiplayer) {
 			this.worldDir = new File(new File(saveDir, "minimap_mp_worlds"), this.worldName);
@@ -468,7 +470,7 @@ public class Mw {
 		this.regionManager = new RegionManager(this.worldDir, this.imageDir, this.blockColours, this.minZoom, this.maxZoom);
 		// overlay manager depends on mapTexture
 		this.miniMap = new MiniMap(this);
-		this.miniMap.view.setDimension(this.mc.thePlayer.dimension);
+		this.miniMap.view.setDimension(this.mc.player.dimension);
 		
 		this.chunkManager = new ChunkManager(this);
 
@@ -480,12 +482,12 @@ public class Mw {
 			//this.regionManager.recreateAllZoomLevels();
 		//}
 		
-		MwUtil.log("load  Done");
+		MwUtil.log("minimap load: Done");
 	}
 	
 	public void close() {
 		
-		MwUtil.log("closing...");
+		MwUtil.log("minimap closing...");
 		
 		if (this.ready) {
 			this.ready = false;
@@ -503,7 +505,6 @@ public class Mw {
 				MwUtil.log("error: timeout waiting for tasks to finish");
 			}
 
-			
 			this.playerTrail.close();
 			
 			this.markerManager.save(this.worldConfig, catMarkers);
@@ -517,7 +518,7 @@ public class Mw {
 			this.mapTexture.close();
 
 			this.tickCounter = 0;
-			MwForge.TM.removeTeammate(this.mc.thePlayer.getUniqueID().toString());
+			MwForge.TM.removeTeammate(this.mc.player.getUniqueID().toString());
 			this.clientTM.save(this.worldConfig, "colors");
 
 			this.saveWorldConfig();
@@ -538,7 +539,7 @@ public class Mw {
 		//		world.getWorldInfo().getWorldName(),
 		//		world.provider.dimensionId);
 		
-		this.playerDimension = world.provider.dimensionId;
+		this.playerDimension = world.provider.getDimension();
 		if (this.ready) {
 			this.addDimension(this.playerDimension);
 			this.miniMap.view.setDimension(this.playerDimension);
@@ -556,7 +557,7 @@ public class Mw {
 	public void onTick() {
 
 		this.load();
-		if (this.ready && (this.mc.thePlayer != null)) {
+		if (this.ready && (this.mc.player != null)) {
 			
 			this.updatePlayer();
 			
@@ -586,7 +587,7 @@ public class Mw {
 			while (!this.executor.processTaskQueue() && (maxTasks > 0)) {
 				maxTasks--;
 			}
-			//shan ni mei
+			
 			this.chunkManager.onTick();
 			
 			// update GL texture of mapTexture if updated
@@ -599,6 +600,7 @@ public class Mw {
 	    	//	MwUtil.log("tick %d", this.tickCounter);
 	    	//}
 	    	this.playerTrail.onTick();
+	    	
 			this.tickCounter++;
 		}
 	}
@@ -606,11 +608,11 @@ public class Mw {
 	// add chunk to the set of loaded chunks
 	public void onChunkLoad(Chunk chunk) {
 		this.load();
-		if ((chunk != null) && (chunk.worldObj instanceof net.minecraft.client.multiplayer.WorldClient)) {
+		if ((chunk != null) && (chunk.getWorld() instanceof net.minecraft.client.multiplayer.WorldClient)) {
 			if (this.ready) {
 				this.chunkManager.addChunk(chunk);
 			} else {
-				MwUtil.logInfo("missed chunk (%d, %d)", chunk.xPosition, chunk.zPosition);
+				MwUtil.logInfo("missed chunk (%d, %d)", chunk.x, chunk.z);
 			}
 		}
 	}
@@ -618,7 +620,7 @@ public class Mw {
 	// remove chunk from the set of loaded chunks.
 	// convert to mwchunk and write chunk to region file if in multiplayer.
 	public void onChunkUnload(Chunk chunk) {
-		if (this.ready && (chunk != null) && (chunk.worldObj instanceof net.minecraft.client.multiplayer.WorldClient)) {
+		if (this.ready && (chunk != null) && (chunk.getWorld() instanceof net.minecraft.client.multiplayer.WorldClient)) {
 			this.chunkManager.removeChunk(chunk);
 		}
 	}

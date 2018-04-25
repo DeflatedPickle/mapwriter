@@ -1,11 +1,17 @@
 package com.cabchinoe.gotcha;
 
-import cpw.mods.fml.common.*;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLModContainer;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,21 +21,22 @@ import java.util.List;
 /**
  * Created by n3212 on 2017/9/19.
  */
-@Mod(modid=GotChaForge.ModName, name=GotChaForge.ModName, version=GotChaForge.version, dependencies = "", acceptableRemoteVersions="*")
+@Mod(modid= GotChaForge.ModName, name= GotChaForge.ModName, version= GotChaForge.version, dependencies = "", acceptableRemoteVersions="*")
 public class GotChaForge {
     public static final String ModName = "gotcha";
-    public static final String version = "1.7.10";
+    public static final String version = "1.12";
     public static HashMap<String,String> ModMap = new HashMap<String, String>();
 
     @Mod.Instance(ModName)
     public static GotChaForge instance;
     public static Logger logger = LogManager.getLogger(ModName);
 
+    @SideOnly(Side.CLIENT)
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        FMLCommonHandler.instance().bus().register(this);
-        MinecraftForge.EVENT_BUS.register(this);
+//        FMLCommonHandler.instance().bus().register(this);
         GotCha g = new GotCha();
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Mod.EventHandler
@@ -43,9 +50,11 @@ public class GotChaForge {
         }
     }
 
+
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void renderMap(RenderGameOverlayEvent.Post event) {
-        if (event.type == RenderGameOverlayEvent.ElementType.ALL) {
+        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             GotCha.instance.OnTick();
         }
     }

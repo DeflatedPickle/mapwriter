@@ -3,11 +3,14 @@ package com.cabchinoe.minimap.map;
 import java.awt.Point;
 import java.util.LinkedList;
 
-import com.cabchinoe.common.Render;
 import com.cabchinoe.minimap.Mw;
+import com.cabchinoe.common.Render;
 import com.cabchinoe.minimap.map.mapmode.MapMode;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class Trail {
 	
 	class TrailMarker {

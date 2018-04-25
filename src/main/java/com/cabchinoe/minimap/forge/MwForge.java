@@ -2,21 +2,41 @@ package com.cabchinoe.minimap.forge;
 
 import java.io.File;
 
+import com.cabchinoe.minimap.item.itemTPbook;
 import com.google.gson.JsonObject;
 import com.cabchinoe.minimap.MwUtil;
 import com.cabchinoe.minimap.forge.server.MinimapMessage;
-import com.cabchinoe.minimap.item.itemTPbook;
 import com.cabchinoe.minimap.map.TeamManager;
 import com.cabchinoe.minimap.map.TeammateData;
-import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,16 +44,8 @@ import com.cabchinoe.minimap.Mw;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent;
 
-@Mod(modid="minimap", name="minimap", version="2.1.7.10", acceptableRemoteVersions = "*")
+@Mod(modid="minimap", name="minimap", version="2.1.12", acceptableRemoteVersions = "*")
 public class MwForge {
 	
 	@Instance("minimap")
@@ -42,30 +54,32 @@ public class MwForge {
 	
 	@SidedProxy(clientSide="com.cabchinoe.minimap.forge.ClientProxy", serverSide="com.cabchinoe.minimap.forge.CommonProxy")
 	public static CommonProxy proxy;
+	
 	public static Logger logger = LogManager.getLogger("minimap");
 
 	public static TeamManager TM = new TeamManager();
 
 	public static final SimpleNetworkWrapper simpleNetworkWrapperInstance = NetworkRegistry.INSTANCE.newSimpleChannel("minimap");
-	public static itemTPbook tpbook;
+	public static itemTPbook tpbook = new itemTPbook();
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-        FMLCommonHandler.instance().bus().register(this);
+//        FMLCommonHandler.instance().bus().register(this);
         MinecraftForge.EVENT_BUS.register(this);
         //MwUtil.log(Minecraft.getMinecraft().toString());
 //        proxy.preInit(new File(Mw.saveDir,"minimap.cfg"));
 
-		simpleNetworkWrapperInstance.registerMessage(com.cabchinoe.minimap.forge.server.MinimapMessageHandler.class, MinimapMessage.class, 0, Side.SERVER);
-		simpleNetworkWrapperInstance.registerMessage(com.cabchinoe.minimap.forge.client.MinimapMessageHandler.class, MinimapMessage.class, 0, Side.CLIENT);
+		simpleNetworkWrapperInstance.registerMessage(com.cabchinoe.minimap.forge.server.MinimapMessageHandler.class, MinimapMessage.class, 123, Side.SERVER);
+		simpleNetworkWrapperInstance.registerMessage(com.cabchinoe.minimap.forge.client.MinimapMessageHandler.class, MinimapMessage.class, 123, Side.CLIENT);
 
 		tpbook = new itemTPbook();
 		tpbook.setUnlocalizedName("minimap."+tpbook.itemName);
-		tpbook.setCreativeTab(CreativeTabs.tabTools).setTextureName("minimap:"+tpbook.itemName);
+		tpbook.setCreativeTab(CreativeTabs.TOOLS).setRegistryName("minimap",tpbook.itemName);
 		tpbook.setMaxStackSize(1);
-		GameRegistry.registerItem(tpbook,tpbook.itemName,"minimap");
-
+//		GameRegistry.registerItem(tpbook,tpbook.itemName,"minimap");
+		GameRegistry.findRegistry(Item.class).register(tpbook);
+		ModelLoader.setCustomModelResourceLocation(tpbook, 0, new ModelResourceLocation( tpbook.getRegistryName(), "inventory"));
 	}
-	
+
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
 		proxy.load();
@@ -78,17 +92,19 @@ public class MwForge {
 	
     @SubscribeEvent
     public void renderMap(RenderGameOverlayEvent.Post event){
-        if(event.type == RenderGameOverlayEvent.ElementType.ALL){
+        if(event.getType() == RenderGameOverlayEvent.ElementType.ALL){
             Mw.instance.onTick();
         }
     }
 
-
     @SubscribeEvent
+	@SideOnly(Side.CLIENT)
     public void onConnected(FMLNetworkEvent.ClientConnectedToServerEvent event){
-    	if (!event.isLocal) {
-			Mw.worldName = Minecraft.getMinecraft().currentServerData.serverName;
+    	if (!event.isLocal()) {
+    		//InetSocketAddress address = (InetSocketAddress) event.manager.getSocketAddress();
+			Mw.worldName = Minecraft.getMinecraft().getCurrentServerData().serverName;
 			initMinimap(new File(Mw.saveDir,"minimap.cfg"));
+			//MwUtil.log("WWWWWWWWWWWWWWWWW  %s",Minecraft.getMinecraft().currentServerData.getNBTCompound().getString("name"));
     	}
     }
 
@@ -105,12 +121,12 @@ public class MwForge {
 
 	@SubscribeEvent
 	public void eventPlayerUpdate(LivingEvent.LivingUpdateEvent e){
-    	if(!e.entity.worldObj.isRemote && Mw.instance.tickCounter%50==0) {
-			if (e.entity instanceof EntityPlayerMP) {
-				EntityPlayerMP player = (EntityPlayerMP)e.entity;
+    	if(!e.getEntity().world.isRemote && Mw.instance.tickCounter%50==0) {
+			if (e.getEntity() instanceof EntityPlayerMP) {
+				EntityPlayerMP player = (EntityPlayerMP)e.getEntity();
 				if(TM.isVisible(player.getUniqueID().toString())) {
 					TM.updateTeammate(player.getUniqueID().toString(), new TeammateData(
-						player.getUniqueID().toString(), player.getEntityId(), player.getDisplayName(),
+						player.getUniqueID().toString(), player.getEntityId(), player.getDisplayNameString(),
 						player.posX, player.posY, player.posZ, Math.toRadians(player.rotationYaw) + (Math.PI / 2.0D), player.dimension
 					));
 				}
@@ -120,7 +136,7 @@ public class MwForge {
 
 	@SubscribeEvent
 	public void eventPlayerLeave(PlayerEvent.PlayerLoggedOutEvent e){
-		if(!e.player.worldObj.isRemote) {
+		if(!e.player.world.isRemote) {
 			if (e.player instanceof EntityPlayerMP) {
 				TM.removeTeammate(e.player.getUniqueID().toString());
 			}
@@ -128,6 +144,7 @@ public class MwForge {
 	}
 
 	@EventHandler
+	@SideOnly(Side.CLIENT)
 	public void IntergratedServerStart(FMLServerAboutToStartEvent event){
 		if(Minecraft.getMinecraft().isIntegratedServerRunning()){
 			Mw.saveDir = new File(new File(new File(Mw.mc.mcDataDir, "saves"),Mw.mc.getIntegratedServer().getFolderName()),"minimap");

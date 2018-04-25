@@ -1,10 +1,11 @@
 package com.cabchinoe.minimap.forge.server;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.cabchinoe.minimap.MwUtil;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.io.UnsupportedEncodingException;
 
@@ -24,6 +25,8 @@ public class MinimapMessage implements IMessage {
             buf.writeBytes(JsonObject.toString().getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        }catch (Exception e){
+            MwUtil.log(e.toString());
         }
 
     }

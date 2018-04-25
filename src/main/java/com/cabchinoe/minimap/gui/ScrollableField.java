@@ -105,5 +105,4 @@ public abstract class ScrollableField extends GuiScreen {
 
 	public abstract void setFocused(Boolean focus);
 
-	public abstract Boolean isFocused();
 }

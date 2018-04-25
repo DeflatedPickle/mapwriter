@@ -4,12 +4,17 @@ import com.cabchinoe.gotcha.gui.BlockTip;
 import com.cabchinoe.gotcha.gui.EntityTip;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 
 
 /**
  * Created by n3212 on 2017/9/19.
  */
+@SideOnly(Side.CLIENT)
 public class GotCha {
     public static Minecraft mc = Minecraft.getMinecraft();
     public static GotCha instance;
@@ -31,12 +36,17 @@ public class GotCha {
                 tracer.trace();
             }
             int drawX = 4,drawY = 4;
-            MovingObjectPosition target = tracer.getCurrent();
+            RayTraceResult target = tracer.getCurrent();
             if(target!= null){
-                if (target.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK){
+                if (target.typeOfHit == RayTraceResult.Type.BLOCK){
                     blockTip.draw(target);
-                }else if(target.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY ){
-                    drawY = entityTip.draw(target,drawX);
+                }else if(target.typeOfHit == RayTraceResult.Type.ENTITY ){
+                    if(target.entityHit instanceof EntityArmorStand){
+                        blockTip.draw(target);
+                    }
+                    else{
+                        drawY = entityTip.draw(target);
+                    }
                 }
             }
             equipmentListener.draw(drawX,drawY);

@@ -4,7 +4,10 @@ import com.cabchinoe.minimap.Mw;
 import com.cabchinoe.minimap.map.MapTexture;
 import com.cabchinoe.minimap.region.MwChunk;
 import com.cabchinoe.minimap.region.RegionManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class UpdateSurfaceChunksTask extends Task {
 	MwChunk[] chunkArray;
 	RegionManager regionManager;

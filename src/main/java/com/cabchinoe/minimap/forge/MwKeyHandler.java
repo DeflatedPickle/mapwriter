@@ -3,25 +3,26 @@ package com.cabchinoe.minimap.forge;
 import java.util.ArrayList;
 
 import com.cabchinoe.minimap.Mw;
-import modwarriors.notenoughkeys.api.Api;
 import modwarriors.notenoughkeys.api.KeyBindingPressedEvent;
 import net.minecraft.client.settings.KeyBinding;
-
+import modwarriors.notenoughkeys.api.Api;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.InputEvent;
-import cpw.mods.fml.common.Optional;
-
+@SideOnly(Side.CLIENT)
 public class MwKeyHandler {
 	
 	public static KeyBinding keyMapGui = new KeyBinding("key.mw_open_gui", Keyboard.KEY_M, "minimap");
 //	public static KeyBinding keyNewMarker = new KeyBinding("key.mw_new_marker", Keyboard.KEY_INSERT, "minimap");
 //	public static KeyBinding keyMapMode = new KeyBinding("key.mw_next_map_mode", Keyboard.KEY_N, "minimap");
 //	public static KeyBinding keyNextGroup = new KeyBinding("key.mw_next_marker_group", Keyboard.KEY_COMMA, "minimap");
-	public static KeyBinding keyTeleport = new KeyBinding("key.mw_teleport", Keyboard.KEY_PERIOD, "minimap");
+//	public static KeyBinding keyTeleport = new KeyBinding("key.mw_teleport", Keyboard.KEY_PERIOD, "minimap");
 	public static KeyBinding keyZoomIn = new KeyBinding("key.mw_zoom_in", Keyboard.KEY_PRIOR, "minimap");
 	public static KeyBinding keyZoomOut = new KeyBinding("key.mw_zoom_out", Keyboard.KEY_NEXT, "minimap");
 	public static KeyBinding keyUndergroundMode = new KeyBinding("key.mw_underground_mode", Keyboard.KEY_U, "minimap");
@@ -33,7 +34,7 @@ public class MwKeyHandler {
 //		keyNewMarker,
 		keyMapScale,
 //		keyNextGroup,
-		keyTeleport,
+//		keyTeleport,
 		keyZoomIn,
 		keyZoomOut,
 		keyUndergroundMode,
@@ -70,7 +71,7 @@ public class MwKeyHandler {
 	
 	@Optional.Method(modid = "notenoughkeys")
 	@SubscribeEvent
-	public void keyEventSpecial(KeyBindingPressedEvent event) 
+	public void keyEventSpecial(KeyBindingPressedEvent event)
 	{
 		if (event.isKeyBindingPressed)
 		{

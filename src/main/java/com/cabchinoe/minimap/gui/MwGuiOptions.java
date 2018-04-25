@@ -1,6 +1,5 @@
 package com.cabchinoe.minimap.gui;
 
-
 import com.cabchinoe.minimap.Mw;
 import com.cabchinoe.minimap.map.MapView;
 import net.minecraft.client.gui.GuiButton;
@@ -8,13 +7,15 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 
+import java.io.IOException;
+
 public class MwGuiOptions extends GuiScreen {
 	
 	private final Mw mw;
 	private final GuiScreen parentScreen;
 	private MwGuiOptionSlot optionSlot = null;
 	private MapView mv;
-	private GuiButton donebtn;
+    private GuiButton donebtn;
 	public MwGuiOptions(GuiScreen parentScreen, Mw mw, MapView mv) {
 		this.mw = mw;
 		this.mv = mv;
@@ -41,15 +42,15 @@ public class MwGuiOptions extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float f) {
         this.drawDefaultBackground();
         this.optionSlot.drawScreen(mouseX, mouseY, f);
-        this.drawCenteredString(this.fontRendererObj, I18n.format("minimap.guioption.mwOptions"), this.width / 2, 10, 0xffffff);
+        this.drawCenteredString(this.fontRenderer, I18n.format("minimap.guioption.mwOptions"), this.width / 2, 10, 0xffffff);
         super.drawScreen(mouseX, mouseY, f);
     }
 
-    protected void mouseClicked(int x, int y, int button) {
+    protected void mouseClicked(int x, int y, int button) throws IOException {
         super.mouseClicked(x, y, button);
     }
 
-    protected void keyTyped(char c, int k) {
+    protected void keyTyped(char c, int k) throws IOException{
         if (this.optionSlot.keyTyped(c, k)) {
             switch (k) {
                 case Keyboard.KEY_ESCAPE:

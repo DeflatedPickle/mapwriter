@@ -5,6 +5,8 @@ import net.minecraft.client.gui.GuiTextField;
 
 import org.lwjgl.input.Keyboard;
 
+import java.io.IOException;
+
 public class MwGuiTextDialog extends GuiScreen {
 
 	private final GuiScreen parentScreen;
@@ -33,7 +35,7 @@ public class MwGuiTextDialog extends GuiScreen {
 			this.text = this.textField.getText();
 		}
     	int w = this.width * textDialogWidthPercent / 100;
-    	this.textField = new GuiTextField(this.fontRendererObj,
+    	this.textField = new GuiTextField(0,this.fontRenderer,
     			(this.width - w) / 2 + 5,
     			textDialogY,
     			w - 10,
@@ -109,7 +111,7 @@ public class MwGuiTextDialog extends GuiScreen {
     			textDialogErrorY + 14,
     			0x80000000);
     	this.drawCenteredString(
-    			this.fontRendererObj,
+    			this.fontRenderer,
         		this.title,
         		this.width / 2,
         		textDialogTitleY,
@@ -117,7 +119,7 @@ public class MwGuiTextDialog extends GuiScreen {
     	this.textField.drawTextBox();
     	if (this.showError) {
 	    	this.drawCenteredString(
-	    			this.fontRendererObj,
+	    			this.fontRenderer,
 	        		this.error,
 	        		this.width / 2,
 	        		textDialogErrorY,
@@ -127,8 +129,9 @@ public class MwGuiTextDialog extends GuiScreen {
         super.drawScreen(mouseX, mouseY, f);
     }
 
-    protected void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
+    protected void mouseClicked(int x, int y, int button)throws IOException {
+
+		super.mouseClicked(x, y, button);
     }
 
     protected void keyTyped(char c, int key) {

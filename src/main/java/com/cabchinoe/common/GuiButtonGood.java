@@ -21,12 +21,12 @@ public class GuiButtonGood extends GuiButton {
     private int tooltipWidth = -1;
     private boolean drawBackground = true;
 
-    private ResourceLocation resourceButtonCustom = null;
+    protected ResourceLocation resourceButtonCustom = null;
 
-    private ResourceLocation resourceButtonCustomPressed =  null;
+    protected ResourceLocation resourceButtonCustomPressed =  null;
 
-    private double TexturePositionX = this.xPosition;
-    private double TexturePositionY = this.yPosition;
+    private double TexturePositionX = this.x;
+    private double TexturePositionY = this.y;
     private double TextureWidth = this.width;
     private double TextureHeight = this.height;
 
@@ -64,11 +64,11 @@ public class GuiButtonGood extends GuiButton {
     }
 
     @Override
-    public void drawButton(Minecraft minecraft, int i, int j) {
+    public void drawButton(Minecraft minecraft, int i, int j, float partialTicks) {
         if(this.drawBackground) {
-            super.drawButton(minecraft, i, j);
+            super.drawButton(minecraft, i, j,partialTicks);
         } else {
-            this.drawString(minecraft.fontRenderer, this.displayString, this.xPosition,this.yPosition + (this.height - 8) / 2, 0x999999);
+            this.drawString(minecraft.fontRenderer, this.displayString, this.x,this.y + (this.height - 8) / 2, 0x999999);
         }
         if(resourceButtonCustomPressed !=null || resourceButtonCustom!=null) {
             if (resourceButtonCustom != null) {
@@ -127,11 +127,11 @@ public class GuiButtonGood extends GuiButton {
     }
 
     protected boolean isMouseOverButton(int i, int j) {
-        return i >= xPosition && j >= yPosition && i < (xPosition + width) && j < (yPosition + height);
+        return i >= x && j >= y && i < (x + width) && j < (y + height);
     }
 
     public void setTooltip(String tooltip) {
-        tooltip = tooltip.trim().replace("\\n", "\n");
+        tooltip = tooltip.replace("\\n", "\n");
         this.tooltip = tooltip;
         if(this.tooltip!=null && !this.tooltip.equals(""))
             this.tooltipLines = tooltip.split("\n");

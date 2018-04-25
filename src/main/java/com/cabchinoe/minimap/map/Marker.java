@@ -5,7 +5,10 @@ import java.awt.Point;
 import com.cabchinoe.common.Render;
 import com.cabchinoe.minimap.MwUtil;
 import com.cabchinoe.minimap.map.mapmode.MapMode;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class Marker {
 	public final String name;
 	public final String groupName;

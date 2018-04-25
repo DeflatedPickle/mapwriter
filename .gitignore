@@ -1,8 +1,10 @@
+.idea
 .git
 .svn
 .gradle
 build
 out
+run
 classes
 *.iml
 *.ipr

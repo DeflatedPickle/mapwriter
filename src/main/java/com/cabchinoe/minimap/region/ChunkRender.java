@@ -1,5 +1,12 @@
 package com.cabchinoe.minimap.region;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class ChunkRender {
 	
 	public static final byte FLAG_UNPROCESSED = 0;
@@ -76,14 +83,17 @@ public class ChunkRender {
 		double g = 0.0;
 		double b = 0.0;
 		for (; y > 0; y--) {
-			int blockAndMeta = chunk.getBlockAndMetadata(x, y, z);
-			
-			int c1 = bc.getColour(blockAndMeta);
+			IBlockState blockState = chunk.getBlockState(x, y, z);
+			int c1 = bc.getColour(blockState);
 			int alpha = (c1 >> 24) & 0xff;
+			if (c1 == -8650628)
+			{
+				alpha = 0;
+			}
 			// no need to process block if it is transparent
 			if (alpha > 0) {
-				int biome = chunk.getBiome(x, z);
-				int c2 = bc.getBiomeColour(blockAndMeta, biome);
+				int biome = chunk.getBiome(x, y, z);
+				int c2 = bc.getBiomeColour(blockState, biome);
 				
 				// extract colour components as normalized doubles
 				double c1A = (double) (alpha) / 255.0;
@@ -154,14 +164,20 @@ public class ChunkRender {
 				int y;
 				if (dimensionHasCeiling) {
 					for (y = 127; y >= 0; y--) {
-						int blockAndMeta = chunk.getBlockAndMetadata(x, y, z);
-						int alpha = (bc.getColour(blockAndMeta) >> 24) & 0xff;
+						IBlockState blockState = chunk.getBlockState(x, y, z);
+						int color = bc.getColour(blockState);
+						int alpha = (color >> 24) & 0xff;
+
+						if (color == -8650628)
+						{
+							alpha = 0;
+						}
 						if (alpha != 0xff) {
 							break;
 						}
 					}
 				} else {
-					y = chunkMaxY;
+					y = chunkMaxY - 1;
 				}
 				
 				int pixelOffset = offset + (z * scanSize) + x;
@@ -189,8 +205,13 @@ public class ChunkRender {
 				// towards the sky from startY
 				int lastNonTransparentY = startY;
 				for (int y = startY; y < chunk.getMaxY(); y++) {
-					int blockAndMeta = chunk.getBlockAndMetadata(x, y, z);
-					int alpha = (bc.getColour(blockAndMeta) >> 24) & 0xff;
+					IBlockState blockState = chunk.getBlockState(x, y, z);
+					int color = bc.getColour(blockState);
+					int alpha = (color >> 24) & 0xff;
+					if (color == -8650628)
+					{
+						alpha = 0;
+					}
 					if (alpha == 0xff) {
 						break;
 					}

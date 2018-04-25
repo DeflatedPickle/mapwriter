@@ -1,8 +1,8 @@
 package com.cabchinoe.minimap.gui;
 
 import java.awt.Point;
+import java.io.IOException;
 
-import com.google.gson.JsonObject;
 import com.cabchinoe.common.GuiButtonGood;
 import com.cabchinoe.minimap.Mw;
 import com.cabchinoe.minimap.MwUtil;
@@ -19,8 +19,7 @@ import com.cabchinoe.minimap.region.BiomeNameTransfer;
 import com.cabchinoe.minimap.region.MwChunk;
 import com.cabchinoe.minimap.tasks.MergeTask;
 import com.cabchinoe.minimap.tasks.RebuildRegionsTask;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import com.google.gson.JsonObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.client.gui.GuiButton;
@@ -28,6 +27,9 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -65,15 +67,15 @@ public class MwGui extends GuiScreen {
     private Label dimensionLabel;
 //    private Label groupLabel;
     private Label overlayLabel;
-    private String Tips = "";
+	private String Tips = "";
 	private long showTime = 0;
 
     private GuiButtonGood delbtn;
     private GuiButtonGood locbtn;
 	private GuiButtonGood tpbtn;
 
-    public ItemStack itemStack=null;
-    public EntityPlayer entityPlayer=null;
+	public ItemStack itemStack=null;
+	public EntityPlayer entityPlayer=null;
     
     class Label {
     	int x = 0, y = 0, w = 1, h = 12;
@@ -83,9 +85,9 @@ public class MwGui extends GuiScreen {
     	public void draw(int x, int y, String s) {
     		this.x = x;
     		this.y = y;
-    		this.w = MwGui.this.fontRendererObj.getStringWidth(s) + 4;
+    		this.w = MwGui.this.fontRenderer.getStringWidth(s) + 4;
     		MwGui.drawRect(this.x, this.y, this.x + this.w, this.y + this.h, 0x80000000);
-    		MwGui.this.drawString(MwGui.this.fontRendererObj, s, this.x + 2, this.y + 2, 0xffffff);
+    		MwGui.this.drawString(MwGui.this.fontRenderer, s, this.x + 2, this.y + 2, 0xffffff);
     	}
     	
     	public void drawToRightOf(Label label, String s) {
@@ -98,27 +100,26 @@ public class MwGui extends GuiScreen {
     }
     
     public MwGui(Mw mw) {
-    	this.mw = mw;
-    	this.init();
-    }
-
-    private void init(){
-		this.mapMode = new FullScreenMapMode(this.mw.config);
-		this.mapView = new MapView(this.mw);
-		this.map = new MapRenderer(this.mw, this.mapMode, this.mapView);
-
-		this.mapView.setDimension(this.mw.miniMap.view.getDimension());
-		this.mapView.setViewCentreScaled(this.mw.playerX, this.mw.playerZ, this.mw.playerDimension);
-		this.mapView.setZoomLevel(0);
-
-		this.helpLabel = new Label();
-		this.optionsLabel = new Label();
-		this.dimensionLabel = new Label();
-//    	this.groupLabel = new Label();
-		this.overlayLabel = new Label();
+		this.mw = mw;
+		this.init();
 	}
 
-    public MwGui(Mw mw, ItemStack itemStack, EntityPlayer entityPlayer){
+	private void init(){
+    	this.mapMode = new FullScreenMapMode(mw.config);
+    	this.mapView = new MapView(this.mw);
+    	this.map = new MapRenderer(this.mw, this.mapMode, this.mapView);
+    	
+    	this.mapView.setDimension(this.mw.miniMap.view.getDimension());
+    	this.mapView.setViewCentreScaled(this.mw.playerX, this.mw.playerZ, this.mw.playerDimension);
+    	this.mapView.setZoomLevel(0);
+    	
+    	this.helpLabel = new Label();
+    	this.optionsLabel = new Label();
+    	this.dimensionLabel = new Label();
+//    	this.groupLabel = new Label();
+    	this.overlayLabel = new Label();
+    }
+	public MwGui(Mw mw, ItemStack itemStack, EntityPlayer entityPlayer){
 		this.mw = mw;
 		this.init();
 		this.itemStack = itemStack;
@@ -130,8 +131,8 @@ public class MwGui extends GuiScreen {
     // is resized
     public void initGui() {
     	this.delbtn = new GuiButtonGood(180,20,height-20,20,20,"Del","");
-		this.locbtn = new GuiButtonGood(181,0,height-20,20,20,"","","minimap","textures/map/LOC.png",null,null);
-		this.locbtn.setTexturePosition(this.locbtn.xPosition+3,this.locbtn.yPosition+3,this.locbtn.width-6,this.locbtn.height-6);
+		this.locbtn = new GuiButtonGood(181,0,height-20,20,20,"","","minimap","textures/map/loc.png",null,null);
+		this.locbtn.setTexturePosition(this.locbtn.x+3,this.locbtn.y+3,this.locbtn.width-6,this.locbtn.height-6);
 		if(this.entityPlayer!=null && this.itemStack !=null){
 			this.tpbtn = new GuiButtonGood(185,40,height-20,60,20,I18n.format("mw.gui.minimap.tpbtn"),"");
 		}
@@ -170,7 +171,7 @@ public class MwGui extends GuiScreen {
 
     public TeammateData getTeammateNearPos(int x, int y){
     	for(TeammateData td: this.mw.clientTM.getTeamData()){
-    		if(td.screenPos != null &&!td.getId().equals(this.mc.thePlayer.getUniqueID().toString()) && td.screenPos.distanceSq(x,y) < 6){
+    		if(td.screenPos != null &&!td.getId().equals(this.mc.player.getUniqueID().toString()) && td.screenPos.distanceSq(x,y) < 6){
     			return td;
 			}
 		}
@@ -179,9 +180,9 @@ public class MwGui extends GuiScreen {
     
     public int getHeightAtBlockPos(int bX, int bZ) {
     	int bY = 0;
-    	int worldDimension = this.mc.theWorld.provider.dimensionId;
+    	int worldDimension = this.mw.mc.world.provider.getDimension();
     	if ((worldDimension == this.mapView.getDimension()) && (worldDimension != -1)) {
-    		bY = this.mc.theWorld.getChunkFromBlockCoords(bX, bZ).getHeightValue(bX & 0xf, bZ & 0xf);
+			bY = this.mw.mc.world.getHeight(new BlockPos(bX, 0, bZ)).getY();
     	}
     	return bY;
     }
@@ -325,7 +326,7 @@ public class MwGui extends GuiScreen {
 		//	MwUtil.log("refreshing maptexture");
 		//	this.mw.mapTexture.updateTexture();
 		//	break;
-
+		
 		default:
 			if (key == MwKeyHandler.keyMapGui.getKeyCode()) {
 				// exit on the next tick
@@ -364,10 +365,15 @@ public class MwGui extends GuiScreen {
     	if (direction != 0) {
     		this.mouseDWheelScrolled(x, y, direction);
     	}
-    	super.handleMouseInput();
+    	try{
+			super.handleMouseInput();
+		}
+    	catch (IOException e){
+    		MwUtil.log(e.toString());
+		}
     }
 
-    private void setTips(){
+	private void setTips(){
 		showTime = System.currentTimeMillis()+3000;
 		Tips = I18n.format("mw.gui.minimap.untptip");
 	}
@@ -386,7 +392,7 @@ public class MwGui extends GuiScreen {
     		td = getTeammateNearPos(x,y);
 		}
 //    	Marker prevMarker = this.mw.markerManager.selectedMarker;
-
+    	
     	if (button == 0) {
     		if (this.dimensionLabel.posWithin(x, y) && this.mw.showDimension) {
     			this.mc.displayGuiScreen(
@@ -403,41 +409,46 @@ public class MwGui extends GuiScreen {
 				this.mapView.setViewCentreScaled(this.mw.playerX, this.mw.playerZ, this.mw.playerDimension);
 			}else if(delbtn.mousePressed(mc,x,y)){
     			deleteSelectedMarker();
-			}else if(tpbtn!=null&&tpbtn.mousePressed(mc,x,y)){
-				if(this.mw.markerManager.selectedMarker!=null && this.mw.markerManager.selectedMarker.dimension == mapView.getDimension()) {
+			}else if(tpbtn!=null&&tpbtn.mousePressed(mc,x,y)) {
+				if (this.mw.markerManager.selectedMarker != null && this.mw.markerManager.selectedMarker.dimension == mapView.getDimension()) {
 					int markerX = this.mw.markerManager.selectedMarker.x;
 					int markerZ = this.mw.markerManager.selectedMarker.z;
-					MwChunk mwChunk = MwChunk.read(markerX >> 4, markerZ >> 4, mw.playerDimension, mw.regionManager.regionFileCache);
-//					MwUtil.log("----%s",mc.theWorld.getChunkFromBlockCoords(markerX, markerZ).isChunkLoaded);
-//					MwUtil.log("++++%s",!mwChunk.isEmpty());
-					if (!mwChunk.isEmpty()||mc.theWorld.getChunkFromBlockCoords(markerX, markerZ).isChunkLoaded) {
+					MwChunk	mwChunk = MwChunk.read(markerX >> 4, markerZ >> 4, mw.playerDimension, mw.regionManager.regionFileCache, null);
+					//					MwUtil.log("----%s",mc.theWorld.getChunkFromBlockCoords(markerX, markerZ).isChunkLoaded);
+					//					MwUtil.log("++++%s",!mwChunk.isEmpty());
+					boolean mcChunkLoaded = mc.world.getChunkFromBlockCoords(new BlockPos(markerX, 0, markerZ)).isLoaded();
+					if (!mwChunk.isEmpty() || mcChunkLoaded) {
 						if (!entityPlayer.capabilities.isCreativeMode) {
-							this.entityPlayer.destroyCurrentEquippedItem();
+							//this.entityPlayer.destroyCurrentEquippedItem();
+							this.itemStack.setCount(this.itemStack.getCount()-1);
 						}
 						JsonObject jsonObject = new JsonObject();
 						jsonObject.addProperty("x", markerX);
 						jsonObject.addProperty("z", markerZ);
 						int block_y = mwChunk.getMaxY()|255;
+
 						int firstAir = 0;
-						if(mw.playerDimension==-1){
+						if (mw.playerDimension == -1) {
 							block_y = 120;
-						}else{
-							firstAir=1;
+						} else {
+							firstAir = 1;
 						}
 
 						while (block_y > 0) {
-							Block tmpblock = entityPlayer.worldObj.getBlock(markerX, block_y, markerZ);
-//							MwUtil.log("%s",firstAir);
+							Block tmpblock = entityPlayer.world.getBlockState(new BlockPos(markerX, block_y, markerZ)).getBlock();
+							//							MwUtil.log("%s",firstAir);
 							if (tmpblock != null) {
-								if(tmpblock instanceof BlockAir){
-									if(firstAir ==1){
-										firstAir =2;
+								if (tmpblock instanceof BlockAir) {
+									if (firstAir == 1) {
+										firstAir = 2;
 									}
-									block_y--;continue;
-								}else{
-									if(firstAir==0 || firstAir==1){
-										firstAir =1;
-										block_y--;continue;
+									block_y--;
+									continue;
+								} else {
+									if (firstAir == 0 || firstAir == 1) {
+										firstAir = 1;
+										block_y--;
+										continue;
 									}
 								}
 								if (block_y < 255)
@@ -446,19 +457,20 @@ public class MwGui extends GuiScreen {
 							}
 							block_y--;
 						}
-						MwUtil.log("%d",block_y);
-						if(block_y>=1) {
+						MwUtil.log("%d", block_y);
+						if (block_y >= 1) {
 							jsonObject.addProperty("y", block_y <= 1 ? 2 : block_y);
+//							MwUtil.log(jsonObject.toString());
 							MwUtil.send_to_server(MwUtil.ArgsRequestTP, jsonObject);
-							Tips="";
+							Tips = "";
 							exitGui();
-						}else{
+						} else {
 							setTips();
 						}
-					}else{
+					} else {
 						setTips();
 					}
-				}else{
+				} else {
 					setTips();
 				}
 			}
@@ -476,7 +488,6 @@ public class MwGui extends GuiScreen {
 	    			this.movingMarkerXStart = marker.x;
 	    			this.movingMarkerZStart = marker.z;
 	    		}
-
     		}
     		
     	} else if (button == 1) {
@@ -542,22 +553,23 @@ public class MwGui extends GuiScreen {
 
     // mouse button released. 0 = LMB, 1 = RMB, 2 = MMB
     // not called on mouse movement.
-//    protected void mouseReleased(int x, int y, int button) {
+    protected void mouseReleased(int x, int y, int button) {
 //    	MwUtil.log("MwGui.mouseMovedOrUp(%d, %d, %d)", x, y, button);
-//    	if (button == 0) {
-//    		this.mouseLeftHeld = 0;
-//    		this.movingMarker = null;
-//    	} else if (button == 1) {
+    	if (button == 0) {
+    		this.mouseLeftHeld = 0;
+    		this.movingMarker = null;
+    	}
+//    	else if (button == 1) {
 //    		//this.mouseRightHeld = 0;
 //    	}
-//    }
+    }
 
-	protected void mouseMovedOrUp(int x, int y, int button){
-		if (button == 0) {
-			this.mouseLeftHeld = 0;
-			this.movingMarker = null;
-		}
-	}
+//	protected void mouseMovedOrUp(int x, int y, int button){
+//		if (button == 0) {
+//			this.mouseLeftHeld = 0;
+//			this.movingMarker = null;
+//		}
+//	}
 
     // zoom on mouse direction wheel scroll
     public void mouseDWheelScrolled(int x, int y, int direction) {
@@ -625,44 +637,45 @@ public class MwGui extends GuiScreen {
         super.updateScreen();
     }
 
-    private void drawTip(){
-		this.drawCenteredString(this.fontRendererObj,
+	private void drawTip(){
+		this.drawCenteredString(this.fontRenderer,
 			this.Tips, this.width / 2, this.height - 36, 0xffffff);
 	}
     
-	public void drawStatus(int bX, int bY, int bZ) {
+    public void drawStatus(int bX, int bY, int bZ) {
 		String s;
 		if (bY != 0) {
 			s = I18n.format("mw.gui.mwgui.status.cursor", bX, bY, bZ);
 		} else {
 			s = I18n.format("mw.gui.mwgui.status.cursorNoY", bX, bZ);
 		}
-		if (this.mc.theWorld != null &&this.mapView.getDimension() == this.mc.thePlayer.dimension) {
-			if (!this.mc.theWorld.getChunkFromBlockCoords(bX, bZ).isEmpty()){
-				String BiomeName = this.mw.mc.theWorld.getBiomeGenForCoords(bX, bZ).biomeName;
-				String InBiomeName = biomeNameTransfer.getBiomeName(BiomeName);
-
-				s += String.format(", " + I18n.format("mw.gui.mwgui.status.biome", I18n.format(InBiomeName)));
+		if (this.mc.world != null) {
+			if (!this.mc.world.getChunkFromBlockCoords(new BlockPos(bX, 0, bZ)).isEmpty()) {
+				if (!this.mc.world.getChunkFromBlockCoords(new BlockPos(bX, 0, bZ)).isEmpty()) {
+					String BiomeName = this.mc.world.getBiome(new BlockPos(bX, 0, bZ)).getBiomeName();
+					String InBiomeName = biomeNameTransfer.getBiomeName(BiomeName);
+					s += String.format(", " + I18n.format("mw.gui.mwgui.status.biome", I18n.format(InBiomeName)));
+				}
 			}
 		}
-         
+
          /*if (this.mw.markerManager.selectedMarker != null) {
          	s += ", current marker: " + this.mw.markerManager.selectedMarker.name;
          }*/
-    	 
-    	 IMwDataProvider provider = MwAPI.getCurrentDataProvider();
- 			if (provider != null)    	 
- 				s += provider.getStatusString(this.mapView.getDimension(), bX, bY, bZ);
-    	 
-         drawRect(10, this.height - 21, this.width - 20, this.height - 6, 0x80000000);
-         this.drawCenteredString(this.fontRendererObj,
-         		s, this.width / 2, this.height - 18, 0xffffff);
+
+		IMwDataProvider provider = MwAPI.getCurrentDataProvider();
+		if (provider != null)
+			s += provider.getStatusString(this.mapView.getDimension(), bX, bY, bZ);
+
+		drawRect(10, this.height - 21, this.width - 20, this.height - 6, 0x80000000);
+		this.drawCenteredString(this.fontRenderer,
+				s, this.width / 2, this.height - 18, 0xffffff);
     }
     
     public void drawHelp() {
     	drawRect(10, 20, this.width - 20, this.height - 30, 0x80000000);
-    	this.fontRendererObj.drawSplitString(
-			I18n.format("mw.gui.mwgui.keys") + ":\n" +
+    	this.fontRenderer.drawSplitString(
+		I18n.format("mw.gui.mwgui.keys") + ":\n" +
 			I18n.format("mw.gui.mwgui.helptext.switchscalelevel.key") + "\n"+
 			I18n.format("mw.gui.mwgui.helptext.cyclecolour.key") + "\n"+
 			I18n.format("mw.gui.mwgui.helptext.selectmarker.key") + "\n"+
@@ -675,36 +688,36 @@ public class MwGui extends GuiScreen {
 			"R\n" +
 			"U\n"+
 			I18n.format("mw.gui.mwgui.helptext.note"),
-			15, 24, this.width - 30, 0xffffff);
-    	this.fontRendererObj.drawSplitString(
-	"| " + I18n.format("mw.gui.mwgui.helptext.switchscalelevel") + "\n" +
-				"| " + I18n.format("mw.gui.mwgui.helptext.cyclecolour") + "\n" +
-				"| " + I18n.format("mw.gui.mwgui.helptext.selectmarker") + "\n" +
-				"| " + I18n.format("mw.gui.mwgui.helptext.movemap") + "\n" +
-				"| " + I18n.format("mw.gui.mwgui.helptext.movemarker") + "\n" +
-				"| " + I18n.format("mw.gui.mwgui.helptext.createmarker") + "\n" +
-    			"| " + I18n.format("mw.gui.mwgui.helptext.deletemarker") + "\n" +
-    			"| " + I18n.format("mw.gui.mwgui.helptext.centermap") + "\n" +
-    			"| " + I18n.format("mw.gui.mwgui.helptext.savepng") + "\n" +
-    			"| " + I18n.format("mw.gui.mwgui.helptext.regenerate") + "\n" +
-    			"| " + I18n.format("mw.gui.mwgui.helptext.undergroundmap") + "\n",
-    			this.fontRendererObj.getStringWidth(I18n.format("mw.gui.mwgui.helptext.movemarker.key"))+20, 33, this.width - 90, 0xffffff);
+		15, 24, this.width - 30, 0xffffff);
+		this.fontRenderer.drawSplitString(
+		"| " + I18n.format("mw.gui.mwgui.helptext.switchscalelevel") + "\n" +
+			"| " + I18n.format("mw.gui.mwgui.helptext.cyclecolour") + "\n" +
+			"| " + I18n.format("mw.gui.mwgui.helptext.selectmarker") + "\n" +
+			"| " + I18n.format("mw.gui.mwgui.helptext.movemap") + "\n" +
+			"| " + I18n.format("mw.gui.mwgui.helptext.movemarker") + "\n" +
+			"| " + I18n.format("mw.gui.mwgui.helptext.createmarker") + "\n" +
+			"| " + I18n.format("mw.gui.mwgui.helptext.deletemarker") + "\n" +
+			"| " + I18n.format("mw.gui.mwgui.helptext.centermap") + "\n" +
+			"| " + I18n.format("mw.gui.mwgui.helptext.savepng") + "\n" +
+			"| " + I18n.format("mw.gui.mwgui.helptext.regenerate") + "\n" +
+			"| " + I18n.format("mw.gui.mwgui.helptext.undergroundmap") + "\n",
+		this.fontRenderer.getStringWidth(I18n.format("mw.gui.mwgui.helptext.movemarker.key"))+20, 33, this.width - 90, 0xffffff);
     }
     
     public void drawMouseOverHint(int x, int y, String title, int mX, int mY, int mZ) {
     	String desc = String.format("(%d, %d, %d)", mX, mY, mZ);
     	int stringW = Math.max(
-    			this.fontRendererObj.getStringWidth(title),
-    			this.fontRendererObj.getStringWidth(desc));
+    			this.fontRenderer.getStringWidth(title),
+    			this.fontRenderer.getStringWidth(desc));
     	
     	x = Math.min(x, this.width - (stringW + 16));
     	y = Math.min(Math.max(10, y), this.height - 14);
     	
     	drawRect(x + 8, y - 10, x + stringW + 16, y + 14, 0x80000000);
-    	this.drawString(this.fontRendererObj,
+    	this.drawString(this.fontRenderer,
     			title,
     			x + 10, y - 8, 0xffffff);
-    	this.drawString(this.fontRendererObj,
+    	this.drawString(this.fontRenderer,
     			desc,
     			x + 10, y + 4, 0xcccccc);
     }
@@ -754,7 +767,7 @@ public class MwGui extends GuiScreen {
         
         // draw name of player under mouse cursor
         if (this.isPlayerNearScreenPos(mouseX, mouseY)) {
-        	this.drawMouseOverHint(mouseX, mouseY, this.mc.thePlayer.getDisplayName(),
+        	this.drawMouseOverHint(mouseX, mouseY, this.mc.player.getDisplayNameString(),
         			this.mw.playerXInt,
 					this.mw.playerYInt,
 					this.mw.playerZInt);
@@ -782,26 +795,25 @@ public class MwGui extends GuiScreen {
 		}
 
 		if(this.mw.playerDimension == mapView.getDimension()) {
-			locbtn.drawButton(mc, mouseX, mouseY);
+			locbtn.drawButton(mc, mouseX, mouseY,f);
 		}
-
 		delbtn.enabled = false;
 		if(this.mw.markerManager.selectedMarker!=null && this.mw.markerManager.selectedMarker.dimension == mapView.getDimension()){
 			delbtn.enabled = true;
 		}
-		delbtn.drawButton(mc,mouseX,mouseY);
+		delbtn.drawButton(mc,mouseX,mouseY,f);
 
 		if(tpbtn!=null){
 			tpbtn.enabled = false;
 			if(this.mw.markerManager.selectedMarker!=null && this.mw.markerManager.selectedMarker.dimension == mapView.getDimension()){
 //				MwChunk mwChunk = MwChunk.read(this.mw.markerManager.selectedMarker.x>>4,this.mw.markerManager.selectedMarker.z>>4,mw.playerDimension,mw.regionManager.regionFileCache);
 //				if(!mwChunk.isEmpty())
-					tpbtn.enabled = true;
+				tpbtn.enabled = true;
 			}
-			tpbtn.drawButton(mc,mouseX,mouseY);
+			tpbtn.drawButton(mc,mouseX,mouseY,f);
 		}
 
-        super.drawScreen(mouseX, mouseY, f);
+		super.drawScreen(mouseX, mouseY, f);
     }
 }
 

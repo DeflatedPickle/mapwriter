@@ -3,13 +3,15 @@ package com.cabchinoe.minimap.gui;
 import com.cabchinoe.minimap.api.MwAPI;
 import com.cabchinoe.minimap.map.TeamManager;
 import com.cabchinoe.minimap.map.TeammateData;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
+import java.io.IOException;
 
 
 @SideOnly(Side.CLIENT)
@@ -42,7 +44,7 @@ public class TeammateDialog extends GuiScreen
 	public void initGui() {
 		parentScreen.setWorldAndResolution(mc,width,height);
 		offset =0;
-		int labelsWidth = this.fontRendererObj.getStringWidth("GroupXXXXXX");
+		int labelsWidth = this.fontRenderer.getStringWidth("GroupXXXXXX");
 		int width = this.width * dialogWidthPercent / 100 - labelsWidth;
 		int x = (this.width - width) / 2 + labelsWidth;
 		int y = (this.height - elementVSpacing * 7) / 2;
@@ -92,14 +94,14 @@ public class TeammateDialog extends GuiScreen
 						+ this.elementVSpacing * (offset +4),
 				0x80000000);
 		this.drawCenteredString(
-				this.fontRendererObj,
+				this.fontRenderer,
 				I18n.format(this.title),
 				(this.width) / 2,
 				(this.height - this.elementVSpacing * 8) / 2
 						- this.elementVSpacing / 4,
 				0xffffff);
 		this.ScrollableColorSelectorColor.draw();
-		doneButton.drawButton(mc,mouseX,mouseY);
+		doneButton.drawButton(mc,mouseX,mouseY,f);
 		super.drawScreen(mouseX, mouseY, f);
 	}
 
@@ -107,7 +109,7 @@ public class TeammateDialog extends GuiScreen
 	// the scroll wheel.
 
 	@Override
-	public void handleMouseInput() {
+	public void handleMouseInput()throws IOException {
 		if (MwAPI.getCurrentDataProvider() != null)
 			return;
 		int x = Mouse.getEventX() * this.width / this.mc.displayWidth;
@@ -124,7 +126,7 @@ public class TeammateDialog extends GuiScreen
 		this.ScrollableColorSelectorColor.mouseDWheelScrolled(x, y, direction);
 	}
 
-	protected void mouseClicked(int x, int y, int button) {
+	protected void mouseClicked(int x, int y, int button) throws IOException {
 		super.mouseClicked(x, y, button);
 		this.ScrollableColorSelectorColor.mouseClicked(x,y,button);
 		if(doneButton.mousePressed(mc,x,y)){

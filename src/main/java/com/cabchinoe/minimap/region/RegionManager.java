@@ -144,7 +144,7 @@ public class RegionManager {
 							// load chunk from anvil file
 							MwChunk chunk = MwChunk.read(
 								(region.x >> 4) + cx, (region.z >> 4) + cz,
-								region.dimension, this.regionFileCache
+								region.dimension, this.regionFileCache,null
 							);
 							region.updateChunk(chunk);
 						}

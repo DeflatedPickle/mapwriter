@@ -6,7 +6,10 @@ import com.cabchinoe.minimap.forge.MwConfig;
 import com.cabchinoe.minimap.map.MapView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class MapMode {
 	private final MwConfig config;
 	public final String configCategory;
@@ -98,7 +101,7 @@ public class MapMode {
 	
 	public void setScreenRes() {
 		Minecraft mc = Minecraft.getMinecraft();
-		ScaledResolution sRes = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+		ScaledResolution sRes = new ScaledResolution(mc);
 		this.setScreenRes(mc.displayWidth, mc.displayHeight, sRes.getScaledWidth(), sRes.getScaledHeight(), sRes.getScaleFactor());
 	}
 	
