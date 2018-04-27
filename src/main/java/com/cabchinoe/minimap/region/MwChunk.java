@@ -128,7 +128,7 @@ public class MwChunk implements IChunk {
 					byte[] abyte = section.getByteArray("Blocks");
 					NibbleArray nibblearray = new NibbleArray(section.getByteArray("Data"));
 					NibbleArray nibblearray1 =
-							nbttagcompound.hasKey("Add", 7)
+						section.hasKey("Add", 7)
 									? new NibbleArray(section.getByteArray("Add"))
 									: null;
 					extendedblockstorage.getData().setDataFromNBT(abyte, nibblearray, nibblearray1);
