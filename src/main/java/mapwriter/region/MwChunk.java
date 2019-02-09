@@ -1,11 +1,5 @@
 package mapwriter.region;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import mapwriter.forge.MwForge;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -17,20 +11,25 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MwChunk implements IChunk {
 
     public static final int SIZE = 16;
 
     // load from anvil file
-    public static MwChunk read (int x, int z, int dimension, RegionFileCache regionFileCache) {
-
-        //
-        final Boolean flag = true;
+    public static MwChunk read(int x, int z, DimensionType dimension, RegionFileCache regionFileCache) {
+        final boolean flag = true;
         byte[] biomeArray = null;
         final ExtendedBlockStorage[] data = new ExtendedBlockStorage[16];
         final Map<BlockPos, TileEntity> teMap = new HashMap<>();
@@ -116,15 +115,12 @@ public class MwChunk implements IChunk {
                     }
                 }
 
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 MwForge.logger.error("{}: could not read chunk ({}, {}) from region file\n", e, x, z);
-            }
-            finally {
+            } finally {
                 try {
                     dis.close();
-                }
-                catch (final IOException e) {
+                } catch (final IOException e) {
                     MwForge.logger.error("MwChunk.read: {} while closing input stream", e);
                 }
             }
@@ -137,9 +133,9 @@ public class MwChunk implements IChunk {
 
     public final int z;
 
-    public final int dimension;
+    public final DimensionType dimension;
 
-    public ExtendedBlockStorage[] dataArray = new ExtendedBlockStorage[16];
+    public ExtendedBlockStorage[] dataArray;
 
     public final Map<BlockPos, TileEntity> tileentityMap;
 
@@ -147,8 +143,7 @@ public class MwChunk implements IChunk {
 
     public final int maxY;
 
-    public MwChunk (int x, int z, int dimension, ExtendedBlockStorage[] data, byte[] biomeArray, Map<BlockPos, TileEntity> teMap) {
-
+    public MwChunk(int x, int z, DimensionType dimension, ExtendedBlockStorage[] data, byte[] biomeArray, Map<BlockPos, TileEntity> teMap) {
         this.x = x;
         this.z = z;
         this.dimension = dimension;
@@ -165,8 +160,7 @@ public class MwChunk implements IChunk {
     }
 
     @Override
-    public int getBiome (int x, int y, int z) {
-
+    public int getBiome(int x, int y, int z) {
         final int i = x & 15;
         final int j = z & 15;
         int k = this.biomeArray[j << 4 | i] & 255;
@@ -179,43 +173,35 @@ public class MwChunk implements IChunk {
     }
 
     @Override
-    public IBlockState getBlockState (int x, int y, int z) {
-
+    public IBlockState getBlockState(int x, int y, int z) {
         final int yi = y >> 4 & 0xf;
-
         return this.dataArray != null && this.dataArray[yi] != null ? this.dataArray[yi].getData().get(x & 15, y & 15, z & 15) : Blocks.AIR.getDefaultState();
     }
 
-    public Long getCoordIntPair () {
-
+    public Long getCoordIntPair() {
         return ChunkPos.asLong(this.x, this.z);
     }
 
     @Override
-    public int getLightValue (int x, int y, int z) {
-
+    public int getLightValue(int x, int y, int z) {
         return 15;
     }
 
     @Override
-    public int getMaxY () {
-
+    public int getMaxY() {
         return this.maxY;
     }
 
-    public boolean isEmpty () {
-
+    public boolean isEmpty() {
         return this.maxY <= 0;
     }
 
     @Override
-    public String toString () {
-
-        return String.format("(%d, %d) dim %d", this.x, this.z, this.dimension);
+    public String toString() {
+        return String.format("(%d, %d) dim %s", this.x, this.z, this.dimension.getName());
     }
 
-    public synchronized boolean write (RegionFileCache regionFileCache) {
-
+    public synchronized boolean write(RegionFileCache regionFileCache) {
         boolean error = false;
         final RegionFile regionFile = regionFileCache.getRegionFile(this.x << 4, this.z << 4, this.dimension);
         if (!regionFile.isOpen()) {
@@ -227,25 +213,20 @@ public class MwChunk implements IChunk {
                 try {
 
                     CompressedStreamTools.write(this.writeChunkToNBT(), dos);
-                }
-                catch (final IOException e) {
+                } catch (final IOException e) {
                     MwForge.logger.error("{}: could not write chunk ({}, {}) to region file", e, this.x, this.z);
                     error = true;
-                }
-                finally {
+                } finally {
                     try {
                         dos.close();
-                    }
-                    catch (final IOException e) {
+                    } catch (final IOException e) {
                         MwForge.logger.error("{} while closing chunk data output stream", e);
                     }
                 }
-            }
-            else {
+            } else {
                 MwForge.logger.error("error: could not get output stream for chunk ({}, {})", this.x, this.z);
             }
-        }
-        else {
+        } else {
             MwForge.logger.error("error: could not open region file for chunk ({}, {})", this.x, this.z);
         }
 
@@ -254,7 +235,7 @@ public class MwChunk implements IChunk {
 
     // changed to use the NBTTagCompound that minecraft uses. this makes the
     // local way of saving anvill data the same as Minecraft world data
-    private NBTTagCompound writeChunkToNBT () {
+    private NBTTagCompound writeChunkToNBT() {
 
         final NBTTagCompound level = new NBTTagCompound();
         final NBTTagCompound compound = new NBTTagCompound();
@@ -283,8 +264,7 @@ public class MwChunk implements IChunk {
 
                 if (extendedblockstorage.getSkyLight() != null && extendedblockstorage.getSkyLight().getData() != null) {
                     nbttagcompound.setByteArray("SkyLight", extendedblockstorage.getSkyLight().getData());
-                }
-                else {
+                } else {
                     nbttagcompound.setByteArray("SkyLight", new byte[extendedblockstorage.getBlockLight().getData().length]);
                 }
 
@@ -301,8 +281,7 @@ public class MwChunk implements IChunk {
             try {
                 final NBTTagCompound nbttagcompound3 = tileentity.writeToNBT(new NBTTagCompound());
                 nbttaglist2.appendTag(nbttagcompound3);
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
                 // we eat this exception becous we are doing something we
                 // shouldnt do on client side.
             }

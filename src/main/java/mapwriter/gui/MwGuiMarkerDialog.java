@@ -5,6 +5,7 @@ import mapwriter.map.MarkerManager;
 import mapwriter.util.Utils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -12,15 +13,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class MwGuiMarkerDialog extends MwGuiTextDialog {
     private final MarkerManager markerManager;
     private Marker editingMarker;
-    private String markerName = "";
-    private String markerGroup = "";
-    private int markerX = 0;
-    private int markerY = 80;
-    private int markerZ = 0;
+    private String markerName;
+    private String markerGroup;
+    private int markerX;
+    private int markerY;
+    private int markerZ;
     private int state = 0;
-    private int dimension = 0;
+    private DimensionType dimension;
 
-    public MwGuiMarkerDialog (GuiScreen parentScreen, MarkerManager markerManager, Marker editingMarker) {
+    public MwGuiMarkerDialog(GuiScreen parentScreen, MarkerManager markerManager, Marker editingMarker) {
 
         super(parentScreen, I18n.format("mw.gui.mwguimarkerdialog.title.edit") + ":", editingMarker.name, I18n.format("mw.gui.mwguimarkerdialog.error"));
         this.markerManager = markerManager;
@@ -33,8 +34,7 @@ public class MwGuiMarkerDialog extends MwGuiTextDialog {
         this.dimension = editingMarker.dimension;
     }
 
-    public MwGuiMarkerDialog (GuiScreen parentScreen, MarkerManager markerManager, String markerName, String markerGroup, int x, int y, int z, int dimension) {
-
+    public MwGuiMarkerDialog(GuiScreen parentScreen, MarkerManager markerManager, String markerName, String markerGroup, int x, int y, int z, DimensionType dimension) {
         super(parentScreen, I18n.format("mw.gui.mwguimarkerdialog.title.new") + ":", markerName, I18n.format("mw.gui.mwguimarkerdialog.error"));
         this.markerManager = markerManager;
         this.markerName = markerName;
@@ -47,8 +47,7 @@ public class MwGuiMarkerDialog extends MwGuiTextDialog {
     }
 
     @Override
-    public boolean submit () {
-
+    public boolean submit() {
         boolean done = false;
         switch (this.state) {
             case 0:

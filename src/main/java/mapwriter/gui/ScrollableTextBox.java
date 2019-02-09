@@ -1,11 +1,10 @@
 package mapwriter.gui;
 
-import java.util.List;
-
-import org.lwjgl.input.Keyboard;
-
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
+import org.lwjgl.input.Keyboard;
+
+import java.util.List;
 
 public class ScrollableTextBox extends ScrollableField {
     private static int textFieldHeight = 12;
@@ -17,13 +16,13 @@ public class ScrollableTextBox extends ScrollableField {
 
     protected GuiTextField textField;
 
-    ScrollableTextBox (int x, int y, int width, String label, FontRenderer fontrendererObj) {
+    ScrollableTextBox(int x, int y, int width, String label, FontRenderer fontrendererObj) {
 
         super(x, y, width, label, fontrendererObj);
         this.init();
     }
 
-    ScrollableTextBox (int x, int y, int width, String label, List<String> scrollableElements, FontRenderer fontrendererObj) {
+    ScrollableTextBox(int x, int y, int width, String label, List<String> scrollableElements, FontRenderer fontrendererObj) {
 
         super(x, y, width, label, fontrendererObj);
         this.scrollableElements = scrollableElements;
@@ -31,7 +30,7 @@ public class ScrollableTextBox extends ScrollableField {
     }
 
     @Override
-    public void draw () {
+    public void draw() {
 
         super.draw();
         this.textField.drawTextBox();
@@ -52,35 +51,35 @@ public class ScrollableTextBox extends ScrollableField {
         }
     }
 
-    public int getCursorPosition () {
+    public int getCursorPosition() {
 
         return this.textField.getCursorPosition();
     }
 
-    public String getText () {
+    public String getText() {
 
         return this.textField.getText();
     }
 
     @Override
-    public Boolean isFocused () {
+    public Boolean isFocused() {
 
         return this.textField.isFocused();
     }
 
-    public void KeyTyped (char c, int key) {
+    public void KeyTyped(char c, int key) {
 
         this.textField.textboxKeyTyped(c, key);
     }
 
     @Override
-    public void mouseClicked (int x, int y, int button) {
+    public void mouseClicked(int x, int y, int button) {
 
         super.mouseClicked(x, y, button);
         this.textField.mouseClicked(x, y, button);
     }
 
-    public void mouseDWheelScrolled (int x, int y, int direction) {
+    public void mouseDWheelScrolled(int x, int y, int direction) {
 
         if (this.posWithinTextField(x, y)) {
             this.textFieldScroll(-direction);
@@ -88,56 +87,53 @@ public class ScrollableTextBox extends ScrollableField {
     }
 
     @Override
-    public void nextElement () {
+    public void nextElement() {
 
         this.textFieldScroll(1);
     }
 
-    public boolean posWithinTextField (int x, int y) {
+    public boolean posWithinTextField(int x, int y) {
 
         return x >= this.textFieldX && y >= this.textFieldY && x <= this.textFieldWidth + this.textFieldX && y <= ScrollableTextBox.textFieldHeight + this.textFieldY;
     }
 
     @Override
-    public void previousElement () {
+    public void previousElement() {
 
         this.textFieldScroll(-1);
     }
 
-    public void setCursorPositionEnd () {
+    public void setCursorPositionEnd() {
 
         this.textField.setCursorPositionEnd();
     }
 
     @Override
-    public void setFocused (Boolean focus) {
+    public void setFocused(Boolean focus) {
 
         this.textField.setFocused(focus);
         this.textField.setSelectionPos(0);
     }
 
-    public void setText (String text) {
+    public void setText(String text) {
 
         this.textField.setText(text);
     }
 
-    public void textFieldScroll (int direction) {
+    public void textFieldScroll(int direction) {
 
         if (this.scrollableElements != null) {
             int index = this.scrollableElements.indexOf(this.getText().trim());
             if (direction > 0) {
                 if (index == -1 || index == this.scrollableElements.size() - 1) {
                     index = 0;
-                }
-                else {
+                } else {
                     index++;
                 }
-            }
-            else if (direction < 0) {
+            } else if (direction < 0) {
                 if (index == -1 || index == 0) {
                     index = this.scrollableElements.size() - 1;
-                }
-                else {
+                } else {
                     index--;
                 }
             }
@@ -145,12 +141,12 @@ public class ScrollableTextBox extends ScrollableField {
         }
     }
 
-    public boolean validateTextFieldData () {
+    public boolean validateTextFieldData() {
 
         return this.getText().length() > 0;
     }
 
-    private void init () {
+    private void init() {
 
         this.textFieldX = this.x + ScrollableField.arrowsWidth + 3;
         this.textFieldY = this.y;
@@ -167,23 +163,22 @@ class ScrollableNumericTextBox extends ScrollableTextBox {
     public int maxValue = -1;
     public int minValue = -1;
 
-    public ScrollableNumericTextBox (int x, int y, int width, String label, FontRenderer fontrendererObj) {
+    public ScrollableNumericTextBox(int x, int y, int width, String label, FontRenderer fontrendererObj) {
 
         super(x, y, width, label, fontrendererObj);
     }
 
-    public int getTextFieldIntValue () {
+    public int getTextFieldIntValue() {
 
         try {
             return Integer.parseInt(this.getText());
-        }
-        catch (final NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             return 0;
         }
     }
 
     @Override
-    public void KeyTyped (char c, int key) {
+    public void KeyTyped(char c, int key) {
 
         if (c >= '0' && c <= '9' || key == Keyboard.KEY_BACK || key == Keyboard.KEY_LEFT || key == Keyboard.KEY_RIGHT || c == '-' && this.getCursorPosition() == 0) {
             if (Character.isDigit(c) && this.maxValue > -1 && Integer.parseInt(this.getText() + c) > this.maxValue) {
@@ -193,18 +188,18 @@ class ScrollableNumericTextBox extends ScrollableTextBox {
         }
     }
 
-    public void setMaxValue (int max) {
+    public void setMaxValue(int max) {
 
         this.maxValue = max;
         this.textField.setMaxStringLength(Integer.toString(max).length());
     }
 
-    public void setMinValue (int min) {
+    public void setMinValue(int min) {
 
         this.minValue = min;
     }
 
-    public void setText (int num) {
+    public void setText(int num) {
 
         if (this.maxValue < 0 || num <= this.maxValue || num >= this.minValue) {
             this.setText(Integer.toString(num));
@@ -212,7 +207,7 @@ class ScrollableNumericTextBox extends ScrollableTextBox {
     }
 
     @Override
-    public void textFieldScroll (int direction) {
+    public void textFieldScroll(int direction) {
 
         int newValue = 0;
         if (this.validateTextFieldData()) {
@@ -221,8 +216,7 @@ class ScrollableNumericTextBox extends ScrollableTextBox {
                 if (this.maxValue < 0 || newValue + 1 <= this.maxValue) {
                     newValue += 1;
                 }
-            }
-            else if (direction < 0) {
+            } else if (direction < 0) {
                 if (this.minValue < 0 || newValue - 1 >= this.minValue) {
                     newValue -= 1;
                 }

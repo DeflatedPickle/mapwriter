@@ -1,9 +1,6 @@
 package mapwriter;
 
-import java.io.File;
-
 import com.jarhax.map.BlockColours;
-
 import mapwriter.config.Config;
 import mapwriter.config.ConfigurationHandler;
 import mapwriter.config.WorldConfig;
@@ -12,12 +9,7 @@ import mapwriter.forge.MwKeyHandler;
 import mapwriter.gui.MwGui;
 import mapwriter.gui.MwGuiMarkerDialog;
 import mapwriter.gui.MwGuiMarkerDialogNew;
-import mapwriter.map.MapTexture;
-import mapwriter.map.MapView;
-import mapwriter.map.Marker;
-import mapwriter.map.MarkerManager;
-import mapwriter.map.MiniMap;
-import mapwriter.map.UndergroundTexture;
+import mapwriter.map.*;
 import mapwriter.region.RegionManager;
 import mapwriter.tasks.CloseRegionManagerTask;
 import mapwriter.util.Reference;
@@ -28,13 +20,16 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
+
+import java.io.File;
 
 public class Mw {
     private static Mw instance;
 
-    public static Mw getInstance () {
+    public static Mw getInstance() {
 
         if (Mw.instance == null) {
             synchronized (WorldConfig.class) {
@@ -69,8 +64,8 @@ public class Mw {
     public String playerBiome = "";
     public double playerHeading = 0.0;
 
-    public int playerDimension = 0;
-    public float mapRotationDegrees = 0.0f;
+    public DimensionType playerDimension = DimensionType.OVERWORLD;
+    public float mapRotationDegrees = 0f;
     // instances of components
     public MapTexture mapTexture = null;
     public UndergroundTexture undergroundMapTexture = null;
@@ -82,7 +77,7 @@ public class Mw {
 
     public ChunkManager chunkManager = null;
 
-    private Mw () {
+    private Mw() {
 
         // client only initialization
         this.mc = Minecraft.getMinecraft();
@@ -97,7 +92,7 @@ public class Mw {
         ConfigurationHandler.loadConfig();
     }
 
-    public void close () {
+    public void close() {
 
         MwForge.logger.info("Mw.close: closing...");
 
@@ -118,7 +113,7 @@ public class Mw {
             }
             MwForge.logger.info("done");
 
-            this.markerManager.save(WorldConfig.getInstance().worldConfiguration, Reference.catMarkers);
+            this.markerManager.save(WorldConfig.getInstance().worldConfiguration, Reference.CAT_MARKERS);
             this.markerManager.clear();
 
             // close overlay
@@ -134,8 +129,7 @@ public class Mw {
         }
     }
 
-    public void load () {
-
+    public void load() {
         if (this.ready) {
             return;
         }
@@ -152,17 +146,14 @@ public class Mw {
             final File d = new File(Config.saveDirOverride);
             if (d.isDirectory()) {
                 this.saveDir = d;
-            }
-            else {
+            } else {
                 MwForge.logger.info("error: no such directory {}", Config.saveDirOverride);
             }
         }
 
         if (!this.mc.isSingleplayer()) {
-
             this.worldDir = new File(new File(this.saveDir, "mapwriter_mp_worlds"), Utils.getWorldName());
-        }
-        else {
+        } else {
             this.saveDir = DimensionManager.getCurrentSaveRootDirectory();
             this.worldDir = new File(this.saveDir, "mapwriter");
         }
@@ -180,7 +171,7 @@ public class Mw {
 
         // marker manager only depends on the config being loaded
         this.markerManager = new MarkerManager();
-        this.markerManager.load(WorldConfig.getInstance().worldConfiguration, Reference.catMarkers);
+        this.markerManager.load(WorldConfig.getInstance().worldConfiguration, Reference.CAT_MARKERS);
 
         // executor does not depend on anything
         this.executor = new BackgroundExecutor();
@@ -192,7 +183,7 @@ public class Mw {
         this.regionManager = new RegionManager(this.worldDir, this.imageDir, this.blockColours, Config.zoomInLevels, Config.zoomOutLevels);
         // overlay manager depends on mapTexture
         this.miniMap = new MiniMap(this);
-        this.miniMap.view.setDimension(this.mc.player.dimension);
+        this.miniMap.view.setDimension(this.mc.player.world.provider.getDimensionType());
 
         this.chunkManager = new ChunkManager(this);
 
@@ -200,14 +191,13 @@ public class Mw {
     }
 
     // add chunk to the set of loaded chunks
-    public void onChunkLoad (Chunk chunk) {
+    public void onChunkLoad(Chunk chunk) {
 
         this.load();
         if (chunk != null && chunk.getWorld() instanceof net.minecraft.client.multiplayer.WorldClient) {
             if (this.ready) {
                 this.chunkManager.addChunk(chunk);
-            }
-            else {
+            } else {
                 MwForge.logger.info("missed chunk ({}, {})", chunk.x, chunk.z);
             }
         }
@@ -215,14 +205,14 @@ public class Mw {
 
     // remove chunk from the set of loaded chunks.
     // convert to mwchunk and write chunk to region file if in multiplayer.
-    public void onChunkUnload (Chunk chunk) {
+    public void onChunkUnload(Chunk chunk) {
 
         if (this.ready && chunk != null && chunk.getWorld() instanceof net.minecraft.client.multiplayer.WorldClient) {
             this.chunkManager.removeChunk(chunk);
         }
     }
 
-    public void onKeyDown (KeyBinding kb) {
+    public void onKeyDown(KeyBinding kb) {
 
         // make sure not in GUI element (e.g. chat box)
         if (this.mc.currentScreen == null && this.ready) {
@@ -231,13 +221,11 @@ public class Mw {
                 // map mode toggle
                 this.miniMap.nextOverlayMode(1);
 
-            }
-            else if (kb == MwKeyHandler.keyMapGui) {
+            } else if (kb == MwKeyHandler.keyMapGui) {
                 // open map gui
                 this.mc.displayGuiScreen(new MwGui(this));
 
-            }
-            else if (kb == MwKeyHandler.keyNewMarker) {
+            } else if (kb == MwKeyHandler.keyNewMarker) {
                 // open new marker dialog
                 String group = this.markerManager.getVisibleGroupName();
                 if (group.equals("none")) {
@@ -245,34 +233,28 @@ public class Mw {
                 }
                 if (Config.newMarkerDialog) {
                     this.mc.displayGuiScreen(new MwGuiMarkerDialogNew(null, this.markerManager, "", group, this.playerXInt, this.playerYInt, this.playerZInt, this.playerDimension));
-                }
-                else {
+                } else {
                     this.mc.displayGuiScreen(new MwGuiMarkerDialog(null, this.markerManager, "", group, this.playerXInt, this.playerYInt, this.playerZInt, this.playerDimension));
                 }
-            }
-            else if (kb == MwKeyHandler.keyNextGroup) {
+            } else if (kb == MwKeyHandler.keyNextGroup) {
                 // toggle marker mode
                 this.markerManager.nextGroup();
                 this.markerManager.update();
                 this.mc.player.sendMessage(new TextComponentTranslation("mw.msg.groupselected", this.markerManager.getVisibleGroupName()));
 
-            }
-            else if (kb == MwKeyHandler.keyTeleport) {
+            } else if (kb == MwKeyHandler.keyTeleport) {
                 // set or remove marker
                 final Marker marker = this.markerManager.getNearestMarkerInDirection(this.playerXInt, this.playerZInt, this.playerHeading);
                 if (marker != null) {
                     this.teleportToMarker(marker);
                 }
-            }
-            else if (kb == MwKeyHandler.keyZoomIn) {
+            } else if (kb == MwKeyHandler.keyZoomIn) {
                 // zoom in
                 this.miniMap.view.adjustZoomLevel(-1);
-            }
-            else if (kb == MwKeyHandler.keyZoomOut) {
+            } else if (kb == MwKeyHandler.keyZoomOut) {
                 // zoom out
                 this.miniMap.view.adjustZoomLevel(1);
-            }
-            else if (kb == MwKeyHandler.keyUndergroundMode) {
+            } else if (kb == MwKeyHandler.keyUndergroundMode) {
                 Mw.toggleUndergroundMode();
             }
         }
@@ -280,7 +262,7 @@ public class Mw {
 
     // from onTick when mc.currentScreen is an instance of GuiGameOver
     // it's the only option to detect death client side
-    public void onPlayerDeath () {
+    public void onPlayerDeath() {
 
         if (this.ready && Config.maxDeathMarkers > 0) {
             this.updatePlayer();
@@ -299,7 +281,7 @@ public class Mw {
         }
     }
 
-    public void onTick () {
+    public void onTick() {
 
         this.load();
         if (this.ready && this.mc.player != null) {
@@ -338,7 +320,7 @@ public class Mw {
         }
     }
 
-    public void reloadBlockColours () {
+    public void reloadBlockColours() {
 
         final BlockColours bc = new BlockColours();
         bc.loadColourData();
@@ -347,7 +329,7 @@ public class Mw {
         this.blockColours = bc;
     }
 
-    public void reloadMapTexture () {
+    public void reloadMapTexture() {
 
         this.executor.addTask(new CloseRegionManagerTask(this.regionManager));
         this.executor.close();
@@ -368,7 +350,7 @@ public class Mw {
         }
     }
 
-    public void setTextureSize () {
+    public void setTextureSize() {
 
         if (Config.configTextureSize != this.textureSize) {
             final int maxTextureSize = Render.getMaxTextureSize();
@@ -397,23 +379,21 @@ public class Mw {
     // //////////////////////////////
 
     // cheap and lazy way to teleport...
-    public void teleportTo (int x, int y, int z) {
+    public void teleportTo(int x, int y, int z) {
 
         if (Config.teleportEnabled) {
             this.mc.player.sendChatMessage(String.format("/%s %d %d %d", Config.teleportCommand, x, y, z));
-        }
-        else {
+        } else {
             Utils.printBoth(I18n.format("mw.msg.tpdisabled"));
         }
     }
 
-    public void teleportToMapPos (MapView mapView, int x, int y, int z) {
+    public void teleportToMapPos(MapView mapView, int x, int y, int z) {
 
         if (!Config.teleportCommand.equals("warp")) {
             final double scale = mapView.getDimensionScaling(this.playerDimension);
             this.teleportTo((int) (x / scale), y, (int) (z / scale));
-        }
-        else {
+        } else {
             Utils.printBoth(I18n.format("mw.msg.warp.error"));
         }
     }
@@ -422,36 +402,34 @@ public class Mw {
     // Event handlers
     // //////////////////////////////
 
-    public void teleportToMarker (Marker marker) {
+    public void teleportToMarker(Marker marker) {
 
         if (Config.teleportCommand.equals("warp")) {
             this.warpTo(marker.name);
-        }
-        else if (marker.dimension == this.playerDimension) {
+        } else if (marker.dimension == this.playerDimension) {
             this.teleportTo(marker.x, marker.y, marker.z);
-        }
-        else {
+        } else {
             Utils.printBoth(I18n.format("mw.msg.tp.dimError"));
         }
     }
 
-    public void toggleMarkerMode () {
+    public void toggleMarkerMode() {
 
         this.markerManager.nextGroup();
         this.markerManager.update();
         this.mc.player.sendMessage(new TextComponentTranslation("mw.msg.groupselected", this.markerManager.getVisibleGroupName()));
     }
 
-    public static void toggleUndergroundMode () {
+    public static void toggleUndergroundMode() {
 
         Config.undergroundMode = !Config.undergroundMode;
         // save the new value of underground mode.
-        ConfigurationHandler.configuration.get(Reference.catOptions, "undergroundMode", Config.undergroundModeDef).set(Config.undergroundMode);
+        ConfigurationHandler.configuration.get(Reference.CAT_OPTIONS, "undergroundMode", Config.undergroundModeDef).set(Config.undergroundMode);
     }
 
     // update the saved player position and orientation
     // called every tick
-    public void updatePlayer () {
+    public void updatePlayer() {
 
         // get player pos
         this.playerX = this.mc.player.posX;
@@ -473,19 +451,18 @@ public class Mw {
         this.mapRotationDegrees = -this.mc.player.rotationYaw + 180;
 
         // set by onWorldLoad
-        this.playerDimension = this.mc.world.provider.getDimensionType().getId();
+        this.playerDimension = this.mc.world.provider.getDimensionType();
         if (this.miniMap.view.getDimension() != this.playerDimension) {
             WorldConfig.getInstance().addDimension(this.playerDimension);
             this.miniMap.view.setDimension(this.playerDimension);
         }
     }
 
-    public void warpTo (String name) {
+    public void warpTo(String name) {
 
         if (Config.teleportEnabled) {
             this.mc.player.sendChatMessage(String.format("/warp %s", name));
-        }
-        else {
+        } else {
             Utils.printBoth(I18n.format("mw.msg.tpdisabled"));
         }
     }

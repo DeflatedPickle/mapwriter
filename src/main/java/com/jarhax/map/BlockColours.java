@@ -1,8 +1,5 @@
 package com.jarhax.map;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import mapwriter.forge.MwForge;
 import mapwriter.util.Texture;
 import net.minecraft.block.Block;
@@ -20,25 +17,28 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.registries.IRegistryDelegate;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BlockColours {
 
     private final Map<TextureAtlasSprite, Integer> averageSpriteColours = new HashMap<>();
     private final Map<IBlockState, Integer> stateColours = new HashMap<>();
     private final Map<Biome, BiomeColours> biomeColours = new HashMap<>();
     private Map<IRegistryDelegate<Block>, IBlockColor> blockColorMap;
-    
-    public int getColorModifier (IBlockState state, World world, BlockPos pos) {
+
+    public int getColorModifier(IBlockState state, World world, BlockPos pos) {
 
         if (blockColorMap.containsKey(state.getBlock().delegate)) {
-            
+
             return blockColorMap.get(state.getBlock().delegate).colorMultiplier(state, world, pos, 0);
         }
-        
+
         // Default behavior is white, which doesn't change the color.
         return 0xffffff;
     }
 
-    public int getStateColour (IBlockState state) {
+    public int getStateColour(IBlockState state) {
 
         // Invisible blocks should be skipped. (return 0)
         if (state.getRenderType() == EnumBlockRenderType.INVISIBLE) {
@@ -49,7 +49,7 @@ public class BlockColours {
         return this.stateColours.containsKey(state) ? this.stateColours.get(state) : 0;
     }
 
-    public void loadColourData () {
+    public void loadColourData() {
 
         long time = System.currentTimeMillis();
         this.generateColourAverages();
@@ -62,11 +62,11 @@ public class BlockColours {
         time = System.currentTimeMillis();
         this.generateBiomeColours();
         MwForge.logger.info("Generating Biome colours. Took {}ms.", System.currentTimeMillis() - time);
-        
+
         blockColorMap = TextureUtils.getBlockColours();
     }
 
-    private void generateColourAverages () {
+    private void generateColourAverages() {
 
         this.averageSpriteColours.clear();
         final int terrainTextureId = Minecraft.getMinecraft().renderEngine.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).getGlTextureId();
@@ -78,7 +78,7 @@ public class BlockColours {
         }
     }
 
-    private void generateBlockStateColours () {
+    private void generateBlockStateColours() {
 
         this.stateColours.clear();
         for (final Block block : Block.REGISTRY) {
@@ -95,9 +95,7 @@ public class BlockColours {
 
                             this.stateColours.put(state, this.averageSpriteColours.get(icon));
                         }
-                    }
-
-                    catch (final Exception e) {
+                    } catch (final Exception e) {
 
                         MwForge.logger.trace(e);
                     }
@@ -106,7 +104,7 @@ public class BlockColours {
         }
     }
 
-    private void generateBiomeColours () {
+    private void generateBiomeColours() {
 
         this.biomeColours.clear();
         for (final Biome biome : Biome.REGISTRY) {
@@ -119,9 +117,7 @@ public class BlockColours {
                 final int foliageColour = ColorizerFoliage.getFoliageColor(temp, rain);
                 final int waterColour = biome.getWaterColorMultiplier();
                 this.biomeColours.put(biome, new BiomeColours(waterColour, grassColour, foliageColour));
-            }
-
-            catch (final Exception e) {
+            } catch (final Exception e) {
 
                 MwForge.logger.trace(e);
             }

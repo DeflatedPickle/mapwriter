@@ -1,18 +1,18 @@
 package mapwriter.region;
 
+import mapwriter.forge.MwForge;
+import net.minecraft.world.DimensionType;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import javax.imageio.ImageIO;
-
-import mapwriter.forge.MwForge;
-
 public class SurfacePixels {
 
     // get the averaged colour of a 2x2 pixel area in the given pixels
-    public static int getAverageOfPixelQuad (int[] pixels, int offset, int scanSize) {
+    public static int getAverageOfPixelQuad(int[] pixels, int offset, int scanSize) {
 
         final int p00 = pixels[offset];
         final int p01 = pixels[offset + 1];
@@ -29,13 +29,12 @@ public class SurfacePixels {
         return 0xff000000 | (r & 0xff) << 16 | (g & 0xff) << 8 | b & 0xff;
     }
 
-    public static int[] loadImage (File filename, int w, int h) {
+    public static int[] loadImage(File filename, int w, int h) {
 
-        BufferedImage img = null;
+        BufferedImage img;
         try {
             img = ImageIO.read(filename);
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             img = null;
         }
         int[] pixels = null;
@@ -43,15 +42,14 @@ public class SurfacePixels {
             if (img.getWidth() == w && img.getHeight() == h) {
                 pixels = new int[w * h];
                 img.getRGB(0, 0, w, h, pixels, 0, w);
-            }
-            else {
+            } else {
                 MwForge.logger.warn("loadImage: image '{}' does not match expected dimensions (got {}x{} expected {}x{})", filename, img.getWidth(), img.getHeight(), w, h);
             }
         }
         return pixels;
     }
 
-    public static void saveImage (File filename, int[] pixels, int w, int h) {
+    public static void saveImage(File filename, int[] pixels, int w, int h) {
 
         final BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         img.setRGB(0, 0, w, h, pixels, 0, w);
@@ -59,8 +57,7 @@ public class SurfacePixels {
         try {
             // MwUtil.log("writing region {} to {}", this, this.imageFile);
             ImageIO.write(img, "png", filename);
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             MwForge.logger.error("saveImage: error: could not write image to {}", filename);
         }
     }
@@ -74,29 +71,25 @@ public class SurfacePixels {
 
     protected int updateCount = 0;
 
-    public SurfacePixels (Region region, File filename) {
-
+    public SurfacePixels(Region region, File filename) {
         this.region = region;
         this.filename = filename;
     }
 
-    public void clear () {
-
+    public void clear() {
         if (this.pixels != null) {
             Arrays.fill(this.pixels, 0);
         }
     }
 
-    public void close () {
-
+    public void close() {
         if (this.updateCount > 0) {
             this.save();
         }
         this.pixels = null;
     }
 
-    public int[] getOrAllocatePixels () {
-
+    public int[] getOrAllocatePixels() {
         this.getPixels();
         if (this.pixels == null) {
             this.pixels = new int[Region.SIZE * Region.SIZE];
@@ -105,27 +98,25 @@ public class SurfacePixels {
         return this.pixels;
     }
 
-    public int[] getPixels () {
-
+    public int[] getPixels() {
         if (this.pixels == null) {
             this.load();
         }
         return this.pixels;
     }
 
-    public void updateChunk (MwChunk chunk) {
-
+    public void updateChunk(MwChunk chunk) {
         final int x = chunk.x << 4;
         final int z = chunk.z << 4;
         final int offset = this.region.getPixelOffset(x, z);
         final int[] pixels = this.getOrAllocatePixels();
         // TODO: refactor so that blockColours can be accessed
         // more directly
-        ChunkRender.renderSurface(this.region.regionManager.blockColours, chunk, pixels, offset, Region.SIZE, chunk.dimension == -1 // use
-        // ceiling
-        // algorithm
-        // for
-        // nether
+        ChunkRender.renderSurface(this.region.regionManager.blockColours, chunk, pixels, offset, Region.SIZE, chunk.dimension == DimensionType.NETHER // use
+                // ceiling
+                // algorithm
+                // for
+                // nether
         );
         this.region.updateZoomLevels(x, z, MwChunk.SIZE, MwChunk.SIZE);
         this.updateCount++;
@@ -134,8 +125,7 @@ public class SurfacePixels {
     // update an area of pixels in this region from an area of pixels in
     // srcPixels,
     // scaling the pixels by 50%.
-    public void updateScaled (int[] srcPixels, int srcX, int srcZ, int dstX, int dstZ, int dstW, int dstH) {
-
+    public void updateScaled(int[] srcPixels, int srcX, int srcZ, int dstX, int dstZ, int dstW, int dstH) {
         final int[] dstPixels = this.getOrAllocatePixels();
         for (int j = 0; j < dstH; j++) {
             for (int i = 0; i < dstW; i++) {
@@ -147,8 +137,7 @@ public class SurfacePixels {
         this.updateCount++;
     }
 
-    private void load () {
-
+    private void load() {
         if (!this.cannotLoad) {
             this.pixels = loadImage(this.filename, Region.SIZE, Region.SIZE);
             if (this.pixels != null) {
@@ -160,16 +149,14 @@ public class SurfacePixels {
                         this.pixels[i] = 0;
                     }
                 }
-            }
-            else {
+            } else {
                 this.cannotLoad = true;
             }
             this.updateCount = 0;
         }
     }
 
-    private void save () {
-
+    private void save() {
         if (this.pixels != null) {
             saveImage(this.filename, this.pixels, Region.SIZE, Region.SIZE);
             this.cannotLoad = false;

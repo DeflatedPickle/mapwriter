@@ -1,10 +1,6 @@
 package mapwriter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CircularHashMap<K, V> {
     /*
@@ -24,7 +20,7 @@ public class CircularHashMap<K, V> {
         private Node next;
         private Node prev;
 
-        Node (K key, V value) {
+        Node(K key, V value) {
 
             this.key = key;
             this.value = value;
@@ -33,19 +29,19 @@ public class CircularHashMap<K, V> {
         }
 
         @Override
-        public K getKey () {
+        public K getKey() {
 
             return this.key;
         }
 
         @Override
-        public V getValue () {
+        public V getValue() {
 
             return this.value;
         }
 
         @Override
-        public V setValue (V value) {
+        public V setValue(V value) {
 
             final V oldValue = this.value;
             this.value = value;
@@ -58,7 +54,7 @@ public class CircularHashMap<K, V> {
 
     private Node currentNode = null;
 
-    public void clear () {
+    public void clear() {
 
         for (final Node node : this.nodeMap.values()) {
             node.next = null;
@@ -69,23 +65,23 @@ public class CircularHashMap<K, V> {
         this.currentNode = null;
     }
 
-    public boolean containsKey (Object key) {
+    public boolean containsKey(Object key) {
 
         return this.nodeMap.containsKey(key);
     }
 
-    public Collection<Map.Entry<K, V>> entrySet () {
+    public Collection<Map.Entry<K, V>> entrySet() {
 
         return new ArrayList<>(this.nodeMap.values());
     }
 
-    public V get (Object key) {
+    public V get(Object key) {
 
         final Node node = this.nodeMap.get(key);
         return node != null ? node.value : null;
     }
 
-    public Map.Entry<K, V> getNextEntry () {
+    public Map.Entry<K, V> getNextEntry() {
 
         if (this.currentNode != null) {
             this.currentNode = this.currentNode.next;
@@ -93,7 +89,7 @@ public class CircularHashMap<K, V> {
         return this.currentNode;
     }
 
-    public Map.Entry<K, V> getPrevEntry () {
+    public Map.Entry<K, V> getPrevEntry() {
 
         if (this.currentNode != null) {
             this.currentNode = this.currentNode.prev;
@@ -101,17 +97,17 @@ public class CircularHashMap<K, V> {
         return this.currentNode;
     }
 
-    public boolean isEmpty () {
+    public boolean isEmpty() {
 
         return this.nodeMap.isEmpty();
     }
 
-    public Set<K> keySet () {
+    public Set<K> keySet() {
 
         return this.nodeMap.keySet();
     }
 
-    public V put (K key, V value) {
+    public V put(K key, V value) {
 
         Node node = this.nodeMap.get(key);
         if (node == null) {
@@ -123,8 +119,7 @@ public class CircularHashMap<K, V> {
                 node.next = node;
                 node.prev = node;
 
-            }
-            else {
+            } else {
                 node.next = this.headNode.next;
                 node.prev = this.headNode;
 
@@ -138,15 +133,14 @@ public class CircularHashMap<K, V> {
 
             this.headNode = node;
 
-        }
-        else {
+        } else {
             // update node
             node.value = value;
         }
         return value;
     }
 
-    public V remove (Object key) {
+    public V remove(Object key) {
 
         final Node node = this.nodeMap.get(key);
         V value = null;
@@ -179,12 +173,12 @@ public class CircularHashMap<K, V> {
     // interface to traverse circular nodes
     //
 
-    public void rewind () {
+    public void rewind() {
 
         this.currentNode = this.headNode != null ? this.headNode.next : null;
     }
 
-    public boolean setPosition (K key) {
+    public boolean setPosition(K key) {
 
         final Node node = this.nodeMap.get(key);
         if (node != null) {
@@ -193,12 +187,12 @@ public class CircularHashMap<K, V> {
         return node != null;
     }
 
-    public int size () {
+    public int size() {
 
         return this.nodeMap.size();
     }
 
-    public Collection<V> values () {
+    public Collection<V> values() {
 
         final Collection<V> list = new ArrayList<>();
         for (final Node node : this.nodeMap.values()) {

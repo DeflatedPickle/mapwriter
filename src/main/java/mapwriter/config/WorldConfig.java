@@ -1,19 +1,18 @@
 package mapwriter.config;
 
+import mapwriter.Mw;
+import mapwriter.util.Reference;
+import net.minecraft.world.DimensionType;
+import net.minecraftforge.common.config.Configuration;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import mapwriter.Mw;
-import mapwriter.util.Reference;
-import mapwriter.util.Utils;
-import net.minecraftforge.common.config.Configuration;
-
 public class WorldConfig {
     private static WorldConfig instance = null;
 
-    public static WorldConfig getInstance () {
-
+    public static WorldConfig getInstance() {
         if (instance == null) {
             synchronized (WorldConfig.class) {
                 if (instance == null) {
@@ -25,49 +24,47 @@ public class WorldConfig {
         return instance;
     }
 
-    public Configuration worldConfiguration = null;
+    public Configuration worldConfiguration;
 
     // list of available dimensions
-    public List<Integer> dimensionList = new ArrayList<>();
+    public List<DimensionType> dimensions = new ArrayList<>();
 
-    private WorldConfig () {
-
+    private WorldConfig() {
         // load world specific config file
-        final File worldConfigFile = new File(Mw.getInstance().worldDir, Reference.worldDirConfigName);
+        final File worldConfigFile = new File(Mw.getInstance().worldDir, Reference.WORLD_DIR_CONFIG_NAME);
         this.worldConfiguration = new Configuration(worldConfigFile);
 
-        this.InitDimensionList();
+        this.initDimensions();
     }
 
-    public void addDimension (int dimension) {
-
-        final int i = this.dimensionList.indexOf(dimension);
+    public void addDimension(DimensionType dimension) {
+        final int i = this.dimensions.indexOf(dimension);
         if (i < 0) {
-            this.dimensionList.add(dimension);
+            this.dimensions.add(dimension);
         }
     }
 
-    public void cleanDimensionList () {
-
-        final List<Integer> dimensionListCopy = new ArrayList<>(this.dimensionList);
-        this.dimensionList.clear();
-        for (final int dimension : dimensionListCopy) {
+    public void cleanDimensions() {
+        final List<DimensionType> dimensions = new ArrayList<>(this.dimensions);
+        this.dimensions.clear();
+        for (final DimensionType dimension : dimensions) {
             this.addDimension(dimension);
         }
     }
 
     // Dimension List
-    public void InitDimensionList () {
-
-        this.dimensionList.clear();
-        this.worldConfiguration.get(Reference.catWorld, "dimensionList", Utils.integerListToIntArray(this.dimensionList));
-        this.addDimension(0);
-        this.cleanDimensionList();
+    public void initDimensions() {
+        this.dimensions.clear();
+        String[] dimensions = new String[this.dimensions.size()];
+        for (int i = 0; i < this.dimensions.size(); i++) {
+            dimensions[i] = this.dimensions.get(i).getName();
+        }
+        this.worldConfiguration.get(Reference.CAT_WORLD, "dimensions", dimensions);
+        this.addDimension(DimensionType.OVERWORLD);
+        this.cleanDimensions();
     }
 
-    public void saveWorldConfig () {
-
+    public void saveWorldConfig() {
         this.worldConfiguration.save();
     }
-
 }

@@ -1,11 +1,5 @@
 package mapwriter.map;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.lwjgl.opengl.ARBDepthClamp;
-import org.lwjgl.opengl.GL11;
-
 import mapwriter.config.Config;
 import mapwriter.config.WorldConfig;
 import mapwriter.forge.MwForge;
@@ -20,49 +14,50 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.config.Configuration;
+import org.lwjgl.opengl.ARBDepthClamp;
+import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MarkerManager {
-
     public List<Marker> markerList = new ArrayList<>();
     public List<String> groupList = new ArrayList<>();
 
-    public List<Marker> visibleMarkerList = new ArrayList<>();
+    public List<Marker> visibleMarkers = new ArrayList<>();
 
     private String visibleGroupName = "none";
 
     public Marker selectedMarker = null;
 
-    public MarkerManager () {
-
+    public MarkerManager() {
     }
 
-    public void addMarker (Marker marker) {
-
+    public void addMarker(Marker marker) {
         this.markerList.add(marker);
     }
 
-    public void addMarker (String name, String groupName, int x, int y, int z, int dimension, int colour) {
-
+    public void addMarker(String name, String groupName, int x, int y, int z, DimensionType dimension, int colour) {
         this.addMarker(new Marker(name, groupName, x, y, z, dimension, colour));
-        this.save(WorldConfig.getInstance().worldConfiguration, Reference.catMarkers);
+        this.save(WorldConfig.getInstance().worldConfiguration, Reference.CAT_MARKERS);
     }
 
-    public void clear () {
+    public void clear() {
 
         this.markerList.clear();
         this.groupList.clear();
-        this.visibleMarkerList.clear();
+        this.visibleMarkers.clear();
         this.visibleGroupName = "none";
     }
 
-    public int countMarkersInGroup (String group) {
+    public int countMarkersInGroup(String group) {
 
         int count = 0;
         if (group.equals("all")) {
             count = this.markerList.size();
-        }
-        else {
+        } else {
             for (final Marker marker : this.markerList) {
                 if (marker.groupName.equals(group)) {
                     count++;
@@ -74,21 +69,21 @@ public class MarkerManager {
 
     // returns true if the marker exists in the arraylist.
     // safe to pass null.
-    public boolean delMarker (Marker markerToDelete) {
+    public boolean delMarker(Marker markerToDelete) {
 
         if (this.selectedMarker == markerToDelete) {
             this.selectedMarker = null;
         }
         final boolean result = this.markerList.remove(markerToDelete);
 
-        this.save(WorldConfig.getInstance().worldConfiguration, Reference.catMarkers);
+        this.save(WorldConfig.getInstance().worldConfiguration, Reference.CAT_MARKERS);
 
         return result;
     }
 
     // deletes the first marker with matching name and group.
     // if null is passed as either name or group it means "any".
-    public boolean delMarker (String name, String group) {
+    public boolean delMarker(String name, String group) {
 
         Marker markerToDelete = null;
         for (final Marker marker : this.markerList) {
@@ -102,7 +97,7 @@ public class MarkerManager {
         return this.delMarker(markerToDelete);
     }
 
-    public void drawBeam (Marker m, float partialTicks) {
+    public void drawBeam(Marker m, float partialTicks) {
 
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder vertexbuffer = tessellator.getBuffer();
@@ -198,7 +193,7 @@ public class MarkerManager {
         GlStateManager.popMatrix();
     }
 
-    public void drawLabel (Marker m) {
+    public void drawLabel(Marker m) {
 
         final float growFactor = 0.17F;
         final Minecraft mc = Minecraft.getMinecraft();
@@ -272,9 +267,9 @@ public class MarkerManager {
         GlStateManager.popMatrix();
     }
 
-    public void drawMarkers (MapMode mapMode, MapView mapView) {
+    public void drawMarkers(MapMode mapMode, MapView mapView) {
 
-        for (final Marker marker : this.visibleMarkerList) {
+        for (final Marker marker : this.visibleMarkers) {
             // only draw markers that were set in the current dimension
             if (mapView.getDimension() == marker.dimension) {
                 marker.draw(mapMode, mapView, 0xff000000);
@@ -285,14 +280,13 @@ public class MarkerManager {
         }
     }
 
-    public void drawMarkersWorld (float partialTicks) {
-
+    public void drawMarkersWorld(float partialTicks) {
         if (!Config.drawMarkersInWorld && !Config.drawMarkersNameInWorld || Minecraft.getMinecraft().getRenderManager().renderViewEntity == null) {
             return;
         }
 
-        for (final Marker m : this.visibleMarkerList) {
-            if (m.dimension == Minecraft.getMinecraft().player.dimension) {
+        for (final Marker m : this.visibleMarkers) {
+            if (m.dimension.getId() == Minecraft.getMinecraft().player.dimension) {
                 if (Config.drawMarkersInWorld) {
                     this.drawBeam(m, partialTicks);
                 }
@@ -303,11 +297,10 @@ public class MarkerManager {
         }
     }
 
-    public Marker getNearestMarker (int x, int z, int maxDistance) {
-
+    public Marker getNearestMarker(int x, int z, int maxDistance) {
         int nearestDistance = maxDistance * maxDistance;
         Marker nearestMarker = null;
-        for (final Marker marker : this.visibleMarkerList) {
+        for (final Marker marker : this.visibleMarkers) {
             final int dx = x - marker.x;
             final int dz = z - marker.z;
             final int d = dx * dx + dz * dz;
@@ -319,11 +312,11 @@ public class MarkerManager {
         return nearestMarker;
     }
 
-    public Marker getNearestMarkerInDirection (int x, int z, double desiredAngle) {
+    public Marker getNearestMarkerInDirection(int x, int z, double desiredAngle) {
 
         int nearestDistance = 10000 * 10000;
         Marker nearestMarker = null;
-        for (final Marker marker : this.visibleMarkerList) {
+        for (final Marker marker : this.visibleMarkers) {
             final int dx = marker.x - x;
             final int dz = marker.z - z;
             final int d = dx * dx + dz * dz;
@@ -340,12 +333,12 @@ public class MarkerManager {
         return nearestMarker;
     }
 
-    public String getVisibleGroupName () {
+    public String getVisibleGroupName() {
 
         return this.visibleGroupName;
     }
 
-    public void load (Configuration config, String category) {
+    public void load(Configuration config, String category) {
 
         this.markerList.clear();
 
@@ -360,8 +353,7 @@ public class MarkerManager {
                     final Marker marker = this.stringToMarker(value);
                     if (marker != null) {
                         this.addMarker(marker);
-                    }
-                    else {
+                    } else {
                         MwForge.logger.info("error: could not load {} from config file", key);
                     }
                 }
@@ -371,36 +363,34 @@ public class MarkerManager {
         this.update();
     }
 
-    public String markerToString (Marker marker) {
+    public String markerToString(Marker marker) {
 
         return String.format("%s:%d:%d:%d:%d:%06x:%s", marker.name, marker.x, marker.y, marker.z, marker.dimension, marker.colour & 0xffffff, marker.groupName);
     }
 
-    public void nextGroup () {
+    public void nextGroup() {
 
         this.nextGroup(1);
     }
 
-    public void nextGroup (int n) {
+    public void nextGroup(int n) {
 
         if (this.groupList.size() > 0) {
             int i = this.groupList.indexOf(this.visibleGroupName);
             final int size = this.groupList.size();
             if (i != -1) {
                 i = (i + size + n) % size;
-            }
-            else {
+            } else {
                 i = 0;
             }
             this.visibleGroupName = this.groupList.get(i);
-        }
-        else {
+        } else {
             this.visibleGroupName = "none";
             this.groupList.add("none");
         }
     }
 
-    public void save (Configuration config, String category) {
+    public void save(Configuration config, String category) {
 
         config.removeCategory(config.getCategory(category));
         config.get(category, "markerCount", 0).set(this.markerList.size());
@@ -419,35 +409,33 @@ public class MarkerManager {
         }
     }
 
-    public void selectNextMarker () {
+    public void selectNextMarker() {
 
-        if (this.visibleMarkerList.size() > 0) {
+        if (this.visibleMarkers.size() > 0) {
             int i = 0;
             if (this.selectedMarker != null) {
-                i = this.visibleMarkerList.indexOf(this.selectedMarker);
+                i = this.visibleMarkers.indexOf(this.selectedMarker);
                 if (i == -1) {
                     i = 0;
                 }
             }
-            i = (i + 1) % this.visibleMarkerList.size();
-            this.selectedMarker = this.visibleMarkerList.get(i);
-        }
-        else {
+            i = (i + 1) % this.visibleMarkers.size();
+            this.selectedMarker = this.visibleMarkers.get(i);
+        } else {
             this.selectedMarker = null;
         }
     }
 
-    public void setVisibleGroupName (String groupName) {
+    public void setVisibleGroupName(String groupName) {
 
         if (groupName != null) {
             this.visibleGroupName = Utils.mungeStringForConfig(groupName);
-        }
-        else {
+        } else {
             this.visibleGroupName = "none";
         }
     }
 
-    public Marker stringToMarker (String s) {
+    public Marker stringToMarker(String s) {
 
         // new style delimited with colons
         String[] split = s.split(":");
@@ -461,31 +449,29 @@ public class MarkerManager {
                 final int x = Integer.parseInt(split[1]);
                 final int y = Integer.parseInt(split[2]);
                 final int z = Integer.parseInt(split[3]);
-                final int dimension = Integer.parseInt(split[4]);
+                final DimensionType dimension = DimensionType.byName(split[4]);
                 final int colour = 0xff000000 | Integer.parseInt(split[5], 16);
 
                 marker = new Marker(split[0], split[6], x, y, z, dimension, colour);
 
-            }
-            catch (final NumberFormatException e) {
+            } catch (final IllegalArgumentException e) {
                 marker = null;
             }
-        }
-        else {
+        } else {
             MwForge.logger.info("Marker.stringToMarker: invalid marker '{}'", s);
         }
         return marker;
     }
 
-    public void update () {
+    public void update() {
 
-        this.visibleMarkerList.clear();
+        this.visibleMarkers.clear();
         this.groupList.clear();
         this.groupList.add("none");
         this.groupList.add("all");
         for (final Marker marker : this.markerList) {
             if (marker.groupName.equals(this.visibleGroupName) || this.visibleGroupName.equals("all")) {
-                this.visibleMarkerList.add(marker);
+                this.visibleMarkers.add(marker);
             }
             if (!this.groupList.contains(marker.groupName)) {
                 this.groupList.add(marker.groupName);

@@ -1,16 +1,17 @@
 package mapwriter.map;
 
-import java.util.List;
-
 import mapwriter.Mw;
 import mapwriter.api.IMapMode;
 import mapwriter.api.IMapView;
 import mapwriter.api.MwAPI;
 import mapwriter.config.Config;
+import net.minecraft.world.DimensionType;
+
+import java.util.List;
 
 public class MapView implements IMapView {
     private int zoomLevel = 0;
-    private int dimension = 0;
+    private DimensionType dimension = DimensionType.OVERWORLD;
     private int textureSize = 2048;
 
     // the position of the centre of the 'view' of the map using game (block)
@@ -38,7 +39,7 @@ public class MapView implements IMapView {
     private boolean undergroundMode;
     private final boolean fullscreenMap;
 
-    public MapView (Mw mw, boolean fullscreenMap) {
+    public MapView(Mw mw, boolean fullscreenMap) {
 
         this.minZoom = Config.zoomInLevels;
         this.maxZoom = Config.zoomOutLevels;
@@ -52,146 +53,118 @@ public class MapView implements IMapView {
     }
 
     @Override
-    public int adjustZoomLevel (int n) {
-
+    public int adjustZoomLevel(int n) {
         return this.setZoomLevel(this.zoomLevel + n);
     }
 
     @Override
-    public int getDimension () {
-
+    public DimensionType getDimension() {
         return this.dimension;
     }
 
     @Override
-    public double getDimensionScaling (int playerDimension) {
-
-        double scale;
-        if (this.dimension != -1 && playerDimension == -1) {
-            scale = 8.0;
+    public double getDimensionScaling(DimensionType playerDimension) {
+        if (this.dimension != DimensionType.NETHER && playerDimension == DimensionType.NETHER) {
+            return 8.0;
+        } else if (this.dimension == DimensionType.NETHER && playerDimension != DimensionType.NETHER) {
+            return 0.125;
+        } else {
+            return 1.0;
         }
-        else if (this.dimension == -1 && playerDimension != -1) {
-            scale = 0.125;
-        }
-        else {
-            scale = 1.0;
-        }
-        return scale;
     }
 
     @Override
-    public double getHeight () {
-
+    public double getHeight() {
         return this.h;
     }
 
     @Override
-    public double getMaxX () {
-
+    public double getMaxX() {
         return this.x + this.w / 2;
     }
 
     @Override
-    public double getMaxZ () {
-
+    public double getMaxZ() {
         return this.z + this.h / 2;
     }
 
     @Override
-    public double getMinX () {
-
+    public double getMinX() {
         return this.x - this.w / 2;
     }
 
     @Override
-    public double getMinZ () {
-
+    public double getMinZ() {
         return this.z - this.h / 2;
     }
 
     @Override
-    public int getPixelsPerBlock () {
-
+    public int getPixelsPerBlock() {
         return this.mapW / this.baseW;
     }
 
     @Override
-    public int getRegionZoomLevel () {
-
+    public int getRegionZoomLevel() {
         return Math.max(0, this.zoomLevel);
     }
 
     @Override
-    public boolean getUndergroundMode () {
-
+    public boolean getUndergroundMode() {
         return this.undergroundMode;
     }
 
     @Override
-    public double getWidth () {
-
+    public double getWidth() {
         return this.w;
     }
 
     @Override
-    public double getX () {
-
+    public double getX() {
         return this.x;
     }
 
     @Override
-    public double getZ () {
-
+    public double getZ() {
         return this.z;
     }
 
     @Override
-    public int getZoomLevel () {
-
+    public int getZoomLevel() {
         return this.zoomLevel;
     }
 
     @Override
-    public boolean isBlockWithinView (double bX, double bZ, boolean circular) {
-
-        boolean inside;
+    public boolean isBlockWithinView(double bX, double bZ, boolean circular) {
         if (!circular) {
-            inside = bX > this.getMinX() || bX < this.getMaxX() || bZ > this.getMinZ() || bZ < this.getMaxZ();
-        }
-        else {
+            return bX > this.getMinX() || bX < this.getMaxX() || bZ > this.getMinZ() || bZ < this.getMaxZ();
+        } else {
             final double dX = bX - this.x;
             final double dZ = bZ - this.z;
             final double dR = this.getHeight() / 2;
-            inside = dX * dX + dZ * dZ < dR * dR;
+            return dX * dX + dZ * dZ < dR * dR;
         }
-        return inside;
     }
 
     @Override
-    public void nextDimension (List<Integer> dimensionList, int n) {
-
-        int i = dimensionList.indexOf(this.dimension);
-        i = Math.max(0, i);
-        final int size = dimensionList.size();
-        final int nextDim = dimensionList.get((i + size + n) % size);
+    public void nextDimension(List<DimensionType> dimensions, int n) {
+        int i = Math.max(0, dimensions.indexOf(this.dimension));
+        final int size = dimensions.size();
+        final DimensionType nextDim = dimensions.get((i + size + n) % size);
         this.setDimensionAndAdjustZoom(nextDim);
     }
 
     @Override
-    public void panView (double relX, double relZ) {
-
+    public void panView(double relX, double relZ) {
         this.setViewCentre(this.x + relX * this.w, this.z + relZ * this.h);
     }
 
     @Override
-    public void setDimension (int dimension) {
-
+    public void setDimension(DimensionType dimension) {
         double scale = 1.0;
         if (dimension != this.dimension) {
-            if (this.dimension != -1 && dimension == -1) {
+            if (this.dimension != DimensionType.NETHER && dimension == DimensionType.NETHER) {
                 scale = 0.125;
-            }
-            else if (this.dimension == -1 && dimension != -1) {
+            } else if (this.dimension == DimensionType.NETHER && dimension != DimensionType.NETHER) {
                 scale = 8.0;
             }
             this.dimension = dimension;
@@ -204,13 +177,11 @@ public class MapView implements IMapView {
     }
 
     @Override
-    public void setDimensionAndAdjustZoom (int dimension) {
-
+    public void setDimensionAndAdjustZoom(DimensionType dimension) {
         int zoomLevelChange = 0;
-        if (this.dimension != -1 && dimension == -1) {
+        if (this.dimension != DimensionType.NETHER && dimension == DimensionType.NETHER) {
             zoomLevelChange = -3;
-        }
-        else if (this.dimension == -1 && dimension != -1) {
+        } else if (this.dimension == DimensionType.NETHER && dimension != DimensionType.NETHER) {
             zoomLevelChange = 3;
         }
         this.setZoomLevel(this.getZoomLevel() + zoomLevelChange);
@@ -218,14 +189,12 @@ public class MapView implements IMapView {
     }
 
     @Override
-    public void setMapWH (IMapMode mapMode) {
-
+    public void setMapWH(IMapMode mapMode) {
         this.setMapWH(mapMode.getWPixels(), mapMode.getHPixels());
     }
 
     @Override
-    public void setMapWH (int w, int h) {
-
+    public void setMapWH(int w, int h) {
         if (this.mapW != w || this.mapH != h) {
             this.mapW = w;
             this.mapH = h;
@@ -234,8 +203,7 @@ public class MapView implements IMapView {
     }
 
     @Override
-    public void setTextureSize (int n) {
-
+    public void setTextureSize(int n) {
         if (this.textureSize != n) {
             this.textureSize = n;
             this.updateBaseWH();
@@ -243,10 +211,8 @@ public class MapView implements IMapView {
     }
 
     @Override
-    public void setUndergroundMode (boolean enabled) {
-
+    public void setUndergroundMode(boolean enabled) {
         if (enabled && this.zoomLevel >= 0) {
-
             this.setZoomLevel(-1);
         }
 
@@ -254,32 +220,27 @@ public class MapView implements IMapView {
     }
 
     @Override
-    public void setViewCentre (double vX, double vZ) {
-
+    public void setViewCentre(double vX, double vZ) {
         this.x = vX;
         this.z = vZ;
 
         if (MwAPI.getCurrentDataProvider() != null) {
             MwAPI.getCurrentDataProvider().onMapCenterChanged(vX, vZ, this);
         }
-
     }
 
     @Override
-    public void setViewCentreScaled (double vX, double vZ, int playerDimension) {
-
+    public void setViewCentreScaled(double vX, double vZ, DimensionType playerDimension) {
         final double scale = this.getDimensionScaling(playerDimension);
         this.setViewCentre(vX * scale, vZ * scale);
     }
 
     @Override
-    public int setZoomLevel (int zoomLevel) {
-
+    public int setZoomLevel(int zoomLevel) {
         final int prevZoomLevel = this.zoomLevel;
         if (this.undergroundMode) {
             this.zoomLevel = Math.min(Math.max(this.minZoom, zoomLevel), 0);
-        }
-        else {
+        } else {
             this.zoomLevel = Math.min(Math.max(this.minZoom, zoomLevel), this.maxZoom);
         }
         if (prevZoomLevel != this.zoomLevel) {
@@ -290,7 +251,6 @@ public class MapView implements IMapView {
             Config.fullScreenZoomLevel = this.zoomLevel;
         }
         Config.overlayZoomLevel = this.zoomLevel;
-
         return this.zoomLevel;
     }
 
@@ -298,16 +258,14 @@ public class MapView implements IMapView {
     // The relative position of the block in the view will remain the same
     // as before the zoom.
     @Override
-    public void zoomToPoint (int newZoomLevel, double bX, double bZ) {
-
+    public void zoomToPoint(int newZoomLevel, double bX, double bZ) {
         final int prevZoomLevel = this.zoomLevel;
         newZoomLevel = this.setZoomLevel(newZoomLevel);
         final double zF = Math.pow(2, newZoomLevel - prevZoomLevel);
         this.setViewCentre(bX - (bX - this.x) * zF, bZ - (bZ - this.z) * zF);
     }
 
-    private void updateBaseWH () {
-
+    private void updateBaseWH() {
         int nW = this.mapW;
         int nH = this.mapH;
         final int halfTextureSize = this.textureSize / 2;
@@ -325,13 +283,11 @@ public class MapView implements IMapView {
         this.updateZoom();
     }
 
-    private void updateZoom () {
-
+    private void updateZoom() {
         if (this.zoomLevel >= 0) {
             this.w = this.baseW << this.zoomLevel;
             this.h = this.baseH << this.zoomLevel;
-        }
-        else {
+        } else {
             this.w = this.baseW >> -this.zoomLevel;
             this.h = this.baseH >> -this.zoomLevel;
         }

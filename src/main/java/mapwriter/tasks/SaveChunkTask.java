@@ -1,10 +1,10 @@
 package mapwriter.tasks;
 
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import mapwriter.region.MwChunk;
 import mapwriter.region.RegionManager;
+
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SaveChunkTask extends Task {
     private static HashMap<Long, SaveChunkTask> chunksUpdating = new HashMap<>();
@@ -12,27 +12,25 @@ public class SaveChunkTask extends Task {
     private RegionManager regionManager;
     private final AtomicBoolean Running = new AtomicBoolean();
 
-    public SaveChunkTask (MwChunk chunk, RegionManager regionManager) {
+    public SaveChunkTask(MwChunk chunk, RegionManager regionManager) {
 
         this.chunk = chunk;
         this.regionManager = regionManager;
     }
 
     @Override
-    public boolean CheckForDuplicate () {
+    public boolean CheckForDuplicate() {
 
         final Long coords = this.chunk.getCoordIntPair();
 
         if (!SaveChunkTask.chunksUpdating.containsKey(coords)) {
             SaveChunkTask.chunksUpdating.put(coords, this);
             return false;
-        }
-        else {
+        } else {
             final SaveChunkTask task2 = SaveChunkTask.chunksUpdating.get(coords);
             if (task2.Running.get() == false) {
                 task2.UpdateChunkData(this.chunk, this.regionManager);
-            }
-            else {
+            } else {
                 SaveChunkTask.chunksUpdating.put(coords, this);
                 return false;
             }
@@ -41,7 +39,7 @@ public class SaveChunkTask extends Task {
     }
 
     @Override
-    public void onComplete () {
+    public void onComplete() {
 
         final Long coords = this.chunk.getCoordIntPair();
         SaveChunkTask.chunksUpdating.remove(coords);
@@ -49,13 +47,13 @@ public class SaveChunkTask extends Task {
     }
 
     @Override
-    public void run () {
+    public void run() {
 
         this.Running.set(true);
         this.chunk.write(this.regionManager.regionFileCache);
     }
 
-    public void UpdateChunkData (MwChunk chunk, RegionManager regionManager) {
+    public void UpdateChunkData(MwChunk chunk, RegionManager regionManager) {
 
         this.chunk = chunk;
         this.regionManager = regionManager;

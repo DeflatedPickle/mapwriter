@@ -1,11 +1,11 @@
 package mapwriter.map;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mapwriter.Mw;
 import mapwriter.config.Config;
 import mapwriter.map.mapmode.MapMode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MiniMap {
     public MapMode smallMapMode;
@@ -20,7 +20,7 @@ public class MiniMap {
     private final List<MapRenderer> mapList;
     private MapRenderer currentMap = null;
 
-    public MiniMap (Mw mw) {
+    public MiniMap(Mw mw) {
 
         // map view shared between large and small map modes
         this.view = new MapView(mw, false);
@@ -52,14 +52,14 @@ public class MiniMap {
         this.currentMap = this.mapList.get(Config.overlayModeIndex);
     }
 
-    public void close () {
+    public void close() {
 
         this.mapList.clear();
         this.currentMap = null;
     }
 
     // draw the map overlay, player arrow, and markers
-    public void drawCurrentMap () {
+    public void drawCurrentMap() {
 
         if (this.currentMap != null) {
             this.currentMap.draw();
@@ -67,7 +67,7 @@ public class MiniMap {
     }
 
     // toggle between small map, underground map and no map
-    public MapRenderer nextOverlayMode (int increment) {
+    public MapRenderer nextOverlayMode(int increment) {
 
         final int size = this.mapList.size();
         Config.overlayModeIndex = (Config.overlayModeIndex + size + increment) % size;

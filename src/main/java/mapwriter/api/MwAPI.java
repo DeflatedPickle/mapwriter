@@ -1,9 +1,9 @@
 package mapwriter.api;
 
+import com.google.common.collect.HashBiMap;
+
 import java.util.ArrayList;
 import java.util.Collection;
-
-import com.google.common.collect.HashBiMap;
 
 public class MwAPI {
 
@@ -11,87 +11,82 @@ public class MwAPI {
     private static IMwDataProvider currentProvider = null;
     private static ArrayList<String> providerKeys = new ArrayList<>();
 
-    public static IMwDataProvider getCurrentDataProvider () {
+    public static IMwDataProvider getCurrentDataProvider() {
 
         return currentProvider;
     }
 
-    public static String getCurrentProviderName () {
+    public static String getCurrentProviderName() {
 
         if (currentProvider != null) {
             return getProviderName(currentProvider);
-        }
-        else {
+        } else {
             return "None";
         }
     }
 
     // Returns the data provider based on its name //
-    public static IMwDataProvider getDataProvider (String name) {
+    public static IMwDataProvider getDataProvider(String name) {
 
         return dataProviders.get(name);
     }
 
-    public static Collection<IMwDataProvider> getDataProviders () {
+    public static Collection<IMwDataProvider> getDataProviders() {
 
         return dataProviders.values();
     }
 
     // Returns the name based on the data provider //
-    public static String getProviderName (IMwDataProvider provider) {
+    public static String getProviderName(IMwDataProvider provider) {
 
         return dataProviders.inverse().get(provider);
     }
 
-    public static void registerDataProvider (String name, IMwDataProvider handler) {
+    public static void registerDataProvider(String name, IMwDataProvider handler) {
 
         dataProviders.put(name, handler);
         providerKeys.add(name);
     }
 
-    public static IMwDataProvider setCurrentDataProvider (IMwDataProvider provider) {
+    public static IMwDataProvider setCurrentDataProvider(IMwDataProvider provider) {
 
         currentProvider = provider;
         return currentProvider;
     }
 
-    public static IMwDataProvider setCurrentDataProvider (String name) {
+    public static IMwDataProvider setCurrentDataProvider(String name) {
 
         currentProvider = dataProviders.get(name);
         return currentProvider;
     }
 
-    public static IMwDataProvider setNextProvider () {
+    public static IMwDataProvider setNextProvider() {
 
         if (currentProvider != null) {
             final int index = providerKeys.indexOf(getCurrentProviderName());
             if (index + 1 >= providerKeys.size()) {
                 currentProvider = null;
-            }
-            else {
+            } else {
                 final String nextKey = providerKeys.get(index + 1);
                 currentProvider = getDataProvider(nextKey);
             }
-        }
-        else if (!providerKeys.isEmpty()) {
+        } else if (!providerKeys.isEmpty()) {
             currentProvider = getDataProvider(providerKeys.get(0));
         }
         return currentProvider;
     }
 
-    public static IMwDataProvider setPrevProvider () {
+    public static IMwDataProvider setPrevProvider() {
 
         if (currentProvider != null) {
             final int index = providerKeys.indexOf(getCurrentProviderName());
             if (index - 1 < 0) {
                 currentProvider = null;
-            }
-            else {
+            } else {
                 final String prevKey = providerKeys.get(index - 1);
                 currentProvider = getDataProvider(prevKey);
             }
-        }
-        else if (!providerKeys.isEmpty()) {
+        } else if (!providerKeys.isEmpty()) {
 
             currentProvider = getDataProvider(providerKeys.get(providerKeys.size() - 1));
         }

@@ -4,13 +4,13 @@ import mapwriter.gui.ModGuiConfig.ModBooleanEntry;
 import mapwriter.gui.ModGuiConfigHUD.MapPosConfigEntry;
 
 public class smallMapModeConfig extends largeMapModeConfig {
-    public smallMapModeConfig (String configCategory) {
+    public smallMapModeConfig(String configCategory) {
 
         super(configCategory);
     }
 
     @Override
-    public void loadConfig () {
+    public void loadConfig() {
 
         super.loadConfig();
         ConfigurationHandler.configuration.getCategory(this.configCategory).remove("Position");
@@ -18,7 +18,7 @@ public class smallMapModeConfig extends largeMapModeConfig {
     }
 
     @Override
-    public void setDefaults () {
+    public void setDefaults() {
 
         this.rotateDef = true;
         this.circularDef = true;

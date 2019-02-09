@@ -1,24 +1,21 @@
 package mapwriter.util;
 
-import java.nio.IntBuffer;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
 import mapwriter.forge.MwForge;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
+import java.nio.IntBuffer;
 
 public class Texture {
-
     private int id;
     public final int w;
     public final int h;
     private final IntBuffer pixelBuf;
 
     // create from existing texture
-    public Texture (int id) {
-
+    public Texture(int id) {
         this.id = id;
         this.bind();
         this.w = Render.getTextureWidth();
@@ -28,14 +25,12 @@ public class Texture {
         MwForge.logger.info("created new MwTexture from GL texture id {} ({}x{}) ({} pixels)", this.id, this.w, this.h, this.pixelBuf.limit());
     }
 
-    public Texture (int w, int h, int fillColour) {
-
+    public Texture(int w, int h, int fillColour) {
         this(w, h, fillColour, GL11.GL_LINEAR, GL11.GL_NEAREST, GL12.GL_CLAMP_TO_EDGE);
     }
 
     // allocate new texture and fill from IntBuffer
-    public Texture (int w, int h, int fillColour, int minFilter, int maxFilter, int textureWrap) {
-
+    public Texture(int w, int h, int fillColour, int minFilter, int maxFilter, int textureWrap) {
         this.id = GlStateManager.generateTexture();
         this.w = w;
         this.h = h;
@@ -47,30 +42,25 @@ public class Texture {
         this.setTexParameters(minFilter, maxFilter, textureWrap);
     }
 
-    public void bind () {
-
+    public void bind() {
         synchronized (net.minecraftforge.fml.client.SplashProgress.class) {
             GlStateManager.bindTexture(this.id);
         }
-
     }
 
     // free up the resources used by the GL texture
-    public synchronized void close () {
-
+    public synchronized void close() {
         if (this.id != 0) {
             try {
                 GlStateManager.deleteTexture(this.id);
-            }
-            catch (final NullPointerException e) {
+            } catch (final NullPointerException e) {
                 MwForge.logger.info("MwTexture.close: null pointer exception (texture {})", this.id);
             }
             this.id = 0;
         }
     }
 
-    public synchronized void fillRect (int x, int y, int w, int h, int colour) {
-
+    public synchronized void fillRect(int x, int y, int w, int h, int colour) {
         final int offset = y * this.w + x;
         for (int j = 0; j < h; j++) {
             this.pixelBuf.position(offset + j * this.w);
@@ -80,22 +70,19 @@ public class Texture {
         }
     }
 
-    public synchronized int getRGB (int x, int y) {
-
+    public synchronized int getRGB(int x, int y) {
         return this.pixelBuf.get(y * this.w + x);
     }
 
     // Copy a rectangular sub-region of dimensions 'w' x 'h' from the pixel
     // buffer to the array 'pixels'.
-    public synchronized void getRGB (int x, int y, int w, int h, int[] pixels, int offset, int scanSize, TextureAtlasSprite icon) {
-
+    public synchronized void getRGB(int x, int y, int w, int h, int[] pixels, int offset, int scanSize, TextureAtlasSprite icon) {
         final int bufOffset = y * this.w + x;
         for (int i = 0; i < h; i++) {
             try {
                 this.pixelBuf.position(bufOffset + i * this.w);
                 this.pixelBuf.get(pixels, offset + i * scanSize, w);
-            }
-            catch (final IllegalArgumentException e) {
+            } catch (final IllegalArgumentException e) {
                 MwForge.logger.warn("MwTexture.getRGB: IllegalArgumentException (icon name: {}; height: {}; width: {}; MaxU: %f; MinU: %f; MaxV: %f; MinV: %f)", icon.getIconName(), icon.getIconHeight(), icon.getIconWidth(), icon.getMaxU(), icon.getMinU(), icon.getMaxV(), icon.getMinV());
                 MwForge.logger.warn("MwTexture.getRGB: IllegalArgumentException (pos: {})", bufOffset + i * this.w);
                 MwForge.logger.warn("MwTexture.getRGB: IllegalArgumentException (buffersize: {})", this.pixelBuf.limit());
@@ -104,38 +91,32 @@ public class Texture {
         }
     }
 
-    public void pixelBufPut (int pixel) {
-
+    public void pixelBufPut(int pixel) {
         this.pixelBuf.put(pixel);
     }
 
-    public void setLinearScaling (boolean enabled) {
-
+    public void setLinearScaling(boolean enabled) {
         this.bind();
         if (enabled) {
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        }
-        else {
+        } else {
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
         }
     }
 
-    public void setPixelBufPosition (int i) {
-
+    public void setPixelBufPosition(int i) {
         this.pixelBuf.position(i);
     }
 
-    public synchronized void setRGB (int x, int y, int colour) {
-
+    public synchronized void setRGB(int x, int y, int colour) {
         this.pixelBuf.put(y * this.w + x, colour);
     }
 
     // Copy a rectangular sub-region of dimensions 'w' x 'h' from the array
     // 'pixels' to the pixel buffer.
-    public synchronized void setRGB (int x, int y, int w, int h, int[] pixels, int offset, int scanSize) {
-
+    public synchronized void setRGB(int x, int y, int w, int h, int[] pixels, int offset, int scanSize) {
         final int bufOffset = y * this.w + x;
         for (int i = 0; i < h; i++) {
             this.pixelBuf.position(bufOffset + i * this.w);
@@ -144,8 +125,7 @@ public class Texture {
     }
 
     // set texture scaling and wrapping parameters
-    public void setTexParameters (int minFilter, int maxFilter, int textureWrap) {
-
+    public void setTexParameters(int minFilter, int maxFilter, int textureWrap) {
         this.bind();
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, textureWrap);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, textureWrap);
@@ -153,31 +133,27 @@ public class Texture {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, maxFilter);
     }
 
-    public synchronized void updateTexture () {
-
+    public synchronized void updateTexture() {
         this.bind();
         this.pixelBuf.position(0);
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, this.w, this.h, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, this.pixelBuf);
     }
 
     // update texture from pixels in pixelBuf
-    public synchronized void updateTextureArea (int x, int y, int w, int h) {
-
+    public synchronized void updateTextureArea(int x, int y, int w, int h) {
         try {
             this.bind();
             GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, this.w);
             this.pixelBuf.position(y * this.w + x);
             GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, w, h, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, this.pixelBuf);
             GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
-        }
-        catch (final NullPointerException e) {
+        } catch (final NullPointerException e) {
             MwForge.logger.info("MwTexture.updatePixels: null pointer exception (texture {})", this.id);
         }
     }
 
     // copy pixels from GL texture to pixelBuf
-    private synchronized void getPixelsFromExistingTexture () {
-
+    private synchronized void getPixelsFromExistingTexture() {
         try {
             this.bind();
             this.pixelBuf.clear();
@@ -186,8 +162,7 @@ public class Texture {
             // does not work here
             // this.pixelBuf.flip()
             this.pixelBuf.limit(this.w * this.h);
-        }
-        catch (final NullPointerException e) {
+        } catch (final NullPointerException e) {
             MwForge.logger.info("MwTexture.getPixels: null pointer exception (texture {})", this.id);
         }
     }

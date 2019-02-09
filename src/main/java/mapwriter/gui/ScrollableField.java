@@ -27,7 +27,7 @@ public abstract class ScrollableField extends Gui {
 
     public final FontRenderer fontrendererObj;
 
-    public ScrollableField (int x, int y, int width, String label, FontRenderer fontrendererObj) {
+    public ScrollableField(int x, int y, int width, String label, FontRenderer fontrendererObj) {
 
         this.x = x;
         this.y = y;
@@ -46,7 +46,7 @@ public abstract class ScrollableField extends Gui {
         this.labelY = this.y + this.labelHeight / 2 - 2;
     }
 
-    public void draw () {
+    public void draw() {
 
         final TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
         // Render.drawRectBorder(labelX, y, width + this.labelWidth + 4,
@@ -56,51 +56,47 @@ public abstract class ScrollableField extends Gui {
         this.drawString(this.fontrendererObj, this.label, this.labelX, this.labelY, 0xffffff);
 
         if (this.drawArrows) {
-            renderEngine.bindTexture(Reference.leftArrowTexture);
+            renderEngine.bindTexture(Reference.LEFT_ARROW_TEXTURE);
             Render.drawTexturedRect(this.leftArrowX, this.arrowsY, ScrollableField.arrowsWidth, this.arrowsHeight, 0.0, 0.0, 1.0, 1.0);
-            renderEngine.bindTexture(Reference.rightArrowTexture);
+            renderEngine.bindTexture(Reference.RIGHT_ARROW_TEXTURE);
             Render.drawTexturedRect(this.rightArrowX, this.arrowsY, ScrollableField.arrowsWidth, this.arrowsHeight, 0.0, 0.0, 1.0, 1.0);
         }
     }
 
-    public abstract Boolean isFocused ();
+    public abstract Boolean isFocused();
 
-    public void mouseClicked (int x, int y, int button) {
+    public void mouseClicked(int x, int y, int button) {
 
         final int direction = this.posWithinArrows(x, y);
         if (direction == 1) {
             this.nextElement();
-        }
-        else if (direction == -1) {
+        } else if (direction == -1) {
             this.previousElement();
         }
     }
 
-    public abstract void nextElement ();
+    public abstract void nextElement();
 
     /**
-     *
      * @return Returns clicked arrow: 1 for right and -1 for left
      */
-    public int posWithinArrows (int x, int y) {
+    public int posWithinArrows(int x, int y) {
 
         if (x >= this.leftArrowX && y >= this.arrowsY && x <= ScrollableField.arrowsWidth + this.leftArrowX && y <= this.arrowsHeight + this.arrowsY) {
             return -1;
-        }
-        else if (x >= this.rightArrowX && y >= this.arrowsY && x <= ScrollableField.arrowsWidth + this.rightArrowX && y <= this.arrowsHeight + this.arrowsY) {
+        } else if (x >= this.rightArrowX && y >= this.arrowsY && x <= ScrollableField.arrowsWidth + this.rightArrowX && y <= this.arrowsHeight + this.arrowsY) {
             return 1;
-        }
-        else {
+        } else {
             return 0;
         }
     }
 
-    public abstract void previousElement ();
+    public abstract void previousElement();
 
-    public void setDrawArrows (boolean value) {
+    public void setDrawArrows(boolean value) {
 
         this.drawArrows = value;
     }
 
-    public abstract void setFocused (Boolean focus);
+    public abstract void setFocused(Boolean focus);
 }

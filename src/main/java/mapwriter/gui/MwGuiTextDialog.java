@@ -1,11 +1,10 @@
 package mapwriter.gui;
 
-import java.io.IOException;
-
-import org.lwjgl.input.Keyboard;
-
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import org.lwjgl.input.Keyboard;
+
+import java.io.IOException;
 
 public class MwGuiTextDialog extends GuiScreen {
 
@@ -23,7 +22,7 @@ public class MwGuiTextDialog extends GuiScreen {
     boolean showError = false;
     boolean backToGameOnSubmit = false;
 
-    public MwGuiTextDialog (GuiScreen parentScreen, String title, String text, String error) {
+    public MwGuiTextDialog(GuiScreen parentScreen, String title, String text, String error) {
 
         this.parentScreen = parentScreen;
         this.title = title;
@@ -32,12 +31,11 @@ public class MwGuiTextDialog extends GuiScreen {
     }
 
     @Override
-    public void drawScreen (int mouseX, int mouseY, float f) {
+    public void drawScreen(int mouseX, int mouseY, float f) {
 
         if (this.parentScreen != null) {
             this.parentScreen.drawScreen(mouseX, mouseY, f);
-        }
-        else {
+        } else {
             this.drawDefaultBackground();
         }
 
@@ -52,7 +50,7 @@ public class MwGuiTextDialog extends GuiScreen {
         super.drawScreen(mouseX, mouseY, f);
     }
 
-    public int getInputAsHexInt () {
+    public int getInputAsHexInt() {
 
         final String s = this.getInputAsString();
         int value = 0;
@@ -60,15 +58,14 @@ public class MwGuiTextDialog extends GuiScreen {
             value = Integer.parseInt(s, 16);
             this.inputValid = true;
             this.showError = false;
-        }
-        catch (final NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             this.inputValid = false;
             this.showError = true;
         }
         return value;
     }
 
-    public int getInputAsInt () {
+    public int getInputAsInt() {
 
         final String s = this.getInputAsString();
         int value = 0;
@@ -76,15 +73,14 @@ public class MwGuiTextDialog extends GuiScreen {
             value = Integer.parseInt(s);
             this.inputValid = true;
             this.showError = false;
-        }
-        catch (final NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             this.inputValid = false;
             this.showError = true;
         }
         return value;
     }
 
-    public String getInputAsString () {
+    public String getInputAsString() {
 
         final String s = this.textField.getText().trim();
         this.inputValid = s.length() > 0;
@@ -93,23 +89,23 @@ public class MwGuiTextDialog extends GuiScreen {
     }
 
     @Override
-    public void initGui () {
+    public void initGui() {
 
         this.newTextField();
     }
 
-    public void setText (String s) {
+    public void setText(String s) {
 
         this.textField.setText(s);
         this.text = s;
     }
 
-    public boolean submit () {
+    public boolean submit() {
 
         return false;
     }
 
-    private void newTextField () {
+    private void newTextField() {
 
         if (this.textField != null) {
             this.text = this.textField.getText();
@@ -124,7 +120,7 @@ public class MwGuiTextDialog extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped (char c, int key) {
+    protected void keyTyped(char c, int key) {
 
         switch (key) {
             case Keyboard.KEY_ESCAPE:
@@ -136,8 +132,7 @@ public class MwGuiTextDialog extends GuiScreen {
                 if (this.submit()) {
                     if (!this.backToGameOnSubmit) {
                         this.mc.displayGuiScreen(this.parentScreen);
-                    }
-                    else {
+                    } else {
                         this.mc.displayGuiScreen(null);
                     }
                 }
@@ -152,7 +147,7 @@ public class MwGuiTextDialog extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked (int x, int y, int button) throws IOException {
+    protected void mouseClicked(int x, int y, int button) throws IOException {
 
         super.mouseClicked(x, y, button);
     }

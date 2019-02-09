@@ -1,14 +1,9 @@
 package mapwriter.forge;
 
-import java.util.List;
-
-import org.apache.commons.lang3.reflect.FieldUtils;
-
 import com.mojang.realmsclient.RealmsMainScreen;
 import com.mojang.realmsclient.dto.RealmsServer;
 import com.mojang.realmsclient.gui.screens.RealmsConfigureWorldScreen;
 import com.mojang.realmsclient.gui.screens.RealmsLongRunningMcoTaskScreen;
-
 import mapwriter.Mw;
 import mapwriter.config.Config;
 import mapwriter.util.Utils;
@@ -22,26 +17,26 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.commons.lang3.reflect.FieldUtils;
+
+import java.util.List;
 
 public class MapWriterEventHandler {
     Mw mw;
 
-    public MapWriterEventHandler (Mw mw) {
-
+    public MapWriterEventHandler(Mw mw) {
         this.mw = mw;
     }
 
     @SubscribeEvent
-    public void eventChunkLoad (ChunkEvent.Load event) {
-
+    public void eventChunkLoad(ChunkEvent.Load event) {
         if (event.getWorld().isRemote) {
             this.mw.onChunkLoad(event.getChunk());
         }
     }
 
     @SubscribeEvent
-    public void eventChunkUnload (ChunkEvent.Unload event) {
-
+    public void eventChunkUnload(ChunkEvent.Unload event) {
         if (event.getWorld().isRemote) {
             this.mw.onChunkUnload(event.getChunk());
         }
@@ -51,16 +46,13 @@ public class MapWriterEventHandler {
     // yet then the uv values and icons will be wrong.
     // this only happens if fml.skipFirstTextureLoad is enabled.
     @SubscribeEvent
-    public void onGuiOpenEvent (GuiOpenEvent event) {
-
+    public void onGuiOpenEvent(GuiOpenEvent event) {
         if (event.getGui() instanceof GuiMainMenu && Config.reloadColours) {
             this.mw.reloadBlockColours();
             Config.reloadColours = false;
-        }
-        else if (event.getGui() instanceof GuiGameOver) {
+        } else if (event.getGui() instanceof GuiGameOver) {
             this.mw.onPlayerDeath();
-        }
-        else if (event.getGui() instanceof GuiScreenRealmsProxy) {
+        } else if (event.getGui() instanceof GuiScreenRealmsProxy) {
             try {
                 final RealmsScreen proxy = ((GuiScreenRealmsProxy) event.getGui()).getProxy();
                 RealmsMainScreen parrent = null;
@@ -93,35 +85,28 @@ public class MapWriterEventHandler {
                     }
 
                 }
-            }
-            catch (final IllegalAccessException e) {
-
-            }
+            } catch (final IllegalAccessException ignored) {}
         }
     }
 
     @SubscribeEvent
-    public void onTextureStitchEventPost (TextureStitchEvent.Post event) {
-
+    public void onTextureStitchEventPost(TextureStitchEvent.Post event) {
         if (Config.reloadColours) {
             MwForge.logger.info("Skipping the first generation of blockcolours, models are not loaded yet");
-        }
-        else {
+        } else {
             this.mw.reloadBlockColours();
         }
     }
 
     @SubscribeEvent
-    public void renderMap (RenderGameOverlayEvent.Post event) {
-
+    public void renderMap(RenderGameOverlayEvent.Post event) {
         if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
             Mw.getInstance().onTick();
         }
     }
 
     @SubscribeEvent
-    public void renderWorldLastEvent (RenderWorldLastEvent event) {
-
+    public void renderWorldLastEvent(RenderWorldLastEvent event) {
         if (Mw.getInstance().ready) {
             Mw.getInstance().markerManager.drawMarkersWorld(event.getPartialTicks());
         }

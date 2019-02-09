@@ -31,7 +31,7 @@ public class MwGuiLabel {
 
     private Side side = Side.none;
 
-    public MwGuiLabel (String[] s1, String[] s2, int x, int y, Boolean Background, Boolean AllowFlip, int parentWidth, int parentHeight) {
+    public MwGuiLabel(String[] s1, String[] s2, int x, int y, Boolean Background, Boolean AllowFlip, int parentWidth, int parentHeight) {
 
         this.Background = Background;
         this.AllowFlip = AllowFlip;
@@ -43,7 +43,7 @@ public class MwGuiLabel {
         this.setText(s1, s2);
     }
 
-    public void draw () {
+    public void draw() {
 
         this.updateCoords();
         if (this.str1 != null) {
@@ -59,88 +59,85 @@ public class MwGuiLabel {
         }
     }
 
-    public void drawToAboveOf (MwGuiLabel label) {
+    public void drawToAboveOf(MwGuiLabel label) {
 
         this.label = label;
         this.side = Side.top;
     }
 
-    public void drawToBelowOf (MwGuiLabel label) {
+    public void drawToBelowOf(MwGuiLabel label) {
 
         this.label = label;
         this.side = Side.bottom;
     }
 
-    public void drawToLeftOf (MwGuiLabel label) {
+    public void drawToLeftOf(MwGuiLabel label) {
 
         this.label = label;
         this.side = Side.left;
     }
 
-    public void drawToRightOf (MwGuiLabel label) {
+    public void drawToRightOf(MwGuiLabel label) {
 
         this.label = label;
         this.side = Side.right;
     }
 
-    public boolean getAllowFlip () {
+    public boolean getAllowFlip() {
 
         return this.Background;
     }
 
-    public boolean getDrawBackground () {
+    public boolean getDrawBackground() {
 
         return this.Background;
     }
 
-    public int getparentHeight () {
+    public int getparentHeight() {
 
         return this.parentHeight;
     }
 
-    public int getparentWidth () {
+    public int getparentWidth() {
 
         return this.parentWidth;
     }
 
-    public boolean posWithin (int x, int y) {
+    public boolean posWithin(int x, int y) {
 
         return x >= this.x + MwGuiLabel.spacingX && y >= this.y + MwGuiLabel.spacingY && x <= this.x + this.w + MwGuiLabel.spacingX && y <= this.y + this.h + MwGuiLabel.spacingY;
     }
 
-    public void setAllowFlip (boolean enable) {
+    public void setAllowFlip(boolean enable) {
 
         this.Background = enable;
     }
 
-    public void setCoords (int x, int y) {
+    public void setCoords(int x, int y) {
 
         if (this.AllowFlip) {
             if (x + this.w + MwGuiLabel.spacingX > this.parentWidth) {
                 this.x = x - this.w - MwGuiLabel.spacingX - 5;
-            }
-            else {
+            } else {
                 this.x = x;
             }
             if (y + this.h + MwGuiLabel.spacingY > this.parentHeight) {
                 this.y = y - this.h - MwGuiLabel.spacingY;
-            }
-            else {
+            } else {
                 this.y = y;
             }
-        }
-        else {
+        } else {
             this.x = x;
             this.y = y;
         }
     }
 
-    public void setDrawBackground (boolean enable) {
+    public void setDrawBackground(boolean enable) {
 
         this.Background = enable;
     }
 
-    public void setParentWidthAndHeight (int width, int height) {
+    public void setParentWidthAndHeight(int width, int height) {
 
         this.parentWidth = width;
         this.parentHeight = height;
@@ -148,14 +145,14 @@ public class MwGuiLabel {
         this.updateWidthAndHeight();
     }
 
-    public void setText (String[] s1, String[] s2) {
+    public void setText(String[] s1, String[] s2) {
 
         this.s1 = s1;
         this.s2 = s2;
         this.UpdateStrings();
     }
 
-    private void updateCoords () {
+    private void updateCoords() {
 
         switch (this.side) {
             case left:
@@ -179,7 +176,7 @@ public class MwGuiLabel {
         }
     }
 
-    private void UpdateStrings () {
+    private void UpdateStrings() {
 
         if (this.s1 != null && this.s1.length > 0) {
             this.str1 = Utils.stringArrayToString(this.s1);
@@ -190,7 +187,7 @@ public class MwGuiLabel {
         this.updateWidthAndHeight();
     }
 
-    private void updateWidthAndHeight () {
+    private void updateWidthAndHeight() {
 
         if (this.s1 != null) {
             final int stringwidth = Utils.getMaxWidth(this.s1, this.s2);

@@ -11,7 +11,7 @@ key.mw_underground_mode=Режим пещер
 # GUI
 mw.gui.mwgui.help=Помощь
 mw.gui.mwgui.options=Настройки
-mw.gui.mwgui.dimension=измерение: %d
+mw.gui.mwgui.dimension=измерение: %s
 mw.gui.mwgui.group=группа
 mw.gui.mwgui.overlay=наложение: %s
 mw.gui.mwgui.keys=Клавиши

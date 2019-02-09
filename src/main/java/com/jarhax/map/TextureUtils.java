@@ -1,7 +1,5 @@
 package com.jarhax.map;
 
-import java.util.Map;
-
 import mapwriter.util.Render;
 import mapwriter.util.Texture;
 import net.minecraft.block.Block;
@@ -13,20 +11,22 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.registries.IRegistryDelegate;
 
+import java.util.Map;
+
 public class TextureUtils {
 
-    public static Map<String, TextureAtlasSprite> getTextures (TextureMap map) {
+    public static Map<String, TextureAtlasSprite> getTextures(TextureMap map) {
 
         // TODO replace with AT or Bookshelf
         return ReflectionHelper.getPrivateValue(TextureMap.class, map, "mapRegisteredSprites");
     }
-    
+
     public static Map<IRegistryDelegate<Block>, IBlockColor> getBlockColours() {
-        
+
         return ReflectionHelper.getPrivateValue(BlockColors.class, Minecraft.getMinecraft().getBlockColors(), "blockColorMap");
     }
 
-    public static int getIconMapColour (TextureAtlasSprite icon, Texture terrainTexture) {
+    public static int getIconMapColour(TextureAtlasSprite icon, Texture terrainTexture) {
 
         final int iconX = Math.round(terrainTexture.w * Math.min(icon.getMinU(), icon.getMaxU()));
         final int iconY = Math.round(terrainTexture.h * Math.min(icon.getMinV(), icon.getMaxV()));

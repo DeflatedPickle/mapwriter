@@ -15,7 +15,7 @@ public class MwGuiTeleportDialog extends MwGuiTextDialog {
     final MapView mapView;
     final int teleportX, teleportZ;
 
-    public MwGuiTeleportDialog (GuiScreen parentScreen, Mw mw, MapView mapView, int x, int y, int z) {
+    public MwGuiTeleportDialog(GuiScreen parentScreen, Mw mw, MapView mapView, int x, int y, int z) {
 
         super(parentScreen, I18n.format("mw.gui.mwguimarkerdialognew.title") + ":", Integer.toString(y), I18n.format("mw.gui.mwguimarkerdialognew.error"));
         this.mw = mw;
@@ -26,7 +26,7 @@ public class MwGuiTeleportDialog extends MwGuiTextDialog {
     }
 
     @Override
-    public boolean submit () {
+    public boolean submit() {
 
         boolean done = false;
         int height = this.getInputAsInt();

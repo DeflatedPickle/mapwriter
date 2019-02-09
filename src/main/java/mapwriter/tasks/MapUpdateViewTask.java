@@ -12,7 +12,7 @@ public class MapUpdateViewTask extends Task {
     // chunkmanager will need to keep a list of chunks to update.
     // it should also keep a 2D chunkSum array so that only modified chunks are
     // updated.
-    public MapUpdateViewTask (MapTexture mapTexture, RegionManager regionManager, MapViewRequest req) {
+    public MapUpdateViewTask(MapTexture mapTexture, RegionManager regionManager, MapViewRequest req) {
 
         this.mapTexture = mapTexture;
         this.regionManager = regionManager;
@@ -20,20 +20,20 @@ public class MapUpdateViewTask extends Task {
     }
 
     @Override
-    public boolean CheckForDuplicate () {
+    public boolean CheckForDuplicate() {
 
         return false;
     }
 
     @Override
-    public void onComplete () {
+    public void onComplete() {
 
         // set currentView in mapTexture to requestedView
         this.mapTexture.setLoaded(this.req);
     }
 
     @Override
-    public void run () {
+    public void run() {
 
         // load regions for view
         this.mapTexture.loadRegions(this.regionManager, this.req);

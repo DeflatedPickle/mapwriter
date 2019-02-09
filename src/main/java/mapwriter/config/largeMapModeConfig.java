@@ -4,13 +4,13 @@ import mapwriter.gui.ModGuiConfig.ModBooleanEntry;
 import mapwriter.gui.ModGuiConfigHUD.MapPosConfigEntry;
 
 public class largeMapModeConfig extends MapModeConfig {
-    public largeMapModeConfig (String configCategory) {
+    public largeMapModeConfig(String configCategory) {
 
         super(configCategory);
     }
 
     @Override
-    public void loadConfig () {
+    public void loadConfig() {
 
         super.loadConfig();
         this.enabled = ConfigurationHandler.configuration.getBoolean("enabled", this.configCategory, this.enabledDef, "", "mw.config.map.enabled");
@@ -22,7 +22,7 @@ public class largeMapModeConfig extends MapModeConfig {
     }
 
     @Override
-    public void setDefaults () {
+    public void setDefaults() {
 
         this.rotateDef = true;
         this.circularDef = true;

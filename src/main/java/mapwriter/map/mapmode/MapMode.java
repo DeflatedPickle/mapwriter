@@ -1,12 +1,12 @@
 package mapwriter.map.mapmode;
 
-import java.awt.Point;
-
 import mapwriter.api.IMapMode;
 import mapwriter.api.IMapView;
 import mapwriter.config.MapModeConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+
+import java.awt.*;
 
 public class MapMode implements IMapMode {
     private int sw = 320;
@@ -38,14 +38,14 @@ public class MapMode implements IMapMode {
 
     private final MapModeConfig config;
 
-    public MapMode (MapModeConfig config) {
+    public MapMode(MapModeConfig config) {
 
         this.config = config;
         this.updateMargin();
     }
 
     @Override
-    public Point.Double blockXZtoScreenXY (IMapView mapView, double bX, double bZ) {
+    public Point.Double blockXZtoScreenXY(IMapView mapView, double bX, double bZ) {
 
         final double xNorm = (bX - mapView.getX()) / mapView.getWidth();
         final double zNorm = (bZ - mapView.getZ()) / mapView.getHeight();
@@ -53,7 +53,7 @@ public class MapMode implements IMapMode {
     }
 
     @Override
-    public Point.Double getClampedScreenXY (IMapView mapView, double bX, double bZ) {
+    public Point.Double getClampedScreenXY(IMapView mapView, double bX, double bZ) {
 
         double xRel = (bX - mapView.getX()) / mapView.getWidth();
         double zRel = (bZ - mapView.getZ()) / mapView.getHeight();
@@ -84,8 +84,7 @@ public class MapMode implements IMapMode {
                 zRel = limit * zRel / xRel;
                 xRel = limit;
             }
-        }
-        else {
+        } else {
             final double dSq = xRel * xRel + zRel * zRel;
             if (dSq > limit * limit) {
                 final double a = Math.atan2(zRel, xRel);
@@ -100,25 +99,25 @@ public class MapMode implements IMapMode {
     }
 
     @Override
-    public MapModeConfig getConfig () {
+    public MapModeConfig getConfig() {
 
         return this.config;
     }
 
     @Override
-    public int getH () {
+    public int getH() {
 
         return this.h;
     }
 
     @Override
-    public int getHPixels () {
+    public int getHPixels() {
 
         return this.hPixels;
     }
 
     @Override
-    public Point.Double getNewPosPoint (double mouseX, double mouseY) {
+    public Point.Double getNewPosPoint(double mouseX, double mouseY) {
 
         int newX = (int) (mouseX - this.mouseXOffset);
         int newY = (int) (mouseY - this.mouseYOffset);
@@ -145,61 +144,61 @@ public class MapMode implements IMapMode {
     }
 
     @Override
-    public int getTextColour () {
+    public int getTextColour() {
 
         return this.textColour;
     }
 
     @Override
-    public int getTextX () {
+    public int getTextX() {
 
         return this.textX;
     }
 
     @Override
-    public int getTextY () {
+    public int getTextY() {
 
         return this.textY;
     }
 
     @Override
-    public int getW () {
+    public int getW() {
 
         return this.w;
     }
 
     @Override
-    public int getWPixels () {
+    public int getWPixels() {
 
         return this.wPixels;
     }
 
     @Override
-    public int getX () {
+    public int getX() {
 
         return this.x;
     }
 
     @Override
-    public int getXTranslation () {
+    public int getXTranslation() {
 
         return this.xTranslation;
     }
 
     @Override
-    public int getY () {
+    public int getY() {
 
         return this.y;
     }
 
     @Override
-    public int getYTranslation () {
+    public int getYTranslation() {
 
         return this.yTranslation;
     }
 
     @Override
-    public boolean posWithin (int mouseX, int mouseY) {
+    public boolean posWithin(int mouseX, int mouseY) {
 
         this.mouseXOffset = mouseX - this.xTranslation;
         this.mouseYOffset = mouseY - this.yTranslation;
@@ -207,7 +206,7 @@ public class MapMode implements IMapMode {
     }
 
     @Override
-    public Point screenXYtoBlockXZ (IMapView mapView, int sx, int sy) {
+    public Point screenXYtoBlockXZ(IMapView mapView, int sx, int sy) {
 
         final double withinMapX = (double) (sx - this.xTranslation) / (double) this.w;
         final double withinMapY = (double) (sy - this.yTranslation) / (double) this.h;
@@ -217,7 +216,7 @@ public class MapMode implements IMapMode {
     }
 
     @Override
-    public void setScreenRes () {
+    public void setScreenRes() {
 
         final Minecraft mc = Minecraft.getMinecraft();
         final ScaledResolution sRes = new ScaledResolution(mc);
@@ -225,7 +224,7 @@ public class MapMode implements IMapMode {
     }
 
     @Override
-    public void setScreenRes (int dw, int dh, int sw, int sh, double scaling) {
+    public void setScreenRes(int dw, int dh, int sw, int sh, double scaling) {
 
         if (sw != this.sw || sh != this.sh || scaling != this.screenScalingFactor) {
             this.sw = sw;
@@ -236,7 +235,7 @@ public class MapMode implements IMapMode {
     }
 
     @Override
-    public void updateMargin () {
+    public void updateMargin() {
 
         if (this.widthPercent != this.config.widthPercent || this.heightPercent != this.config.heightPercent || this.xPos != this.config.xPos || this.yPos != this.config.yPos) {
             this.widthPercent = this.config.widthPercent;
@@ -248,17 +247,17 @@ public class MapMode implements IMapMode {
         }
     }
 
-    private boolean isMouseXWithinSlotBounds (int mouseX) {
+    private boolean isMouseXWithinSlotBounds(int mouseX) {
 
         return mouseX >= this.xTranslation + this.x && mouseX <= this.xTranslation - this.x;
     }
 
-    private boolean isMouseYWithinSlotBounds (int mouseY) {
+    private boolean isMouseYWithinSlotBounds(int mouseY) {
 
         return mouseY >= this.yTranslation + this.y && mouseY <= this.yTranslation - this.y;
     }
 
-    private void update () {
+    private void update() {
 
         double x, y;
 

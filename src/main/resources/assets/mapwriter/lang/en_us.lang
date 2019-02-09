@@ -115,7 +115,7 @@ mw.config.map.ctgy.position.centerright=Center Right
 #Gui
 mw.gui.mwgui.help=Help
 mw.gui.mwgui.options=Options
-mw.gui.mwgui.dimension=dimension: %d
+mw.gui.mwgui.dimension=dimension: %s
 mw.gui.mwgui.group.1=group: %s
 mw.gui.mwgui.group.2=group
 mw.gui.mwgui.overlay=overlay: %s

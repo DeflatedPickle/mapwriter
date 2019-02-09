@@ -1,31 +1,33 @@
 package mapwriter.api;
 
-import java.util.ArrayList;
+import net.minecraft.world.DimensionType;
+
+import java.util.List;
 
 public interface IMwDataProvider {
-    public ArrayList<IMwChunkOverlay> getChunksOverlay (int dim, double centerX, double centerZ, double minX, double minZ, double maxX, double maxZ);
+    List<IMwChunkOverlay> getChunksOverlay(DimensionType dim, double centerX, double centerZ, double minX, double minZ, double maxX, double maxZ);
 
     // return null if nothing should be drawn on fullscreen map
-    public ILabelInfo getLabelInfo (int mouseX, int mouseY);
+    ILabelInfo getLabelInfo(int mouseX, int mouseY);
 
     // Returns what should be added to the status bar by the addon.
-    public String getStatusString (int dim, int bX, int bY, int bZ);
+    String getStatusString(DimensionType dim, int bX, int bY, int bZ);
 
     // Callback for dimension change on the map
-    public void onDimensionChanged (int dimension, IMapView mapview);
+    void onDimensionChanged(DimensionType dimension, IMapView mapview);
 
-    public void onDraw (IMapView mapview, IMapMode mapmode);
+    void onDraw(IMapView mapview, IMapMode mapmode);
 
-    public void onMapCenterChanged (double vX, double vZ, IMapView mapview);
+    void onMapCenterChanged(double vX, double vZ, IMapView mapview);
 
     // Call back for middle click.
-    public void onMiddleClick (int dim, int bX, int bZ, IMapView mapview);
+    void onMiddleClick(DimensionType dim, int bX, int bZ, IMapView mapview);
 
-    public boolean onMouseInput (IMapView mapview, IMapMode mapmode);
+    boolean onMouseInput(IMapView mapview, IMapMode mapmode);
 
-    public void onOverlayActivated (IMapView mapview);
+    void onOverlayActivated(IMapView mapview);
 
-    public void onOverlayDeactivated (IMapView mapview);
+    void onOverlayDeactivated(IMapView mapview);
 
-    public void onZoomChanged (int level, IMapView mapview);
+    void onZoomChanged(int level, IMapView mapview);
 }

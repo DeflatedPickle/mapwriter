@@ -6,24 +6,24 @@ public class BiomeColours {
     private final int grass;
     private final int foliage;
 
-    public BiomeColours (int water, int grass, int foliage) {
+    public BiomeColours(int water, int grass, int foliage) {
 
         this.water = water;
         this.grass = grass;
         this.foliage = foliage;
     }
 
-    public int getWater () {
+    public int getWater() {
 
         return this.water;
     }
 
-    public int getGrass () {
+    public int getGrass() {
 
         return this.grass;
     }
 
-    public int getFoliage () {
+    public int getFoliage() {
 
         return this.foliage;
     }

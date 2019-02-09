@@ -1,12 +1,10 @@
 package mapwriter.region;
 
 import com.jarhax.map.BlockColours;
-
 import mapwriter.config.Config;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biome;
 
 public class ChunkRender {
 
@@ -45,7 +43,7 @@ public class ChunkRender {
     // note that the "front to back" alpha blending algorithm is used
     // rather than the more common "back to front".
     //
-    public static int getColumnColour (BlockColours bc, IChunk chunk, int x, int y, int z, int heightW, int heightN) {
+    public static int getColumnColour(BlockColours bc, IChunk chunk, int x, int y, int z, int heightW, int heightN) {
 
         double a = 1.0;
         double r = 0.0;
@@ -112,7 +110,7 @@ public class ChunkRender {
     // the block column that created the pixel.
     // height values of 0 and 255 are ignored as these are used as the clear
     // values for pixels.
-    public static double getHeightShading (int height, int heightW, int heightN) {
+    public static double getHeightShading(int height, int heightW, int heightN) {
 
         int samples = 0;
         int heightDiff = 0;
@@ -142,7 +140,7 @@ public class ChunkRender {
         return heightDiffFactor >= 0.0 ? Math.pow(heightDiffFactor * (1 / 255.0), BRIGHTEN_EXP) * BRIGHTEN_AMP : -Math.pow(-(heightDiffFactor * (1 / 255.0)), DARKEN_EXP) * DARKEN_AMP;
     }
 
-    public static void renderSurface (BlockColours bc, IChunk chunk, int[] pixels, int offset, int scanSize, boolean dimensionHasCeiling) {
+    public static void renderSurface(BlockColours bc, IChunk chunk, int[] pixels, int offset, int scanSize, boolean dimensionHasCeiling) {
 
         final int chunkMaxY = chunk.getMaxY();
         for (int z = 0; z < MwChunk.SIZE; z++) {
@@ -167,8 +165,7 @@ public class ChunkRender {
                             break;
                         }
                     }
-                }
-                else {
+                } else {
                     y = chunkMaxY - 1;
                 }
 
@@ -178,7 +175,7 @@ public class ChunkRender {
         }
     }
 
-    public static void renderUnderground (BlockColours bc, IChunk chunk, int[] pixels, int offset, int scanSize, int startY, byte[] mask) {
+    public static void renderUnderground(BlockColours bc, IChunk chunk, int[] pixels, int offset, int scanSize, int startY, byte[] mask) {
 
         startY = Math.min(Math.max(0, startY), 255);
         for (int z = 0; z < MwChunk.SIZE; z++) {
@@ -217,12 +214,12 @@ public class ChunkRender {
         }
     }
 
-    static int getPixelHeightN (int[] pixels, int offset, int scanSize) {
+    static int getPixelHeightN(int[] pixels, int offset, int scanSize) {
 
         return offset >= scanSize ? pixels[offset - scanSize] >> 24 & 0xff : -1;
     }
 
-    static int getPixelHeightW (int[] pixels, int offset, int scanSize) {
+    static int getPixelHeightW(int[] pixels, int offset, int scanSize) {
 
         return (offset & scanSize - 1) >= 1 ? pixels[offset - 1] >> 24 & 0xff : -1;
     }

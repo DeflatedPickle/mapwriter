@@ -14,7 +14,7 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
     private final MarkerManager markerManager;
     private int height;
 
-    public MwGuiMarkerListOverlay (GuiScreen parentScreen, MarkerManager markerManager) {
+    public MwGuiMarkerListOverlay(GuiScreen parentScreen, MarkerManager markerManager) {
 
         super(Minecraft.getMinecraft(), // mcIn
                 MwGuiMarkerListOverlay.listWidth, // width
@@ -31,7 +31,7 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
     }
 
     @Override
-    public void setDimensions (int widthIn, int heightIn, int topIn, int bottomIn, int left) {
+    public void setDimensions(int widthIn, int heightIn, int topIn, int bottomIn, int left) {
 
         this.height = this.parentScreen.height - 20;
 
@@ -39,12 +39,12 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
     }
 
     @Override
-    protected void drawBackground () {
+    protected void drawBackground() {
 
     }
 
     @Override
-    protected void drawSlot (int entryID, int x, int y, int slotHeight, int mouseXIn, int mouseYIn) {
+    protected void drawSlot(int entryID, int x, int y, int slotHeight, int mouseXIn, int mouseYIn) {
 
         final MwGuiLabel label = new MwGuiLabel(this.getLabelString(entryID), null, x, y, false, false, MwGuiMarkerListOverlay.listWidth, this.height);
 
@@ -52,9 +52,9 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
     }
 
     @Override
-    protected void elementClicked (int slotIndex, boolean isDoubleClick, int mouseX, int mouseY, int mouseButton) {
+    protected void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY, int mouseButton) {
 
-        this.markerManager.selectedMarker = this.markerManager.visibleMarkerList.get(slotIndex);
+        this.markerManager.selectedMarker = this.markerManager.visibleMarkers.get(slotIndex);
         if (mouseButton == 1) {
             if (this.parentScreen instanceof MwGui) {
                 ((MwGui) this.parentScreen).openMarkerGui(this.markerManager.selectedMarker, mouseX, mouseY);
@@ -67,9 +67,9 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
         }
     }
 
-    protected String[] getLabelString (int index) {
+    protected String[] getLabelString(int index) {
 
-        final Marker m = this.markerManager.visibleMarkerList.get(index);
+        final Marker m = this.markerManager.visibleMarkers.get(index);
 
         final String[] text = new String[2];
         text[0] = m.name;
@@ -78,13 +78,13 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
     }
 
     @Override
-    protected int getSize () {
+    protected int getSize() {
 
-        return this.markerManager.visibleMarkerList.size();
+        return this.markerManager.visibleMarkers.size();
     }
 
     @Override
-    protected int getSlotHeight (int index) {
+    protected int getSlotHeight(int index) {
 
         final String str = Utils.stringArrayToString(this.getLabelString(index));
         int height = this.mc.fontRenderer.getWordWrappedHeight(str, MwGuiMarkerListOverlay.listWidth - 6);
@@ -95,8 +95,8 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
     }
 
     @Override
-    protected boolean isSelected (int slotIndex) {
+    protected boolean isSelected(int slotIndex) {
 
-        return this.markerManager.selectedMarker == this.markerManager.visibleMarkerList.get(slotIndex);
+        return this.markerManager.selectedMarker == this.markerManager.visibleMarkers.get(slotIndex);
     }
 }

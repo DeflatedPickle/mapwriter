@@ -1,5 +1,7 @@
 package mapwriter.region;
 
+import net.minecraft.world.DimensionType;
+
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,7 +13,7 @@ public class RegionFileCache {
         private static final long serialVersionUID = 1L;
         static final int MAX_REGION_FILES_OPEN = 8;
 
-        public LruCache () {
+        public LruCache() {
 
             // initial capacity, loading factor, true for access time ordering
             super(MAX_REGION_FILES_OPEN * 2, 0.5f, true);
@@ -20,7 +22,7 @@ public class RegionFileCache {
         // called on every put and putAll call, the entry 'entry' is removed
         // if this function returns true.
         @Override
-        protected boolean removeEldestEntry (Map.Entry<String, RegionFile> entry) {
+        protected boolean removeEldestEntry(Map.Entry<String, RegionFile> entry) {
 
             boolean ret = false;
             if (this.size() > MAX_REGION_FILES_OPEN) {
@@ -35,12 +37,12 @@ public class RegionFileCache {
     private final LruCache regionFileCache = new LruCache();
     private final File worldDir;
 
-    public RegionFileCache (File worldDir) {
+    public RegionFileCache(File worldDir) {
 
         this.worldDir = worldDir;
     }
 
-    public void close () {
+    public void close() {
 
         for (final RegionFile regionFile : this.regionFileCache.values()) {
             regionFile.close();
@@ -48,7 +50,7 @@ public class RegionFileCache {
         this.regionFileCache.clear();
     }
 
-    public RegionFile getRegionFile (int x, int z, int dimension) {
+    public RegionFile getRegionFile(int x, int z, DimensionType dimension) {
 
         final File regionFilePath = this.getRegionFilePath(x, z, dimension);
         final String key = regionFilePath.toString();
@@ -60,11 +62,11 @@ public class RegionFileCache {
         return regionFile;
     }
 
-    public File getRegionFilePath (int x, int z, int dimension) {
+    public File getRegionFilePath(int x, int z, DimensionType dimension) {
 
         File dir = this.worldDir;
-        if (dimension != 0) {
-            dir = new File(dir, "DIM" + dimension);
+        if (dimension != DimensionType.OVERWORLD) {
+            dir = new File(dir, "DIM" + dimension.getId());
         }
         dir = new File(dir, "region");
 
@@ -73,8 +75,7 @@ public class RegionFileCache {
         return new File(dir, filename);
     }
 
-    public boolean regionFileExists (int x, int z, int dimension) {
-
+    public boolean regionFileExists(int x, int z, DimensionType dimension) {
         final File regionFilePath = this.getRegionFilePath(x, z, dimension);
         return regionFilePath.isFile();
     }

@@ -1,8 +1,5 @@
 package mapwriter.gui;
 
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -13,38 +10,56 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public abstract class MwGuiSlot {
     protected final Minecraft mc;
     public int width;
     public int height;
-    /** The top of the slot container. Affects the overlays and scrolling. */
+    /**
+     * The top of the slot container. Affects the overlays and scrolling.
+     */
     public int top;
-    /** The bottom of the slot container. Affects the overlays and scrolling. */
+    /**
+     * The bottom of the slot container. Affects the overlays and scrolling.
+     */
     public int bottom;
     public int right;
     public int left;
     public final int scrollBarWidth = 6;
-    /** The buttonID of the button used to scroll up */
+    /**
+     * The buttonID of the button used to scroll up
+     */
     private int scrollUpButtonID;
-    /** The buttonID of the button used to scroll down */
+    /**
+     * The buttonID of the button used to scroll down
+     */
     private int scrollDownButtonID;
     protected int mouseX;
     protected int mouseY;
     protected boolean field_148163_i = true;
-    /** Where the mouse was in the window when you first clicked to scroll */
+    /**
+     * Where the mouse was in the window when you first clicked to scroll
+     */
     protected float initialClickY = -2.0F;
     /**
      * What to multiply the amount you moved your mouse by (used for slowing down scrolling
      * when over the items and not on the scroll bar)
      */
     protected float scrollMultiplier;
-    /** How far down this slot has been scrolled */
+    /**
+     * How far down this slot has been scrolled
+     */
     protected float amountScrolled;
-    /** The element in the list that was selected */
+    /**
+     * The element in the list that was selected
+     */
     protected int selectedElement = -1;
-    /** The time when this button was last clicked. */
+    /**
+     * The time when this button was last clicked.
+     */
     protected long lastClicked;
     /**
      * Set to true if a selected element in this gui will show an outline box
@@ -55,7 +70,7 @@ public abstract class MwGuiSlot {
     private boolean enabled = false;
     int spacingY = 4;
 
-    public MwGuiSlot (Minecraft mcIn, int width, int height, int topIn, int bottomIn, int left) {
+    public MwGuiSlot(Minecraft mcIn, int width, int height, int topIn, int bottomIn, int left) {
 
         this.mc = mcIn;
         this.width = width;
@@ -66,7 +81,7 @@ public abstract class MwGuiSlot {
         this.right = left + width;
     }
 
-    public void actionPerformed (GuiButton button) {
+    public void actionPerformed(GuiButton button) {
 
         if (button.enabled) {
             final int slotHeight = this.getAverageSlotHeight();
@@ -74,8 +89,7 @@ public abstract class MwGuiSlot {
                 this.amountScrolled -= slotHeight * 2 / 3;
                 this.initialClickY = -2.0F;
                 this.bindAmountScrolled();
-            }
-            else if (button.id == this.scrollDownButtonID) {
+            } else if (button.id == this.scrollDownButtonID) {
                 this.amountScrolled += slotHeight * 2 / 3;
                 this.initialClickY = -2.0F;
                 this.bindAmountScrolled();
@@ -83,7 +97,7 @@ public abstract class MwGuiSlot {
         }
     }
 
-    public void drawScreen (int mouseXIn, int mouseYIn, float f) {
+    public void drawScreen(int mouseXIn, int mouseYIn, float f) {
 
         if (this.getEnabled()) {
             this.mouseX = mouseXIn;
@@ -152,7 +166,7 @@ public abstract class MwGuiSlot {
         }
     }
 
-    public int func_148135_f () {
+    public int func_148135_f() {
 
         return Math.max(0, this.getContentHeight() - (this.bottom - this.top));
     }
@@ -160,12 +174,12 @@ public abstract class MwGuiSlot {
     /**
      * Returns the amountScrolled field as an integer.
      */
-    public int getAmountScrolled () {
+    public int getAmountScrolled() {
 
         return (int) this.amountScrolled;
     }
 
-    public int getAverageSlotHeight () {
+    public int getAverageSlotHeight() {
 
         int height = 0;
         int biggest = 0;
@@ -179,7 +193,7 @@ public abstract class MwGuiSlot {
         return height > 0 ? height / this.getSize() : 9;
     }
 
-    public boolean getEnabled () {
+    public boolean getEnabled() {
 
         return this.enabled;
     }
@@ -187,12 +201,12 @@ public abstract class MwGuiSlot {
     /**
      * Gets the width of the list
      */
-    public int getListWidth () {
+    public int getListWidth() {
 
         return this.width;
     }
 
-    public int getSlotIndexFromScreenCoords (int x, int y) {
+    public int getSlotIndexFromScreenCoords(int x, int y) {
 
         final int k = this.left + this.width / 2 - this.getListWidth() / 2;
         final int l = this.left + this.width / 2 + this.getListWidth() / 2 - this.scrollBarWidth;
@@ -211,7 +225,7 @@ public abstract class MwGuiSlot {
         return -1;
     }
 
-    public void handleMouseInput () {
+    public void handleMouseInput() {
 
         if (this.isMouseInField()) {
             if (Mouse.isButtonDown(0) && this.getEnabled()) {
@@ -229,8 +243,7 @@ public abstract class MwGuiSlot {
                             this.elementClicked(l, flag1, this.mouseX, this.mouseY, 0);
                             this.selectedElement = l;
                             this.lastClicked = Minecraft.getSystemTime();
-                        }
-                        else if (this.mouseX >= i && this.mouseX <= j && k < 0) {
+                        } else if (this.mouseX >= i && this.mouseX <= j && k < 0) {
                             this.func_148132_a(this.mouseX - i, this.mouseY - this.top + (int) this.amountScrolled);
                             flag = false;
                         }
@@ -249,28 +262,23 @@ public abstract class MwGuiSlot {
                             int k1 = (int) ((float) ((this.bottom - this.top) * (this.bottom - this.top)) / (float) this.getContentHeight());
                             k1 = MathHelper.clamp(k1, 32, this.bottom - this.top - 8);
                             this.scrollMultiplier /= (float) (this.bottom - this.top - k1) / (float) j1;
-                        }
-                        else {
+                        } else {
                             this.scrollMultiplier = 1.0F;
                         }
 
                         if (flag) {
                             this.initialClickY = this.mouseY;
-                        }
-                        else {
+                        } else {
                             this.initialClickY = -2.0F;
                         }
-                    }
-                    else {
+                    } else {
                         this.initialClickY = -2.0F;
                     }
-                }
-                else if (this.initialClickY >= 0.0F) {
+                } else if (this.initialClickY >= 0.0F) {
                     this.amountScrolled -= (this.mouseY - this.initialClickY) * this.scrollMultiplier;
                     this.initialClickY = this.mouseY;
                 }
-            }
-            else {
+            } else {
                 this.initialClickY = -1.0F;
             }
 
@@ -287,8 +295,7 @@ public abstract class MwGuiSlot {
                             this.elementClicked(l, flag1, this.mouseX, this.mouseY, 1);
                             this.selectedElement = l;
                             this.lastClicked = Minecraft.getSystemTime();
-                        }
-                        else if (this.mouseX >= i && this.mouseX <= j && k < 0) {
+                        } else if (this.mouseX >= i && this.mouseX <= j && k < 0) {
                             this.func_148132_a(this.mouseX - i, this.mouseY - this.top + (int) this.amountScrolled);
                         }
                     }
@@ -300,8 +307,7 @@ public abstract class MwGuiSlot {
             if (l1 != 0) {
                 if (l1 > 0) {
                     l1 = -1;
-                }
-                else if (l1 < 0) {
+                } else if (l1 < 0) {
                     l1 = 1;
                 }
 
@@ -310,17 +316,17 @@ public abstract class MwGuiSlot {
         }
     }
 
-    public boolean isMouseInField () {
+    public boolean isMouseInField() {
 
         return this.isMouseYWithinSlotBounds() && this.isMouseXWithinSlotBounds();
     }
 
-    public boolean isMouseXWithinSlotBounds () {
+    public boolean isMouseXWithinSlotBounds() {
 
         return this.mouseX >= this.left && this.mouseX <= this.right;
     }
 
-    public boolean isMouseYWithinSlotBounds () {
+    public boolean isMouseYWithinSlotBounds() {
 
         return this.mouseY >= this.top && this.mouseY <= this.bottom;
     }
@@ -328,7 +334,7 @@ public abstract class MwGuiSlot {
     /**
      * Registers the IDs that can be used for the scrollbar's up/down buttons.
      */
-    public void registerScrollButtons (int scrollUpButtonIDIn, int scrollDownButtonIDIn) {
+    public void registerScrollButtons(int scrollUpButtonIDIn, int scrollDownButtonIDIn) {
 
         this.scrollUpButtonID = scrollUpButtonIDIn;
         this.scrollDownButtonID = scrollDownButtonIDIn;
@@ -338,14 +344,14 @@ public abstract class MwGuiSlot {
      * Scrolls the slot by the given amount. A positive value scrolls down, and a negative
      * value scrolls up.
      */
-    public void scrollBy (int amount) {
+    public void scrollBy(int amount) {
 
         this.amountScrolled += amount;
         this.bindAmountScrolled();
         this.initialClickY = -2.0F;
     }
 
-    public void setDimensions (int widthIn, int heightIn, int topIn, int bottomIn, int left) {
+    public void setDimensions(int widthIn, int heightIn, int topIn, int bottomIn, int left) {
 
         this.width = widthIn;
         this.height = heightIn;
@@ -355,12 +361,12 @@ public abstract class MwGuiSlot {
         this.right = left + widthIn;
     }
 
-    public void setEnabled (boolean enabledIn) {
+    public void setEnabled(boolean enabledIn) {
 
         this.enabled = enabledIn;
     }
 
-    public void setShowSelectionBox (boolean showSelectionBoxIn) {
+    public void setShowSelectionBox(boolean showSelectionBoxIn) {
 
         this.showSelectionBox = showSelectionBoxIn;
     }
@@ -369,7 +375,7 @@ public abstract class MwGuiSlot {
      * Sets the left and right bounds of the slot. Param is the left bound, right is calculated
      * as left + width.
      */
-    public void setSlotXBoundsFromLeft (int leftIn) {
+    public void setSlotXBoundsFromLeft(int leftIn) {
 
         this.left = leftIn;
         this.right = leftIn + this.width;
@@ -378,7 +384,7 @@ public abstract class MwGuiSlot {
     /**
      * Stop the thing from scrolling out of bounds
      */
-    protected void bindAmountScrolled () {
+    protected void bindAmountScrolled() {
 
         int i = this.func_148135_f();
 
@@ -393,9 +399,9 @@ public abstract class MwGuiSlot {
         this.amountScrolled = MathHelper.clamp(this.amountScrolled, 0.0F, i);
     }
 
-    protected abstract void drawBackground ();
+    protected abstract void drawBackground();
 
-    protected void drawContainerBackground (Tessellator tessellator) {
+    protected void drawContainerBackground(Tessellator tessellator) {
 
         Gui.drawRect(this.left, this.top, this.right, this.bottom, 0x80000000);
     }
@@ -403,14 +409,14 @@ public abstract class MwGuiSlot {
     /**
      * Handles drawing a list's header row.
      */
-    protected void drawListHeader (int x, int y, Tessellator tess) {
+    protected void drawListHeader(int x, int y, Tessellator tess) {
 
     }
 
     /**
      * Draws the selection box around the selected slot element.
      */
-    protected void drawSelectionBox (int x, int y, int mouseXIn, int mouseYIn) {
+    protected void drawSelectionBox(int x, int y, int mouseXIn, int mouseYIn) {
 
         final int i1 = this.getSize();
         final Tessellator tessellator = Tessellator.getInstance();
@@ -452,26 +458,26 @@ public abstract class MwGuiSlot {
         }
     }
 
-    protected abstract void drawSlot (int entryID, int x, int y, int h, int mouseXIn, int mouseYIn);
+    protected abstract void drawSlot(int entryID, int x, int y, int h, int mouseXIn, int mouseYIn);
 
     /**
      * The element in the slot that was clicked, boolean for whether it was double clicked or
      * not
      */
-    protected abstract void elementClicked (int slotIndex, boolean isDoubleClick, int mouseX, int mouseY, int mouseButton);
+    protected abstract void elementClicked(int slotIndex, boolean isDoubleClick, int mouseX, int mouseY, int mouseButton);
 
-    protected void func_148132_a (int p_148132_1_, int p_148132_2_) {
+    protected void func_148132_a(int p_148132_1_, int p_148132_2_) {
 
     }
 
-    protected void func_148142_b (int p_148142_1_, int p_148142_2_) {
+    protected void func_148142_b(int p_148142_1_, int p_148142_2_) {
 
     }
 
     /**
      * Return the height of the content being scrolled
      */
-    protected int getContentHeight () {
+    protected int getContentHeight() {
 
         int slotHeight = this.headerPadding;
         for (int index = 0; index < this.getSize(); ++index) {
@@ -481,30 +487,29 @@ public abstract class MwGuiSlot {
         return slotHeight;
     }
 
-    protected int getScrollBarX () {
+    protected int getScrollBarX() {
 
         return this.left + this.width - this.scrollBarWidth;
     }
 
-    protected abstract int getSize ();
+    protected abstract int getSize();
 
     /**
-     *
      * @param index of the item
      * @return the slotheigt of the specific item
      */
-    protected abstract int getSlotHeight (int index);
+    protected abstract int getSlotHeight(int index);
 
     /**
      * Returns true if the element passed in is currently selected
      */
-    protected abstract boolean isSelected (int slotIndex);
+    protected abstract boolean isSelected(int slotIndex);
 
     /**
      * Sets hasListHeader and headerHeight. Params: hasListHeader, headerHeight. If
      * hasListHeader is false headerHeight is set to 0.
      */
-    protected void setHasListHeader (boolean hasListHeaderIn, int headerPaddingIn) {
+    protected void setHasListHeader(boolean hasListHeaderIn, int headerPaddingIn) {
 
         this.hasListHeader = hasListHeaderIn;
         this.headerPadding = headerPaddingIn;
@@ -514,7 +519,7 @@ public abstract class MwGuiSlot {
         }
     }
 
-    protected void slotOutOfBounds (int index, int p_178040_2_, int p_178040_3_) {
+    protected void slotOutOfBounds(int index, int p_178040_2_, int p_178040_3_) {
 
     }
 }

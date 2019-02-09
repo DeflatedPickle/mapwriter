@@ -1,17 +1,17 @@
 package mapwriter.gui;
 
-import java.io.IOException;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
 import mapwriter.api.MwAPI;
 import mapwriter.map.Marker;
 import mapwriter.map.MarkerManager;
 import mapwriter.util.Utils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.fml.relauncher.Side;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
+import java.io.IOException;
 
 @net.minecraftforge.fml.relauncher.SideOnly(Side.CLIENT)
 public class MwGuiMarkerDialogNew extends GuiScreen {
@@ -37,15 +37,15 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
     boolean backToGameOnSubmit = false;
     private final MarkerManager markerManager;
     private Marker editingMarker;
-    private String markerName = "";
-    private String markerGroup = "";
-    private int markerX = 0;
-    private int markerY = 80;
-    private int markerZ = 0;
-    private int dimension = 0;
-    private int colour = 0;
+    private String markerName;
+    private String markerGroup;
+    private int markerX;
+    private int markerY;
+    private int markerZ;
+    private DimensionType dimension;
+    private int colour;
 
-    public MwGuiMarkerDialogNew (GuiScreen parentScreen, MarkerManager markerManager, Marker editingMarker) {
+    public MwGuiMarkerDialogNew(GuiScreen parentScreen, MarkerManager markerManager, Marker editingMarker) {
 
         this.markerManager = markerManager;
         this.editingMarker = editingMarker;
@@ -60,7 +60,7 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
         this.title = this.titleEdit;
     }
 
-    public MwGuiMarkerDialogNew (GuiScreen parentScreen, MarkerManager markerManager, String markerName, String markerGroup, int x, int y, int z, int dimension) {
+    public MwGuiMarkerDialogNew(GuiScreen parentScreen, MarkerManager markerManager, String markerName, String markerGroup, int x, int y, int z, DimensionType dimension) {
 
         this.markerManager = markerManager;
         this.markerName = markerName;
@@ -76,12 +76,11 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
     }
 
     @Override
-    public void drawScreen (int mouseX, int mouseY, float f) {
+    public void drawScreen(int mouseX, int mouseY, float f) {
 
         if (this.parentScreen != null) {
             this.parentScreen.drawScreen(mouseX, mouseY, f);
-        }
-        else {
+        } else {
             this.drawDefaultBackground();
         }
 
@@ -100,7 +99,7 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
     // override GuiScreen's handleMouseInput to process
     // the scroll wheel.
     @Override
-    public void handleMouseInput () throws IOException {
+    public void handleMouseInput() throws IOException {
 
         if (MwAPI.getCurrentDataProvider() != null) {
             return;
@@ -115,7 +114,7 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
     }
 
     @Override
-    public void initGui () {
+    public void initGui() {
 
         final int labelsWidth = this.fontRenderer.getStringWidth("Group");
         final int width = this.width * MwGuiMarkerDialogNew.dialogWidthPercent / 100 - labelsWidth - 20;
@@ -147,7 +146,7 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
         this.ScrollableColorSelectorColor.setDrawArrows(true);
     }
 
-    public void mouseDWheelScrolled (int x, int y, int direction) {
+    public void mouseDWheelScrolled(int x, int y, int direction) {
 
         this.scrollableTextBoxName.mouseDWheelScrolled(x, y, direction);
         this.scrollableTextBoxGroup.mouseDWheelScrolled(x, y, direction);
@@ -157,49 +156,43 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
         this.ScrollableColorSelectorColor.mouseDWheelScrolled(x, y, direction);
     }
 
-    public boolean submit () {
+    public boolean submit() {
 
         boolean inputCorrect = true;
 
         if (this.scrollableTextBoxName.validateTextFieldData()) {
             this.markerName = this.scrollableTextBoxName.getText();
-        }
-        else {
+        } else {
             inputCorrect = false;
         }
 
         if (this.scrollableTextBoxGroup.validateTextFieldData()) {
             this.markerGroup = this.scrollableTextBoxGroup.getText();
-        }
-        else {
+        } else {
             inputCorrect = false;
         }
 
         if (this.scrollableNumericTextBoxX.validateTextFieldData()) {
             this.markerX = this.scrollableNumericTextBoxX.getTextFieldIntValue();
-        }
-        else {
+        } else {
             inputCorrect = false;
         }
 
         if (this.scrollableNumericTextBoxY.validateTextFieldData()) {
             this.markerY = this.scrollableNumericTextBoxY.getTextFieldIntValue();
-        }
-        else {
+        } else {
             inputCorrect = false;
         }
 
         if (this.scrollableNumericTextBoxZ.validateTextFieldData()) {
             this.markerZ = this.scrollableNumericTextBoxZ.getTextFieldIntValue();
-        }
-        else {
+        } else {
             inputCorrect = false;
         }
 
         if (this.ScrollableColorSelectorColor.validateColorData()) {
             this.colour = this.ScrollableColorSelectorColor.getColor();
-        }
-        else {
+        } else {
             inputCorrect = false;
         }
 
@@ -216,7 +209,7 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped (char c, int key) {
+    protected void keyTyped(char c, int key) {
 
         switch (key) {
             case Keyboard.KEY_ESCAPE:
@@ -227,8 +220,7 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
                 if (this.submit()) {
                     if (!this.backToGameOnSubmit) {
                         this.mc.displayGuiScreen(this.parentScreen);
-                    }
-                    else {
+                    } else {
                         this.mc.displayGuiScreen(null);
                     }
                 }
@@ -242,28 +234,23 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
                     thisField = this.scrollableTextBoxName;
                     prevField = this.ScrollableColorSelectorColor;
                     nextField = this.scrollableTextBoxGroup;
-                }
-                else if (this.scrollableTextBoxGroup.isFocused()) {
+                } else if (this.scrollableTextBoxGroup.isFocused()) {
                     thisField = this.scrollableTextBoxGroup;
                     prevField = this.scrollableTextBoxName;
                     nextField = this.scrollableNumericTextBoxX;
-                }
-                else if (this.scrollableNumericTextBoxX.isFocused()) {
+                } else if (this.scrollableNumericTextBoxX.isFocused()) {
                     thisField = this.scrollableNumericTextBoxX;
                     prevField = this.scrollableTextBoxGroup;
                     nextField = this.scrollableNumericTextBoxY;
-                }
-                else if (this.scrollableNumericTextBoxY.isFocused()) {
+                } else if (this.scrollableNumericTextBoxY.isFocused()) {
                     thisField = this.scrollableNumericTextBoxY;
                     prevField = this.scrollableNumericTextBoxX;
                     nextField = this.scrollableNumericTextBoxZ;
-                }
-                else if (this.scrollableNumericTextBoxZ.isFocused()) {
+                } else if (this.scrollableNumericTextBoxZ.isFocused()) {
                     thisField = this.scrollableNumericTextBoxZ;
                     prevField = this.scrollableNumericTextBoxY;
                     nextField = this.ScrollableColorSelectorColor;
-                }
-                else if (this.ScrollableColorSelectorColor.isFocused()) {
+                } else if (this.ScrollableColorSelectorColor.isFocused()) {
                     thisField = this.ScrollableColorSelectorColor.thisField();
                     nextField = this.ScrollableColorSelectorColor.nextField(this.scrollableTextBoxName);
                     prevField = this.ScrollableColorSelectorColor.prevField(this.scrollableNumericTextBoxZ);
@@ -276,8 +263,7 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
                 }
                 if (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54)) {
                     prevField.setFocused(true);
-                }
-                else {
+                } else {
                     nextField.setFocused(true);
                 }
 
@@ -294,7 +280,7 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked (int x, int y, int button) throws IOException {
+    protected void mouseClicked(int x, int y, int button) throws IOException {
 
         super.mouseClicked(x, y, button);
 

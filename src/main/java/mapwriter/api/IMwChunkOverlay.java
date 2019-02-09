@@ -1,17 +1,17 @@
 package mapwriter.api;
 
-import java.awt.Point;
+import java.awt.*;
 
 public interface IMwChunkOverlay {
-    public int getBorderColor ();
+    int getBorderColor();
 
-    public float getBorderWidth ();
+    float getBorderWidth();
 
-    public int getColor ();
+    int getColor();
 
-    public Point getCoordinates ();
+    Point getCoordinates();
 
-    public float getFilling ();
+    float getFilling();
 
-    public boolean hasBorder ();
+    boolean hasBorder();
 }

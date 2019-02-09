@@ -4,7 +4,7 @@ import mapwriter.util.Reference;
 
 public class Config {
 
-    public static final String[] BACKGROUND_MODES = { "mw.config.backgroundTextureMode.none", "mw.config.backgroundTextureMode.static", "mw.config.backgroundTextureMode.panning" };
+    public static final String[] BACKGROUND_MODES = {"mw.config.backgroundTextureMode.none", "mw.config.backgroundTextureMode.static", "mw.config.backgroundTextureMode.panning"};
 
     // configuration options
     public static boolean linearTextureScalingDef = true;
@@ -62,9 +62,9 @@ public class Config {
     public static int fullScreenZoomLevelDef = 0;
     public static int fullScreenZoomLevel = fullScreenZoomLevelDef;
 
-    public static largeMapModeConfig largeMap = new largeMapModeConfig(Reference.catLargeMapConfig);
-    public static smallMapModeConfig smallMap = new smallMapModeConfig(Reference.catSmallMapConfig);
-    public static MapModeConfig fullScreenMap = new MapModeConfig(Reference.catFullMapConfig);
+    public static largeMapModeConfig largeMap = new largeMapModeConfig(Reference.CAT_LARGE_MAP_CONFIG);
+    public static smallMapModeConfig smallMap = new smallMapModeConfig(Reference.CAT_SMALL_MAP_CONFIG);
+    public static MapModeConfig fullScreenMap = new MapModeConfig(Reference.CAT_FULL_MAP_CONFIG);
 
     public static boolean reloadColours = Boolean.parseBoolean(System.getProperty("fml.skipFirstTextureLoad", "true"));
 }

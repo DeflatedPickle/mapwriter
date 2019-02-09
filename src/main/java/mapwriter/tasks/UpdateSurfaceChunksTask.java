@@ -1,14 +1,14 @@
 package mapwriter.tasks;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import mapwriter.Mw;
 import mapwriter.map.MapTexture;
 import mapwriter.region.MwChunk;
 import mapwriter.region.RegionManager;
 import net.minecraft.util.math.ChunkPos;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UpdateSurfaceChunksTask extends Task {
     private static Map<Long, UpdateSurfaceChunksTask> chunksUpdating = new HashMap<>();
@@ -17,28 +17,24 @@ public class UpdateSurfaceChunksTask extends Task {
     private final MapTexture mapTexture;
     private final AtomicBoolean running = new AtomicBoolean();
 
-    public UpdateSurfaceChunksTask (Mw mw, MwChunk chunk) {
-
+    public UpdateSurfaceChunksTask(Mw mw, MwChunk chunk) {
         this.mapTexture = mw.mapTexture;
         this.regionManager = mw.regionManager;
         this.chunk = chunk;
     }
 
     @Override
-    public boolean CheckForDuplicate () {
-
+    public boolean CheckForDuplicate() {
         final Long coords = ChunkPos.asLong(this.chunk.x, this.chunk.z);
 
         if (!UpdateSurfaceChunksTask.chunksUpdating.containsKey(coords)) {
             UpdateSurfaceChunksTask.chunksUpdating.put(coords, this);
             return false;
-        }
-        else {
+        } else {
             final UpdateSurfaceChunksTask task2 = UpdateSurfaceChunksTask.chunksUpdating.get(coords);
             if (!task2.running.get()) {
                 task2.updateChunkData(this.chunk);
-            }
-            else {
+            } else {
                 UpdateSurfaceChunksTask.chunksUpdating.put(coords, this);
                 return false;
             }
@@ -47,7 +43,7 @@ public class UpdateSurfaceChunksTask extends Task {
     }
 
     @Override
-    public void onComplete () {
+    public void onComplete() {
 
         final Long coords = this.chunk.getCoordIntPair();
         UpdateSurfaceChunksTask.chunksUpdating.remove(coords);
@@ -55,7 +51,7 @@ public class UpdateSurfaceChunksTask extends Task {
     }
 
     @Override
-    public void run () {
+    public void run() {
 
         this.running.set(true);
         if (this.chunk != null) {
@@ -66,7 +62,7 @@ public class UpdateSurfaceChunksTask extends Task {
         }
     }
 
-    public void updateChunkData (MwChunk chunk) {
+    public void updateChunkData(MwChunk chunk) {
 
         this.chunk = chunk;
     }

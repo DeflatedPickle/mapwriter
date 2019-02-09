@@ -1,9 +1,5 @@
 package mapwriter.gui;
 
-import java.awt.Point;
-import java.io.IOException;
-import java.util.List;
-
 import mapwriter.Mw;
 import mapwriter.config.MapModeConfig;
 import mapwriter.config.largeMapModeConfig;
@@ -23,15 +19,19 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
+import java.awt.*;
+import java.io.IOException;
+import java.util.List;
+
 public class ModGuiConfigHUD extends GuiConfig {
     public static class MapPosConfigEntry extends CategoryEntry {
-        public MapPosConfigEntry (GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement prop) {
+        public MapPosConfigEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement prop) {
 
             super(owningScreen, owningEntryList, prop);
         }
 
         @Override
-        protected GuiScreen buildChildScreen () {
+        protected GuiScreen buildChildScreen() {
 
             final String QualifiedName = this.configElement.getQualifiedName();
             final String config = QualifiedName.substring(0, QualifiedName.indexOf(Configuration.CATEGORY_SPLITTER)).replace(Configuration.CATEGORY_SPLITTER, "");
@@ -59,18 +59,16 @@ public class ModGuiConfigHUD extends GuiConfig {
 
     private MapModeConfig dummyMapConfig;
 
-    public ModGuiConfigHUD (GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID, boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String Config) {
+    public ModGuiConfigHUD(GuiScreen parentScreen, List<IConfigElement> configElements, String modID, String configID, boolean allRequireWorldRestart, boolean allRequireMcRestart, String title, String Config) {
 
         super(parentScreen, configElements, modID, configID, allRequireWorldRestart, allRequireMcRestart, title, "Use right click and hold to move the map");
 
-        if (Config.equals(Reference.catFullMapConfig)) {
-            this.dummyMapConfig = new MapModeConfig(Reference.catFullMapConfig);
-        }
-        else if (Config.equals(Reference.catLargeMapConfig)) {
-            this.dummyMapConfig = new largeMapModeConfig(Reference.catLargeMapConfig);
-        }
-        else if (Config.equals(Reference.catSmallMapConfig)) {
-            this.dummyMapConfig = new smallMapModeConfig(Reference.catSmallMapConfig);
+        if (Config.equals(Reference.CAT_FULL_MAP_CONFIG)) {
+            this.dummyMapConfig = new MapModeConfig(Reference.CAT_FULL_MAP_CONFIG);
+        } else if (Config.equals(Reference.CAT_LARGE_MAP_CONFIG)) {
+            this.dummyMapConfig = new largeMapModeConfig(Reference.CAT_LARGE_MAP_CONFIG);
+        } else if (Config.equals(Reference.CAT_SMALL_MAP_CONFIG)) {
+            this.dummyMapConfig = new smallMapModeConfig(Reference.CAT_SMALL_MAP_CONFIG);
         }
         this.dummyMapConfig.setDefaults();
         this.dummyMapConfig.loadConfig();
@@ -82,7 +80,7 @@ public class ModGuiConfigHUD extends GuiConfig {
 
     // also called every frame
     @Override
-    public void drawScreen (int mouseX, int mouseY, float partialTicks) {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 
         super.drawScreen(mouseX, mouseY, partialTicks);
 
@@ -93,7 +91,7 @@ public class ModGuiConfigHUD extends GuiConfig {
     }
 
     @Override
-    public void initGui () {
+    public void initGui() {
 
         super.initGui();
         final int topLeftWidth = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.topleft")) + 20, 100);
@@ -145,67 +143,60 @@ public class ModGuiConfigHUD extends GuiConfig {
 
     // mouse button clicked. 0 = LMB, 1 = RMB, 2 = MMB
     @Override
-    public void mouseClicked (int x, int y, int mouseEvent) throws IOException {
+    public void mouseClicked(int x, int y, int mouseEvent) throws IOException {
 
         if (mouseEvent != 1 || !this.mapMode.posWithin(x, y)) {
             // this.entryList.mouseClickedPassThru(x, y, mouseEvent);
             super.mouseClicked(x, y, mouseEvent);
-        }
-        else {
+        } else {
             this.DraggingMap = true;
         }
     }
 
     @Override
-    public void mouseReleased (int x, int y, int mouseEvent) {
+    public void mouseReleased(int x, int y, int mouseEvent) {
 
         if (this.DraggingMap) {
             this.DraggingMap = false;
-        }
-        else {
+        } else {
             super.mouseReleased(x, y, mouseEvent);
         }
     }
 
-    private void UpdateButtonValues () {
+    private void UpdateButtonValues() {
 
         for (final IConfigEntry entry : this.entryList.listEntries) {
             if (entry.getName().equals("xPos")) {
                 this.dummyMapConfig.xPos = (Double) entry.getCurrentValue();
-            }
-            else if (entry.getName().equals("yPos")) {
+            } else if (entry.getName().equals("yPos")) {
                 this.dummyMapConfig.yPos = (Double) entry.getCurrentValue();
-            }
-            else if (entry.getName().equals("heightPercent")) {
+            } else if (entry.getName().equals("heightPercent")) {
                 this.dummyMapConfig.heightPercent = (Double) entry.getCurrentValue();
-            }
-            else if (entry.getName().equals("widthPercent")) {
+            } else if (entry.getName().equals("widthPercent")) {
                 this.dummyMapConfig.widthPercent = (Double) entry.getCurrentValue();
                 if (this.mapMode.getConfig().circular) {
                     ((ModNumberSliderEntry) entry).setEnabled(false);
-                }
-                else {
+                } else {
                     ((ModNumberSliderEntry) entry).setEnabled(true);
                 }
             }
         }
     }
 
-    private void updateMap (Point.Double point) {
+    private void updateMap(Point.Double point) {
 
         for (final IConfigEntry entry : this.entryList.listEntries) {
             if (entry instanceof ModNumberSliderEntry) {
                 if (entry.getName().equals("xPos")) {
                     ((ModNumberSliderEntry) entry).setValue(point.getX());
-                }
-                else if (entry.getName().equals("yPos")) {
+                } else if (entry.getName().equals("yPos")) {
                     ((ModNumberSliderEntry) entry).setValue(point.getY());
                 }
             }
         }
     }
 
-    private void UpdateParrentSettings () {
+    private void UpdateParrentSettings() {
 
         if (this.parentScreen != null && this.parentScreen instanceof GuiConfig) {
             final GuiConfig parrent = (GuiConfig) this.parentScreen;
@@ -214,17 +205,13 @@ public class ModGuiConfigHUD extends GuiConfig {
                 for (final IConfigEntry entry : parrent.entryList.listEntries) {
                     if (entry.getName().equals("circular")) {
                         this.dummyMapConfig.circular = (Boolean) entry.getCurrentValue();
-                    }
-                    else if (entry.getName().equals("coordsMode")) {
+                    } else if (entry.getName().equals("coordsMode")) {
                         this.dummyMapConfig.coordsMode = (String) entry.getCurrentValue();
-                    }
-                    else if (entry.getName().equals("borderMode")) {
+                    } else if (entry.getName().equals("borderMode")) {
                         this.dummyMapConfig.borderMode = (Boolean) entry.getCurrentValue();
-                    }
-                    else if (entry.getName().equals("playerArrowSize")) {
+                    } else if (entry.getName().equals("playerArrowSize")) {
                         this.dummyMapConfig.playerArrowSize = Integer.valueOf((String) entry.getCurrentValue());
-                    }
-                    else if (entry.getName().equals("biomeMode")) {
+                    } else if (entry.getName().equals("biomeMode")) {
                         this.dummyMapConfig.biomeMode = (String) entry.getCurrentValue();
                     }
                 }
@@ -233,7 +220,7 @@ public class ModGuiConfigHUD extends GuiConfig {
     }
 
     @Override
-    protected void actionPerformed (GuiButton button) {
+    protected void actionPerformed(GuiButton button) {
 
         double bottomOffset = 0;
         if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.coordsModeStringArray[0])) {
@@ -284,21 +271,17 @@ public class ModGuiConfigHUD extends GuiConfig {
         // bottom right
         else if (button.id == 3022) {
             this.updateMap(new Point.Double(100 - SmallMarginX, 100 - bottomOffset));
-        }
-        else {
+        } else {
             super.actionPerformed(button);
         }
     }
 
     @Override
-    protected void mouseClickMove (int x, int y, int mouseEvent, long timeSinceLastClick) {
+    protected void mouseClickMove(int x, int y, int mouseEvent, long timeSinceLastClick) {
 
         if (this.DraggingMap) {
             this.updateMap(this.mapMode.getNewPosPoint(x, y));
-        }
-        else
-
-        {
+        } else {
             super.mouseClickMove(x, y, mouseEvent, timeSinceLastClick);
         }
 

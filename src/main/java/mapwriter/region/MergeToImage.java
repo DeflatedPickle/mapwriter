@@ -1,19 +1,18 @@
 package mapwriter.region;
 
+import mapwriter.forge.MwForge;
+import net.minecraft.world.DimensionType;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
-import mapwriter.forge.MwForge;
 
 public class MergeToImage {
     public static final int MAX_WIDTH = 8192;
     public static final int MAX_HEIGHT = 8192;
 
-    public static int merge (RegionManager regionManager, int xCentre, int zCentre, int w, int h, int dimension, File dir, String basename) {
-
+    public static int merge(RegionManager regionManager, int xCentre, int zCentre, int w, int h, DimensionType dimension, File dir, String basename) {
         // round up to nearest 512 block boundary
         w = w + Region.SIZE - 1 & Region.MASK;
         h = h + Region.SIZE - 1 & Region.MASK;
@@ -58,8 +57,7 @@ public class MergeToImage {
         return count;
     }
 
-    public static BufferedImage mergeRegions (RegionManager regionManager, int x, int z, int w, int h, int dimension) {
-
+    public static BufferedImage mergeRegions(RegionManager regionManager, int x, int z, int w, int h, DimensionType dimension) {
         // create the image and graphics context
         // this is the most likely place to run out of memory
         final BufferedImage mergedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
@@ -82,15 +80,12 @@ public class MergeToImage {
         return mergedImage;
     }
 
-    public static boolean writeImage (BufferedImage img, File f) {
-
-        boolean error = true;
+    public static boolean writeImage(BufferedImage img, File f) {
         try {
             ImageIO.write(img, "png", f);
-            error = false;
+            return false;
+        } catch (final IOException e) {
+            return true;
         }
-        catch (final IOException e) {
-        }
-        return error;
     }
 }

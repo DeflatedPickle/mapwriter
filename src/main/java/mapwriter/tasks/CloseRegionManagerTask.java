@@ -6,24 +6,24 @@ public class CloseRegionManagerTask extends Task {
 
     private final RegionManager regionManager;
 
-    public CloseRegionManagerTask (RegionManager regionManager) {
+    public CloseRegionManagerTask(RegionManager regionManager) {
 
         this.regionManager = regionManager;
     }
 
     @Override
-    public boolean CheckForDuplicate () {
+    public boolean CheckForDuplicate() {
 
         return false;
     }
 
     @Override
-    public void onComplete () {
+    public void onComplete() {
 
     }
 
     @Override
-    public void run () {
+    public void run() {
 
         this.regionManager.close();
     }

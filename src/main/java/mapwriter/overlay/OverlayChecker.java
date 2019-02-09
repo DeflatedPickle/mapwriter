@@ -1,67 +1,54 @@
 package mapwriter.overlay;
 
-import java.awt.Point;
-import java.util.ArrayList;
-
-import mapwriter.api.ILabelInfo;
-import mapwriter.api.IMapMode;
-import mapwriter.api.IMapView;
-import mapwriter.api.IMwChunkOverlay;
-import mapwriter.api.IMwDataProvider;
+import mapwriter.api.*;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.DimensionType;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OverlayChecker implements IMwDataProvider {
-
     public class ChunkOverlay implements IMwChunkOverlay {
-
         Point coord;
 
-        public ChunkOverlay (int x, int z) {
-
+        public ChunkOverlay(int x, int z) {
             this.coord = new Point(x, z);
         }
 
         @Override
-        public int getBorderColor () {
-
+        public int getBorderColor() {
             return 0xff000000;
         }
 
         @Override
-        public float getBorderWidth () {
-
+        public float getBorderWidth() {
             return 0.5f;
         }
 
         @Override
-        public int getColor () {
-
+        public int getColor() {
             return 0x90ffffff;
         }
 
         @Override
-        public Point getCoordinates () {
-
+        public Point getCoordinates() {
             return this.coord;
         }
 
         @Override
-        public float getFilling () {
-
-            return 1.0f;
+        public float getFilling() {
+            return 1f;
         }
 
         @Override
-        public boolean hasBorder () {
-
+        public boolean hasBorder() {
             return true;
         }
-
     }
 
     @Override
-    public ArrayList<IMwChunkOverlay> getChunksOverlay (int dim, double centerX, double centerZ, double minX, double minZ, double maxX, double maxZ) {
-
+    public List<IMwChunkOverlay> getChunksOverlay(DimensionType dim, double centerX, double centerZ, double minX, double minZ, double maxX, double maxZ) {
         // We should pass the center of the map too to reduce the display like
         // in this case
         // and the zoom lvl, to provide higher level informations
@@ -86,62 +73,50 @@ public class OverlayChecker implements IMwDataProvider {
                 }
             }
         }
-        ;
 
         return chunks;
     }
 
     @Override
-    public ILabelInfo getLabelInfo (int mouseX, int mouseY) {
-
+    public ILabelInfo getLabelInfo(int mouseX, int mouseY) {
         return null;
     }
 
     @Override
-    public String getStatusString (int dim, int bX, int bY, int bZ) {
-
+    public String getStatusString(DimensionType dim, int bX, int bY, int bZ) {
         return "";
     }
 
     @Override
-    public void onDimensionChanged (int dimension, IMapView mapview) {
-
+    public void onDimensionChanged(DimensionType dimension, IMapView mapview) {
     }
 
     @Override
-    public void onDraw (IMapView mapview, IMapMode mapmode) {
-
+    public void onDraw(IMapView mapview, IMapMode mapmode) {
     }
 
     @Override
-    public void onMapCenterChanged (double vX, double vZ, IMapView mapview) {
-
+    public void onMapCenterChanged(double vX, double vZ, IMapView mapview) {
     }
 
     @Override
-    public void onMiddleClick (int dim, int bX, int bZ, IMapView mapview) {
-
+    public void onMiddleClick(DimensionType dim, int bX, int bZ, IMapView mapview) {
     }
 
     @Override
-    public boolean onMouseInput (IMapView mapview, IMapMode mapmode) {
-
+    public boolean onMouseInput(IMapView mapview, IMapMode mapmode) {
         return false;
     }
 
     @Override
-    public void onOverlayActivated (IMapView mapview) {
-
+    public void onOverlayActivated(IMapView mapview) {
     }
 
     @Override
-    public void onOverlayDeactivated (IMapView mapview) {
-
+    public void onOverlayDeactivated(IMapView mapview) {
     }
 
     @Override
-    public void onZoomChanged (int level, IMapView mapview) {
-
+    public void onZoomChanged(int level, IMapView mapview) {
     }
-
 }

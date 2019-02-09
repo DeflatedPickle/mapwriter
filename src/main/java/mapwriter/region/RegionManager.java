@@ -1,16 +1,15 @@
 package mapwriter.region;
 
+import com.jarhax.map.BlockColours;
+import mapwriter.forge.MwForge;
+import net.minecraft.world.DimensionType;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.logging.log4j.Logger;
-
-import com.jarhax.map.BlockColours;
-
-import mapwriter.forge.MwForge;
 
 public class RegionManager {
 
@@ -19,7 +18,7 @@ public class RegionManager {
         private final static long serialVersionUID = 1L;
         private final static int MAX_LOADED_REGIONS = 64;
 
-        public LruCache () {
+        public LruCache() {
 
             // initial capacity, loading factor, true for access time ordering
             super(MAX_LOADED_REGIONS * 2, 0.5f, true);
@@ -28,7 +27,7 @@ public class RegionManager {
         // called on every put and putAll call, the entry 'entry' is removed
         // if this function returns true.
         @Override
-        protected boolean removeEldestEntry (Map.Entry<Long, Region> entry) {
+        protected boolean removeEldestEntry(Map.Entry<Long, Region> entry) {
 
             boolean ret = false;
             if (this.size() > MAX_LOADED_REGIONS) {
@@ -42,7 +41,7 @@ public class RegionManager {
 
     public static Logger logger;
 
-    private static int incrStatsCounter (Map<String, Integer> h, String key) {
+    private static int incrStatsCounter(Map<String, Integer> h, String key) {
 
         int n = 1;
         if (h.containsKey(key)) {
@@ -62,7 +61,7 @@ public class RegionManager {
 
     public int minZoom;
 
-    public RegionManager (File worldDir, File imageDir, BlockColours blockColours, int minZoom, int maxZoom) {
+    public RegionManager(File worldDir, File imageDir, BlockColours blockColours, int minZoom, int maxZoom) {
 
         this.worldDir = worldDir;
         this.imageDir = imageDir;
@@ -73,7 +72,7 @@ public class RegionManager {
         this.maxZoom = maxZoom;
     }
 
-    public void close () {
+    public void close() {
 
         for (final Region region : this.regionMap.values()) {
             if (region != null) {
@@ -85,7 +84,7 @@ public class RegionManager {
     }
 
     // must not return null
-    public Region getRegion (int x, int z, int zoomLevel, int dimension) {
+    public Region getRegion(int x, int z, int zoomLevel, DimensionType dimension) {
 
         Region region = this.regionMap.get(Region.getKey(x, z, zoomLevel, dimension));
         if (region == null) {
@@ -96,7 +95,7 @@ public class RegionManager {
         return region;
     }
 
-    public void printLoadedRegionStats () {
+    public void printLoadedRegionStats() {
 
         MwForge.logger.info("loaded region listing:");
         final Map<String, Integer> stats = new HashMap<>();
@@ -112,7 +111,7 @@ public class RegionManager {
         }
     }
 
-    public void rebuildRegions (int xStart, int zStart, int w, int h, int dimension) {
+    public void rebuildRegions(int xStart, int zStart, int w, int h, DimensionType dimension) {
         // read all zoom level 0 regions
         // then find all regions with a backing image at zoom level 0
 
@@ -141,7 +140,7 @@ public class RegionManager {
         }
     }
 
-    public void updateChunk (MwChunk chunk) {
+    public void updateChunk(MwChunk chunk) {
 
         final Region region = this.getRegion(chunk.x << 4, chunk.z << 4, 0, chunk.dimension);
         region.updateChunk(chunk);

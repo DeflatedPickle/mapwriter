@@ -1,14 +1,13 @@
 package mapwriter.forge;
 
-import java.util.ArrayList;
-
-import org.lwjgl.input.Keyboard;
-
 import mapwriter.Mw;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import org.lwjgl.input.Keyboard;
+
+import java.util.ArrayList;
 
 public class MwKeyHandler {
     public static KeyBinding keyMapGui = new KeyBinding("key.mw_open_gui", Keyboard.KEY_M, "Mapwriter");
@@ -20,9 +19,9 @@ public class MwKeyHandler {
     public static KeyBinding keyZoomOut = new KeyBinding("key.mw_zoom_out", Keyboard.KEY_NEXT, "Mapwriter");
     public static KeyBinding keyUndergroundMode = new KeyBinding("key.mw_underground_mode", Keyboard.KEY_U, "Mapwriter");
 
-    public final KeyBinding[] keys = { keyMapGui, keyNewMarker, keyMapMode, keyNextGroup, keyTeleport, keyZoomIn, keyZoomOut, keyUndergroundMode };
+    public final KeyBinding[] keys = {keyMapGui, keyNewMarker, keyMapMode, keyNextGroup, keyTeleport, keyZoomIn, keyZoomOut, keyUndergroundMode};
 
-    public MwKeyHandler () {
+    public MwKeyHandler() {
 
         final ArrayList<String> listKeyDescs = new ArrayList<>();
         // Register bindings
@@ -35,12 +34,12 @@ public class MwKeyHandler {
     }
 
     @SubscribeEvent
-    public void keyEvent (InputEvent.KeyInputEvent event) {
+    public void keyEvent(InputEvent.KeyInputEvent event) {
 
         this.checkKeys();
     }
 
-    private void checkKeys () {
+    private void checkKeys() {
 
         for (final KeyBinding key : this.keys) {
             if (key != null && key.isPressed()) {

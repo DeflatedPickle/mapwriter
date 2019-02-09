@@ -1,20 +1,13 @@
 package mapwriter.region;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import mapwriter.forge.MwForge;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
-
-import mapwriter.forge.MwForge;
 
 /*
  * Anvil region file reader/writer implementation. This code is very similar to
@@ -31,7 +24,7 @@ public class RegionFile {
         private final int z;
         private final RegionFile regionFile;
 
-        public RegionFileChunkBuffer (RegionFile regionFile, int x, int z) {
+        public RegionFileChunkBuffer(RegionFile regionFile, int x, int z) {
 
             super(8096);
             this.regionFile = regionFile;
@@ -40,7 +33,7 @@ public class RegionFile {
         }
 
         @Override
-        public void close () {
+        public void close() {
 
             this.regionFile.writeCompressedChunk(this.x, this.z, this.buf, this.count);
         }
@@ -50,18 +43,18 @@ public class RegionFile {
         final int startSector;
         final int length;
 
-        Section (int sectorAndSize) {
+        Section(int sectorAndSize) {
 
             this(sectorAndSize >> 8 & 0xffffff, sectorAndSize & 0xff);
         }
 
-        Section (int startSector, int length) {
+        Section(int startSector, int length) {
 
             this.startSector = startSector;
             this.length = length;
         }
 
-        int getSectorAndSize () {
+        int getSectorAndSize() {
 
             return this.startSector << 8 | this.length & 0xff;
         }
@@ -77,28 +70,27 @@ public class RegionFile {
 
     private List<Boolean> filledSectorArray = null;
 
-    public RegionFile (File file) {
+    public RegionFile(File file) {
 
         this.file = file;
     }
 
-    public void close () {
+    public void close() {
 
         if (this.fin != null) {
             try {
                 this.fin.close();
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
             }
         }
     }
 
-    public boolean exists () {
+    public boolean exists() {
 
         return this.file.isFile();
     }
 
-    public DataInputStream getChunkDataInputStream (int x, int z) {
+    public DataInputStream getChunkDataInputStream(int x, int z) {
 
         DataInputStream dis = null;
         if (this.fin != null) {
@@ -120,12 +112,10 @@ public class RegionFile {
                         // create a buffered inflater stream on the compressed
                         // data
                         dis = new DataInputStream(new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compressedChunkData))));
-                    }
-                    else {
+                    } else {
                         MwForge.logger.error("data length ({}) or version ({}) invalid for chunk ({}, {})", length, version, x, z);
                     }
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     MwForge.logger.error("exception while reading chunk ({}, {}): {}", x, z, e);
                     dis = null;
                 }
@@ -134,17 +124,17 @@ public class RegionFile {
         return dis;
     }
 
-    public DataOutputStream getChunkDataOutputStream (int x, int z) {
+    public DataOutputStream getChunkDataOutputStream(int x, int z) {
 
         return new DataOutputStream(new DeflaterOutputStream(new RegionFileChunkBuffer(this, x, z)));
     }
 
-    public boolean isOpen () {
+    public boolean isOpen() {
 
         return this.fin != null;
     }
 
-    public boolean open () {
+    public boolean open() {
 
         final File dir = this.file.getParentFile();
         if (dir.exists()) {
@@ -152,8 +142,7 @@ public class RegionFile {
                 MwForge.logger.error("path {} exists and is not a directory", dir);
                 return true;
             }
-        }
-        else {
+        } else {
             if (!dir.mkdirs()) {
                 MwForge.logger.error("could not create directory {}", dir);
                 return true;
@@ -178,8 +167,7 @@ public class RegionFile {
                 for (int i = 0; i < 2048; i++) {
                     this.fin.writeInt(0);
                 }
-            }
-            else {
+            } else {
                 // add a section for each chunk
                 for (int i = 0; i < 1024; i++) {
                     final Section section = new Section(this.fin.readInt());
@@ -188,8 +176,7 @@ public class RegionFile {
                         if (!this.checkSectionOverlaps(section)) {
                             this.chunkSectionsArray[i] = section;
                             this.setFilledSectorArray(section, true);
-                        }
-                        else {
+                        } else {
                             MwForge.logger.error("chunk {} overlaps another chunk, file may be corrupt", i);
                         }
                     }
@@ -201,8 +188,7 @@ public class RegionFile {
 
             // this.printInfo();
 
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             this.fin = null;
             MwForge.logger.error("exception when opening region file '{}': {}", this.file, e);
 
@@ -211,7 +197,7 @@ public class RegionFile {
         return this.fin == null;
     }
 
-    public void printInfo () {
+    public void printInfo() {
 
         int freeCount = 0;
         int filledCount = 0;
@@ -219,8 +205,7 @@ public class RegionFile {
         for (int i = 2; i < this.filledSectorArray.size(); i++) {
             if (this.filledSectorArray.get(i)) {
                 filledCount++;
-            }
-            else {
+            } else {
                 freeCount++;
             }
         }
@@ -243,12 +228,12 @@ public class RegionFile {
     }
 
     @Override
-    public String toString () {
+    public String toString() {
 
         return String.format("{}", this.file);
     }
 
-    private boolean checkSectionOverlaps (Section section) {
+    private boolean checkSectionOverlaps(Section section) {
 
         // get end sector, limiting to length of the filled sector array as all
         // sectors past the
@@ -263,12 +248,12 @@ public class RegionFile {
         return overlaps;
     }
 
-    private Section getChunkSection (int x, int z) {
+    private Section getChunkSection(int x, int z) {
 
         return this.chunkSectionsArray[(z & 31) << 5 | x & 31];
     }
 
-    private Section getFreeSection (int requiredLength) {
+    private Section getFreeSection(int requiredLength) {
 
         int start = 0;
         int length = 0;
@@ -295,8 +280,7 @@ public class RegionFile {
                     }
                 }
                 length = 0;
-            }
-            else {
+            } else {
                 // sector empty
                 if (length == 0) {
                     start = i;
@@ -315,7 +299,7 @@ public class RegionFile {
 
     // set the corresponding bits in filledSectorArray to 'filled'
     // for 'count' sectors, starting at 'firstSector'.
-    private void setFilledSectorArray (Section section, boolean filled) {
+    private void setFilledSectorArray(Section section, boolean filled) {
 
         final int endSector = section.startSector + section.length;
         final int sectorsToAppend = endSector + 1 - this.filledSectorArray.size();
@@ -330,14 +314,13 @@ public class RegionFile {
         }
     }
 
-    private void updateChunkSection (int x, int z, Section newSection) throws IOException {
+    private void updateChunkSection(int x, int z, Section newSection) throws IOException {
 
         final int chunkIndex = (z & 31) << 5 | x & 31;
         this.fin.seek(chunkIndex * 4);
         if (newSection != null && newSection.length > 0) {
             this.fin.writeInt(newSection.getSectorAndSize());
-        }
-        else {
+        } else {
             this.fin.writeInt(0);
         }
 
@@ -352,7 +335,7 @@ public class RegionFile {
      * }
      */
 
-    private void writeChunkDataToSection (Section section, byte[] compressedChunkData, int length) throws IOException {
+    private void writeChunkDataToSection(Section section, byte[] compressedChunkData, int length) throws IOException {
 
         this.fin.seek(section.startSector * 4096L);
         // write version and length
@@ -367,7 +350,7 @@ public class RegionFile {
         }
     }
 
-    private boolean writeCompressedChunk (int x, int z, byte[] compressedChunkData, int length) {
+    private boolean writeCompressedChunk(int x, int z, byte[] compressedChunkData, int length) {
         // if larger than the existing chunk data or chunk does not exist then
         // need to find the
         // first possible file position to write to. This will either be a
@@ -395,8 +378,7 @@ public class RegionFile {
             // {}",
             // x, z, currentSection.startSector);
             newSection = new Section(currentSection.startSector, requiredSectors);
-        }
-        else {
+        } else {
             // otherwise find a free section large enough to hold the chunk data
             newSection = this.getFreeSection(requiredSectors);
         }
@@ -413,8 +395,7 @@ public class RegionFile {
             // update the header
             this.updateChunkSection(x, z, newSection);
             error = false;
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             MwForge.logger.error("could not write chunk ({}, {}) to region file: {}", x, z, e);
         }
 

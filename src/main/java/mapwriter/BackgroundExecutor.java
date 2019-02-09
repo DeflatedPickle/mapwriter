@@ -1,14 +1,14 @@
 package mapwriter;
 
+import mapwriter.forge.MwForge;
+import mapwriter.tasks.Task;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import mapwriter.forge.MwForge;
-import mapwriter.tasks.Task;
 
 // @formatter:off
 /*
@@ -54,14 +54,14 @@ public class BackgroundExecutor {
     private boolean closed = false;
     private boolean doDiag = true;
 
-    public BackgroundExecutor () {
+    public BackgroundExecutor() {
 
         this.executor = Executors.newSingleThreadExecutor();
         this.taskQueue = new LinkedList<>();
     }
 
     // add a task to the queue
-    public boolean addTask (Task task) {
+    public boolean addTask(Task task) {
 
         if (!this.closed) {
             if (!task.CheckForDuplicate()) {
@@ -76,18 +76,16 @@ public class BackgroundExecutor {
                 MwForge.logger.error("Taskque went over 500 starting diagnostic");
                 this.taskLeftPerType();
                 MwForge.logger.error("End of diagnostic");
-            }
-            else {
+            } else {
                 this.doDiag = true;
             }
-        }
-        else {
+        } else {
             MwForge.logger.info("MwExecutor.addTask: error: cannot add task to closed executor");
         }
         return this.closed;
     }
 
-    public boolean close () {
+    public boolean close() {
 
         boolean error = true;
         try {
@@ -97,8 +95,7 @@ public class BackgroundExecutor {
             // process remaining tasks
             this.processRemainingTasks(50, 5);
             error = false;
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             MwForge.logger.info("error: IO task was interrupted during shutdown");
             MwForge.logger.trace(e);
         }
@@ -106,14 +103,13 @@ public class BackgroundExecutor {
         return error;
     }
 
-    public boolean processRemainingTasks (int attempts, int delay) {
+    public boolean processRemainingTasks(int attempts, int delay) {
 
         while (!this.taskQueue.isEmpty() && attempts > 0) {
             if (this.processTaskQueue()) {
                 try {
                     Thread.sleep(delay);
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     MwForge.logger.trace(e);
                 }
                 attempts--;
@@ -126,7 +122,7 @@ public class BackgroundExecutor {
     // finished.
     // If it has completed then call onComplete for the task.
     // If it has not completed then push the task back on the queue.
-    public boolean processTaskQueue () {
+    public boolean processTaskQueue() {
 
         boolean processed = false;
         final Task task = this.taskQueue.poll();
@@ -136,8 +132,7 @@ public class BackgroundExecutor {
                 task.onComplete();
 
                 processed = true;
-            }
-            else {
+            } else {
                 // put entry back on top of queue
                 this.taskQueue.push(task);
             }
@@ -145,12 +140,12 @@ public class BackgroundExecutor {
         return !processed;
     }
 
-    public int tasksRemaining () {
+    public int tasksRemaining() {
 
         return this.taskQueue.size();
     }
 
-    private void taskLeftPerType () {
+    private void taskLeftPerType() {
 
         final HashMap<String, Object> tasksLeft = new HashMap<>();
 
@@ -158,8 +153,7 @@ public class BackgroundExecutor {
             final String className = t.getClass().toString();
             if (tasksLeft.containsKey(className)) {
                 tasksLeft.put(className, (Integer) tasksLeft.get(className) + 1);
-            }
-            else {
+            } else {
                 tasksLeft.put(className, 1);
             }
         }
