@@ -30,7 +30,6 @@ public class MapWriter {
     private static MapWriter instance;
 
     public static MapWriter getInstance() {
-
         if (MapWriter.instance == null) {
             synchronized (WorldConfig.class) {
                 if (MapWriter.instance == null) {
@@ -38,7 +37,6 @@ public class MapWriter {
                 }
             }
         }
-
         return MapWriter.instance;
     }
 
@@ -379,7 +377,7 @@ public class MapWriter {
         if (Config.teleportEnabled) {
             this.mc.player.sendChatMessage(String.format("/%s %d %d %d", Config.teleportCommand, x, y, z));
         } else {
-            Utils.printBoth(I18n.format("mw.msg.tpdisabled"));
+            Utils.printBoth(I18n.format("mw.msg.tp.disabled"));
         }
     }
 
@@ -452,7 +450,7 @@ public class MapWriter {
         if (Config.teleportEnabled) {
             this.mc.player.sendChatMessage(String.format("/warp %s", name));
         } else {
-            Utils.printBoth(I18n.format("mw.msg.tpdisabled"));
+            Utils.printBoth(I18n.format("mw.msg.tp.disabled"));
         }
     }
 }

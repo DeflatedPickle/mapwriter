@@ -1,22 +1,14 @@
 buildscript {
-
     repositories {
-    
         jcenter()
-        
-        maven { 
-        
+        maven {
             url = 'http://files.minecraftforge.net/maven'
         }
-        
         maven {
-
             url 'https://plugins.gradle.org/m2/'
         }
     }
-    
     dependencies {
-    
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.0.9'
     }
@@ -38,7 +30,6 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-
     version = "${version_minecraft}-${version_forge}"
     mappings = "${version_mcp}"
     runDir = 'run'
@@ -49,37 +40,28 @@ minecraft {
 }
 
 repositories {
-
     maven {
-
         url "http://maven.mcmoddev.com"
     }
-	
 	maven {
-
         url 'http://dvs1.progwml6.com/files/maven'
     }
 }
 
 dependencies {
-
-    deobfCompile "net.darkhax.bookshelf:Bookshelf-1.12.2:${version_bookshelf}"
     deobfCompile "mezz.jei:jei_1.12.2:${version_jei}"
 }
 
 processResources {
-
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
     from(sourceSets.main.resources.srcDirs) {
-    
         include 'mcmod.info'
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
         
     from(sourceSets.main.resources.srcDirs) {
-    
         exclude 'mcmod.info'
     }
     
@@ -87,49 +69,38 @@ processResources {
 }
 
 String getBuildNumber() {
-
     return System.getenv('BUILD_NUMBER') ? System.getenv('BUILD_NUMBER') : System.getenv('TRAVIS_BUILD_NUMBER') ? System.getenv('TRAVIS_BUILD_NUMBER') : '0';
 }
 
 //Shuts up javadoc failures
 if (JavaVersion.current().isJava8Compatible()) {
-
     allprojects {
-
         tasks.withType(Javadoc) {
-
             options.addStringOption('Xdoclint:none', '-quiet')
         }
     }
 }
 
 curseforge {
-
     apiKey = System.getenv('curse_auth') ? System.getenv('curse_auth') : 0 
     def versions = "${curse_versions}".split(', ')
 
     project {
-
         id = "${curse_project}"
         releaseType = 'alpha'
         changelog = getGitChangelog
         changelogType = 'markdown'
 
         versions.each {
-
             addGameVersion "${it}"
         }
 
         if (project.hasProperty('curse_requirements') || project.hasProperty('curse_optionals')) {
-
             mainArtifact(jar) {
-
                 relations {
-
                     if (project.hasProperty('curse_requirements')) {
                         def requirements = "${curse_requirements}".split(', ')
                         requirements.each {
-
                             requiredLibrary "${it}"
                         }
                     }
@@ -137,7 +108,6 @@ curseforge {
                     if (project.hasProperty('curse_optionals')) {
                         def optionals = "${curse_optionals}".split(', ')
                         optionals.each {
-
                             optionalLibrary "${it}"
                         }
                     }
@@ -152,9 +122,7 @@ curseforge {
 }
 
 task signJar(type: SignJar, dependsOn: reobfJar) {
-
     onlyIf {
-    
         project.hasProperty('keyStore')
     }
     
