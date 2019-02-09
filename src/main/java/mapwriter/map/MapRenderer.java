@@ -191,10 +191,10 @@ public class MapRenderer {
     }
 
     private void drawBiomeName() {
-        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.coordsModeStringArray[0])) {
+        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODE[0])) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(this.textX, this.textY, 0);
-            if (this.mapMode.getConfig().biomeMode.equals(MapModeConfig.coordsModeStringArray[1])) {
+            if (this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODE[1])) {
                 GlStateManager.scale(0.5f, 0.5f, 1f);
                 this.textOffset = (int) (this.textOffset * 0.5f);
             }
@@ -212,10 +212,10 @@ public class MapRenderer {
 
     private void drawCoords() {
         // draw coordinates
-        if (!this.mapMode.getConfig().coordsMode.equals(MapModeConfig.coordsModeStringArray[0])) {
+        if (!this.mapMode.getConfig().coordsMode.equals(MapModeConfig.TEXT_MODE[0])) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(this.textX, this.textY, 0);
-            if (this.mapMode.getConfig().coordsMode.equals(MapModeConfig.coordsModeStringArray[1])) {
+            if (this.mapMode.getConfig().coordsMode.equals(MapModeConfig.TEXT_MODE[1])) {
                 GlStateManager.scale(0.5f, 0.5f, 1f);
                 this.textOffset = (int) (this.textOffset * 0.5f);
             }

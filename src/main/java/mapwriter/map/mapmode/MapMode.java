@@ -38,7 +38,6 @@ public class MapMode implements mapwriter.api.MapMode {
     private final MapModeConfig config;
 
     public MapMode(MapModeConfig config) {
-
         this.config = config;
         this.updateMargin();
     }

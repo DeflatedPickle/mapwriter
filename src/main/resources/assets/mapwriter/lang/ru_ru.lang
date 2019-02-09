@@ -90,12 +90,12 @@ mw.config.map.circular.tooltip=true = круглая карта, false = ква�
 mw.config.map.borderMode=Рисовать рамку
 mw.config.map.borderMode.tooltip=Установите на true, чтобы рисовать рамку вокруг карты
 mw.config.map.coordsMode=Отображать координаты
-mw.config.map.coordsMode.tooltip=Переключает между выключенными, мелкими и большими координатами под миникартой
+mw.config.map.textMode.tooltip=Переключает между выключенными, мелкими и большими координатами под миникартой
 mw.config.map.biomeMode=Отображать биомы
 mw.config.map.biomeMode.tooltip=Переключает между выключенным, мелким и большим названием биомов под миникартой
-mw.config.map.coordsMode.disabled=нет
-mw.config.map.coordsMode.small=мелко
-mw.config.map.coordsMode.large=крупно
+mw.config.map.textMode.disabled=нет
+mw.config.map.textMode.small=мелко
+mw.config.map.textMode.large=крупно
 mw.config.map.ctgy.position=Вращение карты
 mw.config.map.ctgy.position.tooltip=Расположение карты
 mw.config.map.ctgy.position.topright=Сверху справа

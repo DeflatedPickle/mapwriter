@@ -13,8 +13,6 @@ public interface MapModeConfig {
 
     String getCoordsMode();
 
-    String[] getCoordsModeStringArray();
-
     boolean isEnabled();
 
     String getMapPosCategory();

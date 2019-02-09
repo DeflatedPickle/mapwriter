@@ -6,7 +6,11 @@ import mapwriter.util.Reference;
 import net.minecraftforge.common.config.Configuration;
 
 public class MapModeConfig implements mapwriter.api.MapModeConfig {
-    public static final String[] coordsModeStringArray = {"mw.config.map.coordsMode.disabled", "mw.config.map.coordsMode.small", "mw.config.map.coordsMode.large"};
+    public static final String[] TEXT_MODE = {
+        "mw.config.map.textMode.disabled",
+        "mw.config.map.textMode.small",
+        "mw.config.map.textMode.large"
+    };
     public final String configCategory;
     public final String mapPosCategory;
 
@@ -16,7 +20,7 @@ public class MapModeConfig implements mapwriter.api.MapModeConfig {
     public boolean rotate = this.rotateDef;
     public boolean circularDef = false;
     public boolean circular = this.circularDef;
-    public String coordsModeDef = coordsModeStringArray[0];
+    public String coordsModeDef = TEXT_MODE[0];
     public String coordsMode = this.coordsModeDef;
     public boolean borderModeDef = false;
     public boolean borderMode = this.borderModeDef;
@@ -26,7 +30,7 @@ public class MapModeConfig implements mapwriter.api.MapModeConfig {
     public int markerSize = this.markerSizeDef;
     public int alphaPercentDef = 100;
     public int alphaPercent = this.alphaPercentDef;
-    public String biomeModeDef = coordsModeStringArray[0];
+    public String biomeModeDef = TEXT_MODE[0];
     public String biomeMode = this.biomeModeDef;
     public double xPosDef = 0;
     public double xPos = this.xPosDef;
@@ -70,11 +74,6 @@ public class MapModeConfig implements mapwriter.api.MapModeConfig {
     @Override
     public String getCoordsMode() {
         return this.coordsMode;
-    }
-
-    @Override
-    public String[] getCoordsModeStringArray() {
-        return mapwriter.config.MapModeConfig.coordsModeStringArray;
     }
 
     @Override

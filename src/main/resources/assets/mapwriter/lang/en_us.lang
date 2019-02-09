@@ -90,12 +90,12 @@ mw.config.map.circular.tooltip=True = Circular map, false = square map
 mw.config.map.borderMode=Draw border
 mw.config.map.borderMode.tooltip=Set to true to draw the borders around the map
 mw.config.map.coordsMode=Coordinates mode
-mw.config.map.coordsMode.tooltip=Switch between no,small or large coordinates under the minimap
+mw.config.map.textMode.tooltip=Switch between no,small or large coordinates under the minimap
 mw.config.map.biomeMode=Biome mode
 mw.config.map.biomeMode.tooltip=Switch between no,small or large biome name under the minimap
-mw.config.map.coordsMode.disabled=Disabled
-mw.config.map.coordsMode.small=Small
-mw.config.map.coordsMode.large=Large
+mw.config.map.textMode.disabled=Disabled
+mw.config.map.textMode.small=Small
+mw.config.map.textMode.large=Large
 mw.config.map.ctgy.position=Map position
 mw.config.map.ctgy.position.tooltip=Location of the map
 mw.config.map.ctgy.position.topright=Top Right

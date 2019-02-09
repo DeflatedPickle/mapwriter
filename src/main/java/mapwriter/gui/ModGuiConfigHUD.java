@@ -78,33 +78,32 @@ public class ModGuiConfigHUD extends GuiConfig {
         final int topRightWidth = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.topright")) + 20, 100);
         final int bottomLeftWidth = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.botleft")) + 20, 100);
         final int bottomRightWidth = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.botright")) + 20, 100);
-        final int CenterTopWidth = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.centertop")) + 20, 100);
-        final int CenterBottomWidth = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.centerbottom")) + 20, 100);
-        final int CenterWidth = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.center")) + 20, 100);
-        final int CenterLeft = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.centerleft")) + 20, 100);
-        final int CenterRight = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.centerright")) + 20, 100);
+        final int centerTopWidth = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.centertop")) + 20, 100);
+        final int centerBottomWidth = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.centerbottom")) + 20, 100);
+        final int centerWidth = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.center")) + 20, 100);
+        final int centerLeft = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.centerleft")) + 20, 100);
+        final int centerRight = Math.max(this.mc.fontRenderer.getStringWidth(I18n.format("mw.config.map.ctgy.position.centerright")) + 20, 100);
 
-        final int buttonWidthHalf1 = (bottomLeftWidth + 5 + bottomRightWidth + CenterTopWidth + 5) / 2;
-        final int buttonWidthHalf2 = (CenterLeft + 5 + CenterWidth + CenterRight + 5) / 2;
-        final int buttonWidthHalf3 = (topLeftWidth + 5 + topRightWidth + CenterBottomWidth + 5) / 2;
+        final int buttonWidthHalf1 = (bottomLeftWidth + 5 + bottomRightWidth + centerTopWidth + 5) / 2;
+        final int buttonWidthHalf2 = (centerLeft + 5 + centerWidth + centerRight + 5) / 2;
+        final int buttonWidthHalf3 = (topLeftWidth + 5 + topRightWidth + centerBottomWidth + 5) / 2;
 
         final int buttonHeigth1 = this.height - 29 - 29 - 29 - 29;
         final int buttonHeigth2 = this.height - 29 - 29 - 29;
         final int buttonHeigth3 = this.height - 29 - 29;
 
         this.buttonList.add(new GuiButtonExt(3000, this.width / 2 - buttonWidthHalf1, buttonHeigth1, topLeftWidth, 20, I18n.format("mw.config.map.ctgy.position.topleft")));
-        this.buttonList.add(new GuiButtonExt(3001, this.width / 2 - buttonWidthHalf1 + topLeftWidth + 5, buttonHeigth1, CenterTopWidth, 20, I18n.format("mw.config.map.ctgy.position.centertop")));
-        this.buttonList.add(new GuiButtonExt(3002, this.width / 2 - buttonWidthHalf1 + topLeftWidth + 5 + CenterTopWidth + 5, buttonHeigth1, topRightWidth, 20, I18n.format("mw.config.map.ctgy.position.topright")));
-        this.buttonList.add(new GuiButtonExt(3010, this.width / 2 - buttonWidthHalf2, buttonHeigth2, CenterLeft, 20, I18n.format("mw.config.map.ctgy.position.centerleft")));
-        this.buttonList.add(new GuiButtonExt(3011, this.width / 2 - buttonWidthHalf2 + CenterLeft + 5, buttonHeigth2, CenterWidth, 20, I18n.format("mw.config.map.ctgy.position.center")));
-        this.buttonList.add(new GuiButtonExt(3012, this.width / 2 - buttonWidthHalf2 + CenterLeft + 5 + CenterWidth + 5, buttonHeigth2, CenterRight, 20, I18n.format("mw.config.map.ctgy.position.centerright")));
+        this.buttonList.add(new GuiButtonExt(3001, this.width / 2 - buttonWidthHalf1 + topLeftWidth + 5, buttonHeigth1, centerTopWidth, 20, I18n.format("mw.config.map.ctgy.position.centertop")));
+        this.buttonList.add(new GuiButtonExt(3002, this.width / 2 - buttonWidthHalf1 + topLeftWidth + 5 + centerTopWidth + 5, buttonHeigth1, topRightWidth, 20, I18n.format("mw.config.map.ctgy.position.topright")));
+        this.buttonList.add(new GuiButtonExt(3010, this.width / 2 - buttonWidthHalf2, buttonHeigth2, centerLeft, 20, I18n.format("mw.config.map.ctgy.position.centerleft")));
+        this.buttonList.add(new GuiButtonExt(3011, this.width / 2 - buttonWidthHalf2 + centerLeft + 5, buttonHeigth2, centerWidth, 20, I18n.format("mw.config.map.ctgy.position.center")));
+        this.buttonList.add(new GuiButtonExt(3012, this.width / 2 - buttonWidthHalf2 + centerLeft + 5 + centerWidth + 5, buttonHeigth2, centerRight, 20, I18n.format("mw.config.map.ctgy.position.centerright")));
         this.buttonList.add(new GuiButtonExt(3020, this.width / 2 - buttonWidthHalf3, buttonHeigth3, bottomLeftWidth, 20, I18n.format("mw.config.map.ctgy.position.botleft")));
-        this.buttonList.add(new GuiButtonExt(3021, this.width / 2 - buttonWidthHalf3 + bottomLeftWidth + 5, buttonHeigth3, CenterBottomWidth, 20, I18n.format("mw.config.map.ctgy.position.centerbottom")));
-        this.buttonList.add(new GuiButtonExt(3022, this.width / 2 - buttonWidthHalf3 + bottomLeftWidth + 5 + CenterBottomWidth + 5, buttonHeigth3, bottomRightWidth, 20, I18n.format("mw.config.map.ctgy.position.botright")));
+        this.buttonList.add(new GuiButtonExt(3021, this.width / 2 - buttonWidthHalf3 + bottomLeftWidth + 5, buttonHeigth3, centerBottomWidth, 20, I18n.format("mw.config.map.ctgy.position.centerbottom")));
+        this.buttonList.add(new GuiButtonExt(3022, this.width / 2 - buttonWidthHalf3 + bottomLeftWidth + 5 + centerBottomWidth + 5, buttonHeigth3, bottomRightWidth, 20, I18n.format("mw.config.map.ctgy.position.botright")));
         this.updateParentSettings();
     }
 
-    // mouse button clicked. 0 = LMB, 1 = RMB, 2 = MMB
     @Override
     public void mouseClicked(int x, int y, int mouseEvent) throws IOException {
         if (mouseEvent != 1 || !this.mapMode.posWithin(x, y)) {
@@ -191,10 +190,10 @@ public class ModGuiConfigHUD extends GuiConfig {
     @Override
     protected void actionPerformed(GuiButton button) {
         double bottomOffset = 0;
-        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.coordsModeStringArray[0])) {
+        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODE[0])) {
             bottomOffset = bottomOffset + this.mc.fontRenderer.FONT_HEIGHT + 3;
         }
-        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.coordsModeStringArray[0])) {
+        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODE[0])) {
             bottomOffset = bottomOffset + this.mc.fontRenderer.FONT_HEIGHT + 3;
         }
         bottomOffset = bottomOffset / this.height * 100;
