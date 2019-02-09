@@ -1,7 +1,7 @@
 package mapwriter.tasks;
 
-import com.jarhax.map.BlockColours;
-import mapwriter.Mw;
+import mapwriter.util.BlockColours;
+import mapwriter.MapWriter;
 import mapwriter.region.RegionManager;
 import mapwriter.util.Utils;
 import net.minecraft.client.resources.I18n;
@@ -15,7 +15,7 @@ public class RebuildRegionsTask extends Task {
     final DimensionType dimension;
     String msg = "";
 
-    public RebuildRegionsTask(Mw mw, int x, int z, int w, int h, DimensionType dimension) {
+    public RebuildRegionsTask(MapWriter mw, int x, int z, int w, int h, DimensionType dimension) {
         this.regionManager = mw.regionManager;
         this.blockColours = mw.blockColours;
         this.x = x;
@@ -26,7 +26,7 @@ public class RebuildRegionsTask extends Task {
     }
 
     @Override
-    public boolean CheckForDuplicate() {
+    public boolean checkForDuplicate() {
         return false;
     }
 

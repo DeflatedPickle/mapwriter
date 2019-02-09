@@ -1,6 +1,6 @@
 package mapwriter.util;
 
-import mapwriter.forge.MwForge;
+import mapwriter.forge.MapWriterForge;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import org.lwjgl.opengl.GL11;
@@ -22,7 +22,7 @@ public class Texture {
         this.h = Render.getTextureHeight();
         this.pixelBuf = Utils.allocateDirectIntBuffer(this.w * this.h);
         this.getPixelsFromExistingTexture();
-        MwForge.logger.info("created new MwTexture from GL texture id {} ({}x{}) ({} pixels)", this.id, this.w, this.h, this.pixelBuf.limit());
+        MapWriterForge.LOGGER.info("created new MwTexture from GL texture id {} ({}x{}) ({} pixels)", this.id, this.w, this.h, this.pixelBuf.limit());
     }
 
     public Texture(int w, int h, int fillColour) {
@@ -54,7 +54,7 @@ public class Texture {
             try {
                 GlStateManager.deleteTexture(this.id);
             } catch (final NullPointerException e) {
-                MwForge.logger.info("MwTexture.close: null pointer exception (texture {})", this.id);
+                MapWriterForge.LOGGER.info("MwTexture.close: null pointer exception (texture {})", this.id);
             }
             this.id = 0;
         }
@@ -83,9 +83,9 @@ public class Texture {
                 this.pixelBuf.position(bufOffset + i * this.w);
                 this.pixelBuf.get(pixels, offset + i * scanSize, w);
             } catch (final IllegalArgumentException e) {
-                MwForge.logger.warn("MwTexture.getRGB: IllegalArgumentException (icon name: {}; height: {}; width: {}; MaxU: %f; MinU: %f; MaxV: %f; MinV: %f)", icon.getIconName(), icon.getIconHeight(), icon.getIconWidth(), icon.getMaxU(), icon.getMinU(), icon.getMaxV(), icon.getMinV());
-                MwForge.logger.warn("MwTexture.getRGB: IllegalArgumentException (pos: {})", bufOffset + i * this.w);
-                MwForge.logger.warn("MwTexture.getRGB: IllegalArgumentException (buffersize: {})", this.pixelBuf.limit());
+                MapWriterForge.LOGGER.warn("MwTexture.getRGB: IllegalArgumentException (icon name: {}; height: {}; width: {}; MaxU: %f; MinU: %f; MaxV: %f; MinV: %f)", icon.getIconName(), icon.getIconHeight(), icon.getIconWidth(), icon.getMaxU(), icon.getMinU(), icon.getMaxV(), icon.getMinV());
+                MapWriterForge.LOGGER.warn("MwTexture.getRGB: IllegalArgumentException (pos: {})", bufOffset + i * this.w);
+                MapWriterForge.LOGGER.warn("MwTexture.getRGB: IllegalArgumentException (buffersize: {})", this.pixelBuf.limit());
             }
 
         }
@@ -148,7 +148,7 @@ public class Texture {
             GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, w, h, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, this.pixelBuf);
             GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
         } catch (final NullPointerException e) {
-            MwForge.logger.info("MwTexture.updatePixels: null pointer exception (texture {})", this.id);
+            MapWriterForge.LOGGER.info("MwTexture.updatePixels: null pointer exception (texture {})", this.id);
         }
     }
 
@@ -163,7 +163,7 @@ public class Texture {
             // this.pixelBuf.flip()
             this.pixelBuf.limit(this.w * this.h);
         } catch (final NullPointerException e) {
-            MwForge.logger.info("MwTexture.getPixels: null pointer exception (texture {})", this.id);
+            MapWriterForge.LOGGER.info("MwTexture.getPixels: null pointer exception (texture {})", this.id);
         }
     }
 }

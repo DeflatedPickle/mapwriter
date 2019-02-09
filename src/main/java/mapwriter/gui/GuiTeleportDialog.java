@@ -1,6 +1,6 @@
 package mapwriter.gui;
 
-import mapwriter.Mw;
+import mapwriter.MapWriter;
 import mapwriter.config.Config;
 import mapwriter.map.MapView;
 import net.minecraft.client.gui.GuiScreen;
@@ -9,13 +9,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class MwGuiTeleportDialog extends MwGuiTextDialog {
+public class GuiTeleportDialog extends GuiTextDialog {
 
-    final Mw mw;
+    final MapWriter mw;
     final MapView mapView;
     final int teleportX, teleportZ;
 
-    public MwGuiTeleportDialog(GuiScreen parentScreen, Mw mw, MapView mapView, int x, int y, int z) {
+    public GuiTeleportDialog(GuiScreen parentScreen, MapWriter mw, MapView mapView, int x, int y, int z) {
 
         super(parentScreen, I18n.format("mw.gui.mwguimarkerdialognew.title") + ":", Integer.toString(y), I18n.format("mw.gui.mwguimarkerdialognew.error"));
         this.mw = mw;

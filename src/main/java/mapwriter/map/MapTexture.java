@@ -112,7 +112,6 @@ public class MapTexture extends Texture {
     }
 
     public void setLoaded(MapViewRequest req) {
-
         this.loadedView = req;
     }
 

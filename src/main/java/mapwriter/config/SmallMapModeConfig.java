@@ -3,15 +3,13 @@ package mapwriter.config;
 import mapwriter.gui.ModGuiConfig.ModBooleanEntry;
 import mapwriter.gui.ModGuiConfigHUD.MapPosConfigEntry;
 
-public class largeMapModeConfig extends MapModeConfig {
-    public largeMapModeConfig(String configCategory) {
-
+public class SmallMapModeConfig extends MapModeConfig {
+    public SmallMapModeConfig(String configCategory) {
         super(configCategory);
     }
 
     @Override
     public void loadConfig() {
-
         super.loadConfig();
         this.enabled = ConfigurationHandler.configuration.getBoolean("enabled", this.configCategory, this.enabledDef, "", "mw.config.map.enabled");
         this.rotate = ConfigurationHandler.configuration.getBoolean("rotate", this.configCategory, this.rotateDef, "", "mw.config.map.rotate");
@@ -19,14 +17,17 @@ public class largeMapModeConfig extends MapModeConfig {
         this.coordsMode = ConfigurationHandler.configuration.getString("coordsMode", this.configCategory, this.coordsModeDef, "", coordsModeStringArray, "mw.config.map.coordsMode");
         this.borderMode = ConfigurationHandler.configuration.getBoolean("borderMode", this.configCategory, this.borderModeDef, "", "mw.config.map.borderMode");
         this.biomeMode = ConfigurationHandler.configuration.getString("biomeMode", this.configCategory, this.biomeModeDef, "", coordsModeStringArray, "mw.config.map.biomeMode");
+        ConfigurationHandler.configuration.getCategory(this.configCategory).remove("Position");
+        ConfigurationHandler.configuration.getCategory(this.configCategory).remove("heightPercent");
     }
 
     @Override
     public void setDefaults() {
-
+        this.coordsModeDef = coordsModeStringArray[1];
         this.rotateDef = true;
         this.circularDef = true;
         this.coordsModeDef = coordsModeStringArray[1];
+        this.biomeModeDef = coordsModeStringArray[0];
         this.borderModeDef = true;
         this.heightPercentDef = -1;
         this.xPosDef = 50;

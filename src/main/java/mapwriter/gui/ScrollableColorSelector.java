@@ -25,7 +25,7 @@ public class ScrollableColorSelector extends ScrollableField {
 
     public ScrollableColorSelector(int x, int y, int width, String label, FontRenderer fontrendererObj) {
 
-        super(x, y + MwGuiMarkerDialogNew.elementVSpacing, width, label, fontrendererObj);
+        super(x, y + GuiMarkerDialogNew.elementVSpacing, width, label, fontrendererObj);
         this.y = y;
         this.init();
     }
@@ -179,12 +179,12 @@ public class ScrollableColorSelector extends ScrollableField {
         this.ScrollableNumericTextBoxColourRed.setMaxValue(255);
         this.ScrollableNumericTextBoxColourRed.setMinValue(0);
 
-        this.ScrollableNumericTextBoxColourGreen = new ScrollableNumericTextBox(x1, this.y + MwGuiMarkerDialogNew.elementVSpacing, w, I18n.format(this.editGreen), this.fontrendererObj);
+        this.ScrollableNumericTextBoxColourGreen = new ScrollableNumericTextBox(x1, this.y + GuiMarkerDialogNew.elementVSpacing, w, I18n.format(this.editGreen), this.fontrendererObj);
         this.ScrollableNumericTextBoxColourGreen.setDrawArrows(true);
         this.ScrollableNumericTextBoxColourGreen.setMaxValue(255);
         this.ScrollableNumericTextBoxColourGreen.setMinValue(0);
 
-        this.ScrollableNumericTextBoxColourBlue = new ScrollableNumericTextBox(x1, this.y + MwGuiMarkerDialogNew.elementVSpacing * 2, w, I18n.format(this.editBlue), this.fontrendererObj);
+        this.ScrollableNumericTextBoxColourBlue = new ScrollableNumericTextBox(x1, this.y + GuiMarkerDialogNew.elementVSpacing * 2, w, I18n.format(this.editBlue), this.fontrendererObj);
         this.ScrollableNumericTextBoxColourBlue.setDrawArrows(true);
         this.ScrollableNumericTextBoxColourBlue.setMaxValue(255);
         this.ScrollableNumericTextBoxColourBlue.setMinValue(0);
@@ -192,7 +192,7 @@ public class ScrollableColorSelector extends ScrollableField {
         this.colourFieldX = x1 + w + 2;
         this.colourFieldY = this.y + 6;
         this.colourFieldW = this.width - w - ScrollableField.arrowsWidth * 2 - this.fontrendererObj.getStringWidth(I18n.format(this.editGreen)) - 8;
-        this.colourFieldH = MwGuiMarkerDialogNew.elementVSpacing * 2;
+        this.colourFieldH = GuiMarkerDialogNew.elementVSpacing * 2;
     }
 
     private void UpdateColour() {

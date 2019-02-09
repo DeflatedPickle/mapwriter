@@ -1,6 +1,6 @@
 package mapwriter.region;
 
-import mapwriter.forge.MwForge;
+import mapwriter.forge.MapWriterForge;
 import net.minecraft.world.DimensionType;
 
 import javax.imageio.ImageIO;
@@ -31,7 +31,7 @@ public class MergeToImage {
         final int xMax = xMin + w;
         final int zMax = zMin + h;
 
-        MwForge.logger.info("merging area starting at ({},{}), {}x{} blocks", xMin, zMin, w, h);
+        MapWriterForge.LOGGER.info("merging area starting at ({},{}), {}x{} blocks", xMin, zMin, w, h);
 
         int countZ = 0;
         int count = 0;
@@ -43,7 +43,7 @@ public class MergeToImage {
 
                 final String imgName = String.format("%s.%d.%d.png", basename, countX, countZ);
                 final File f = new File(dir, imgName);
-                MwForge.logger.info("merging regions to image {}", f);
+                MapWriterForge.LOGGER.info("merging regions to image {}", f);
 
                 final BufferedImage img = mergeRegions(regionManager, x, z, imgW, imgH, dimension);
                 writeImage(img, f);
@@ -65,8 +65,8 @@ public class MergeToImage {
         // copy region PNGs to the image
         for (int zi = 0; zi < h; zi += Region.SIZE) {
             for (int xi = 0; xi < w; xi += Region.SIZE) {
-                // MwUtil.log("merging region (%d,%d)", rX << Mw.REGION_SHIFT,
-                // rZ << Mw.REGION_SHIFT);
+                // MwUtil.log("merging region (%d,%d)", rX << MapWriter.REGION_SHIFT,
+                // rZ << MapWriter.REGION_SHIFT);
 
                 // get region pixels
                 final Region region = regionManager.getRegion(x + xi, z + zi, 0, dimension);

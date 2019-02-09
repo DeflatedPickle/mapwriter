@@ -1,6 +1,6 @@
 package mapwriter.region;
 
-import com.jarhax.map.BlockColours;
+import mapwriter.util.BlockColours;
 import mapwriter.config.Config;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -43,7 +43,7 @@ public class ChunkRender {
     // note that the "front to back" alpha blending algorithm is used
     // rather than the more common "back to front".
     //
-    public static int getColumnColour(BlockColours bc, IChunk chunk, int x, int y, int z, int heightW, int heightN) {
+    public static int getColumnColour(BlockColours bc, MapChunk chunk, int x, int y, int z, int heightW, int heightN) {
 
         double a = 1.0;
         double r = 0.0;
@@ -140,11 +140,11 @@ public class ChunkRender {
         return heightDiffFactor >= 0.0 ? Math.pow(heightDiffFactor * (1 / 255.0), BRIGHTEN_EXP) * BRIGHTEN_AMP : -Math.pow(-(heightDiffFactor * (1 / 255.0)), DARKEN_EXP) * DARKEN_AMP;
     }
 
-    public static void renderSurface(BlockColours bc, IChunk chunk, int[] pixels, int offset, int scanSize, boolean dimensionHasCeiling) {
+    public static void renderSurface(BlockColours bc, MapChunk chunk, int[] pixels, int offset, int scanSize, boolean dimensionHasCeiling) {
 
         final int chunkMaxY = chunk.getMaxY();
-        for (int z = 0; z < MwChunk.SIZE; z++) {
-            for (int x = 0; x < MwChunk.SIZE; x++) {
+        for (int z = 0; z < MapWriterChunk.SIZE; z++) {
+            for (int x = 0; x < MapWriterChunk.SIZE; x++) {
                 // for the nether dimension search for the first non-opaque
                 // block below the ceiling.
                 // cannot use y = chunkMaxY as the nether sometimes spawns
@@ -175,11 +175,11 @@ public class ChunkRender {
         }
     }
 
-    public static void renderUnderground(BlockColours bc, IChunk chunk, int[] pixels, int offset, int scanSize, int startY, byte[] mask) {
+    public static void renderUnderground(BlockColours bc, MapChunk chunk, int[] pixels, int offset, int scanSize, int startY, byte[] mask) {
 
         startY = Math.min(Math.max(0, startY), 255);
-        for (int z = 0; z < MwChunk.SIZE; z++) {
-            for (int x = 0; x < MwChunk.SIZE; x++) {
+        for (int z = 0; z < MapWriterChunk.SIZE; z++) {
+            for (int x = 0; x < MapWriterChunk.SIZE; x++) {
 
                 // only process columns where the mask bit is set.
                 // process all columns if mask is null.

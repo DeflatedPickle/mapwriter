@@ -2,7 +2,7 @@ package mapwriter.api;
 
 import java.awt.*;
 
-public interface IMwChunkOverlay {
+public interface MapChunkOverlay {
     int getBorderColor();
 
     float getBorderWidth();
@@ -13,5 +13,5 @@ public interface IMwChunkOverlay {
 
     float getFilling();
 
-    boolean hasBorder();
+    byte getBorder();
 }

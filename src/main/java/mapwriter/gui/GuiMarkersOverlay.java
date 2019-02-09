@@ -6,7 +6,7 @@ import mapwriter.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 
-public class MwGuiMarkerListOverlay extends MwGuiSlot {
+public class GuiMarkersOverlay extends GuiMapSlot {
     public static int listWidth = 95;
     public static int ListY = 10;
 
@@ -14,12 +14,12 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
     private final MarkerManager markerManager;
     private int height;
 
-    public MwGuiMarkerListOverlay(GuiScreen parentScreen, MarkerManager markerManager) {
+    public GuiMarkersOverlay(GuiScreen parentScreen, MarkerManager markerManager) {
 
         super(Minecraft.getMinecraft(), // mcIn
-                MwGuiMarkerListOverlay.listWidth, // width
+                GuiMarkersOverlay.listWidth, // width
                 parentScreen.height - 20, // height
-                MwGuiMarkerListOverlay.ListY, // topIn
+                GuiMarkersOverlay.ListY, // topIn
                 10 + parentScreen.height - 20, // bottomIn
                 parentScreen.width - 110 // left
         );
@@ -46,7 +46,7 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
     @Override
     protected void drawSlot(int entryID, int x, int y, int slotHeight, int mouseXIn, int mouseYIn) {
 
-        final MwGuiLabel label = new MwGuiLabel(this.getLabelString(entryID), null, x, y, false, false, MwGuiMarkerListOverlay.listWidth, this.height);
+        final GuiLabel label = new GuiLabel(this.getLabelString(entryID), null, x, y, false, false, GuiMarkersOverlay.listWidth, this.height);
 
         label.draw();
     }
@@ -56,13 +56,13 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
 
         this.markerManager.selectedMarker = this.markerManager.visibleMarkers.get(slotIndex);
         if (mouseButton == 1) {
-            if (this.parentScreen instanceof MwGui) {
-                ((MwGui) this.parentScreen).openMarkerGui(this.markerManager.selectedMarker, mouseX, mouseY);
+            if (this.parentScreen instanceof GuiFullScreenMap) {
+                ((GuiFullScreenMap) this.parentScreen).openMarkerGui(this.markerManager.selectedMarker, mouseX, mouseY);
             }
         }
         if (mouseButton == 0 && isDoubleClick) {
-            if (this.parentScreen instanceof MwGui) {
-                ((MwGui) this.parentScreen).centerOnSelectedMarker();
+            if (this.parentScreen instanceof GuiFullScreenMap) {
+                ((GuiFullScreenMap) this.parentScreen).centerOnSelectedMarker();
             }
         }
     }
@@ -87,7 +87,7 @@ public class MwGuiMarkerListOverlay extends MwGuiSlot {
     protected int getSlotHeight(int index) {
 
         final String str = Utils.stringArrayToString(this.getLabelString(index));
-        int height = this.mc.fontRenderer.getWordWrappedHeight(str, MwGuiMarkerListOverlay.listWidth - 6);
+        int height = this.mc.fontRenderer.getWordWrappedHeight(str, GuiMarkersOverlay.listWidth - 6);
 
         height += this.spacingY * 2;
 

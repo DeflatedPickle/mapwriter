@@ -1,6 +1,6 @@
 package mapwriter.config;
 
-import mapwriter.Mw;
+import mapwriter.MapWriter;
 import mapwriter.util.Reference;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.config.Configuration;
@@ -31,7 +31,7 @@ public class WorldConfig {
 
     private WorldConfig() {
         // load world specific config file
-        final File worldConfigFile = new File(Mw.getInstance().worldDir, Reference.WORLD_DIR_CONFIG_NAME);
+        final File worldConfigFile = new File(MapWriter.getInstance().worldDir, Reference.WORLD_DIR_CONFIG_NAME);
         this.worldConfiguration = new Configuration(worldConfigFile);
 
         this.initDimensions();

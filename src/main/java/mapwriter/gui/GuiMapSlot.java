@@ -14,7 +14,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public abstract class MwGuiSlot {
+public abstract class GuiMapSlot {
     protected final Minecraft mc;
     public int width;
     public int height;
@@ -70,7 +70,7 @@ public abstract class MwGuiSlot {
     private boolean enabled = false;
     int spacingY = 4;
 
-    public MwGuiSlot(Minecraft mcIn, int width, int height, int topIn, int bottomIn, int left) {
+    public GuiMapSlot(Minecraft mcIn, int width, int height, int topIn, int bottomIn, int left) {
 
         this.mc = mcIn;
         this.width = width;

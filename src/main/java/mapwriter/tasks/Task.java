@@ -4,29 +4,25 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public abstract class Task implements Runnable {
-
     // the task stores its own future
     private Future<?> future = null;
 
     // returns false if the task has to be added to a new future
-    public abstract boolean CheckForDuplicate();
+    public abstract boolean checkForDuplicate();
 
     // methods to access the tasks Future variable
     public final Future<?> getFuture() {
-
         return this.future;
     }
 
     public final boolean isDone() {
-
-        return this.future != null ? this.future.isDone() : false;
+        return this.future != null && this.future.isDone();
     }
 
     // called by processTaskQueue after the thread completes
     public abstract void onComplete();
 
     public final void printException() {
-
         if (this.future != null) {
             try {
                 this.future.get();
@@ -45,7 +41,6 @@ public abstract class Task implements Runnable {
     public abstract void run();
 
     public final void setFuture(Future<?> future) {
-
         this.future = future;
     }
 }

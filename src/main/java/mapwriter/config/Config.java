@@ -55,15 +55,14 @@ public class Config {
     public static boolean drawMarkersDistanceInWorld = drawMarkersDistanceInWorldDef;
 
     // World configuration Options
-    public static int overlayModeIndexDef = 0;
-    public static int overlayModeIndex = overlayModeIndexDef;
+    public static boolean overlayEnabledDef = true;
+    public static boolean overlayEnabled = overlayEnabledDef;
     public static int overlayZoomLevelDef = 0;
     public static int overlayZoomLevel = overlayZoomLevelDef;
     public static int fullScreenZoomLevelDef = 0;
     public static int fullScreenZoomLevel = fullScreenZoomLevelDef;
 
-    public static largeMapModeConfig largeMap = new largeMapModeConfig(Reference.CAT_LARGE_MAP_CONFIG);
-    public static smallMapModeConfig smallMap = new smallMapModeConfig(Reference.CAT_SMALL_MAP_CONFIG);
+    public static SmallMapModeConfig smallMap = new SmallMapModeConfig(Reference.CAT_SMALL_MAP_CONFIG);
     public static MapModeConfig fullScreenMap = new MapModeConfig(Reference.CAT_FULL_MAP_CONFIG);
 
     public static boolean reloadColours = Boolean.parseBoolean(System.getProperty("fml.skipFirstTextureLoad", "true"));

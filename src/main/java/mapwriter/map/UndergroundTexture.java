@@ -1,8 +1,8 @@
 package mapwriter.map;
 
-import mapwriter.Mw;
+import mapwriter.MapWriter;
 import mapwriter.region.ChunkRender;
-import mapwriter.region.IChunk;
+import mapwriter.region.MapChunk;
 import mapwriter.util.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -20,49 +20,42 @@ import java.util.Arrays;
 
 public class UndergroundTexture extends Texture {
 
-    class RenderChunk implements IChunk {
+    class RenderChunk implements MapChunk {
         Chunk chunk;
 
         public RenderChunk(Chunk chunk) {
-
             this.chunk = chunk;
         }
 
         @Override
-        public int getBiome(int x, int y, int z) {
+        public Biome getBiome(int x, int y, int z) {
+            final int localX = x & 15;
+            final int localZ = z & 15;
+            int bid = this.chunk.getBiomeArray()[localZ << 4 | localX] & 255;
 
-            final int i = x & 15;
-            final int j = z & 15;
-            int k = this.chunk.getBiomeArray()[j << 4 | i] & 255;
-
-            if (k == 255) {
-                final Biome biome = Minecraft.getMinecraft().world.getBiomeProvider().getBiome(new BlockPos(k, k, k), Biomes.PLAINS);
-                k = Biome.getIdForBiome(biome);
+            if (bid == 255) {
+                return Minecraft.getMinecraft().world.getBiomeProvider().getBiome(new BlockPos(x, y, z), Biomes.PLAINS);
             }
-            ;
-            return k;
+            return Biome.getBiome(bid);
         }
 
         @Override
         public IBlockState getBlockState(int x, int y, int z) {
-
             return this.chunk.getBlockState(x, y, z);
         }
 
         @Override
         public int getLightValue(int x, int y, int z) {
-
             return this.chunk.getLightSubtracted(new BlockPos(x, y, z), 0);
         }
 
         @Override
         public int getMaxY() {
-
             return this.chunk.getTopFilledSegment() + 15;
         }
     }
 
-    private final Mw mw;
+    private final MapWriter mw;
     private int px = 0;
     private int py = 0;
     private int pz = 0;
@@ -76,7 +69,7 @@ public class UndergroundTexture extends Texture {
 
     private final int[] pixels;
 
-    public UndergroundTexture(Mw mw, int textureSize, boolean linearScaling) {
+    public UndergroundTexture(MapWriter mw, int textureSize, boolean linearScaling) {
 
         super(textureSize, textureSize, 0x00000000, GL11.GL_NEAREST, GL11.GL_NEAREST, GL11.GL_REPEAT);
         this.setLinearScaling(false);

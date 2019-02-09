@@ -4,7 +4,7 @@ import com.mojang.realmsclient.RealmsMainScreen;
 import com.mojang.realmsclient.dto.RealmsServer;
 import com.mojang.realmsclient.gui.screens.RealmsConfigureWorldScreen;
 import com.mojang.realmsclient.gui.screens.RealmsLongRunningMcoTaskScreen;
-import mapwriter.Mw;
+import mapwriter.MapWriter;
 import mapwriter.config.Config;
 import mapwriter.util.Utils;
 import net.minecraft.client.gui.GuiGameOver;
@@ -22,9 +22,9 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import java.util.List;
 
 public class MapWriterEventHandler {
-    Mw mw;
+    MapWriter mw;
 
-    public MapWriterEventHandler(Mw mw) {
+    public MapWriterEventHandler(MapWriter mw) {
         this.mw = mw;
     }
 
@@ -92,7 +92,7 @@ public class MapWriterEventHandler {
     @SubscribeEvent
     public void onTextureStitchEventPost(TextureStitchEvent.Post event) {
         if (Config.reloadColours) {
-            MwForge.logger.info("Skipping the first generation of blockcolours, models are not loaded yet");
+            MapWriterForge.LOGGER.info("Skipping the first generation of blockcolours, models are not loaded yet");
         } else {
             this.mw.reloadBlockColours();
         }
@@ -101,14 +101,14 @@ public class MapWriterEventHandler {
     @SubscribeEvent
     public void renderMap(RenderGameOverlayEvent.Post event) {
         if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
-            Mw.getInstance().onTick();
+            MapWriter.getInstance().onTick();
         }
     }
 
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent event) {
-        if (Mw.getInstance().ready) {
-            Mw.getInstance().markerManager.drawMarkersWorld(event.getPartialTicks());
+        if (MapWriter.getInstance().ready) {
+            MapWriter.getInstance().markerManager.drawMarkersWorld(event.getPartialTicks());
         }
     }
 }

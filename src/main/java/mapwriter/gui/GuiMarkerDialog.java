@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class MwGuiMarkerDialog extends MwGuiTextDialog {
+public class GuiMarkerDialog extends GuiTextDialog {
     private final MarkerManager markerManager;
     private Marker editingMarker;
     private String markerName;
@@ -21,7 +21,7 @@ public class MwGuiMarkerDialog extends MwGuiTextDialog {
     private int state = 0;
     private DimensionType dimension;
 
-    public MwGuiMarkerDialog(GuiScreen parentScreen, MarkerManager markerManager, Marker editingMarker) {
+    public GuiMarkerDialog(GuiScreen parentScreen, MarkerManager markerManager, Marker editingMarker) {
 
         super(parentScreen, I18n.format("mw.gui.mwguimarkerdialog.title.edit") + ":", editingMarker.name, I18n.format("mw.gui.mwguimarkerdialog.error"));
         this.markerManager = markerManager;
@@ -34,7 +34,7 @@ public class MwGuiMarkerDialog extends MwGuiTextDialog {
         this.dimension = editingMarker.dimension;
     }
 
-    public MwGuiMarkerDialog(GuiScreen parentScreen, MarkerManager markerManager, String markerName, String markerGroup, int x, int y, int z, DimensionType dimension) {
+    public GuiMarkerDialog(GuiScreen parentScreen, MarkerManager markerManager, String markerName, String markerGroup, int x, int y, int z, DimensionType dimension) {
         super(parentScreen, I18n.format("mw.gui.mwguimarkerdialog.title.new") + ":", markerName, I18n.format("mw.gui.mwguimarkerdialog.error"));
         this.markerManager = markerManager;
         this.markerName = markerName;

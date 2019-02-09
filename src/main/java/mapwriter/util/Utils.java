@@ -1,7 +1,7 @@
 package mapwriter.util;
 
 import mapwriter.config.Config;
-import mapwriter.forge.MwForge;
+import mapwriter.forge.MapWriterForge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -23,10 +23,10 @@ import java.util.*;
 public class Utils {
     public static String RealmsWorldName = "";
 
-    private static int[] colours = new int[]{0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff, 0xff8000, 0x8000ff};
+    private static int[] colors = new int[]{0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff, 0xff8000, 0x8000ff};
 
     // static so that current index is shared between all markers
-    public static int colourIndex = 0;
+    public static int colorIndex = 0;
 
     public static IntBuffer allocateDirectIntBuffer(int size) {
         if (size < 1) {
@@ -43,7 +43,7 @@ public class Utils {
     }
 
     public static int getCurrentColour() {
-        return 0xff000000 | Utils.colours[Utils.colourIndex];
+        return 0xff000000 | Utils.colors[Utils.colorIndex];
     }
 
     public static String getCurrentDateString() {
@@ -103,12 +103,12 @@ public class Utils {
     }
 
     public static int getNextColour() {
-        Utils.colourIndex = (Utils.colourIndex + 1) % Utils.getColoursLengt();
+        Utils.colorIndex = (Utils.colorIndex + 1) % Utils.getColorsLength();
         return Utils.getCurrentColour();
     }
 
     public static int getPrevColour() {
-        Utils.colourIndex = (Utils.colourIndex + Utils.getColoursLengt() - 1) % Utils.getColoursLengt();
+        Utils.colorIndex = (Utils.colorIndex + Utils.getColorsLength() - 1) % Utils.getColorsLength();
         return Utils.getCurrentColour();
     }
 
@@ -193,17 +193,17 @@ public class Utils {
             final Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object) null);
             oclass.getMethod("browse", new Class[]{URI.class}).invoke(object, url);
         } catch (final Throwable throwable) {
-            MwForge.logger.error("Couldn\'t open link {}", throwable.getStackTrace().toString());
+            MapWriterForge.LOGGER.error("Couldn\'t open link {}", throwable.getStackTrace().toString());
         }
     }
 
     // send an ingame chat message and console log
     public static void printBoth(String msg) {
-        final EntityPlayerSP thePlayer = Minecraft.getMinecraft().player;
-        if (thePlayer != null) {
-            thePlayer.sendMessage(new TextComponentString(msg));
+        final EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (player != null) {
+            player.sendMessage(new TextComponentString(msg));
         }
-        MwForge.logger.info("{}", msg);
+        MapWriterForge.LOGGER.info("{}", msg);
     }
 
     public static String stringArrayToString(String[] arr) {
@@ -215,8 +215,7 @@ public class Utils {
         return builder.toString();
     }
 
-    private static int getColoursLengt() {
-
-        return Utils.colours.length;
+    private static int getColorsLength() {
+        return Utils.colors.length;
     }
 }

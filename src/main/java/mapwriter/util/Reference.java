@@ -12,7 +12,6 @@ public final class Reference {
     public static final String ACCEPTED_VERSION = "@ACCEPTED_MC_VERSION@";
 
     public static final String CAT_OPTIONS = "options";
-    public static final String CAT_LARGE_MAP_CONFIG = "largemap";
     public static final String CAT_SMALL_MAP_CONFIG = "smallmap";
     public static final String CAT_FULL_MAP_CONFIG = "fullscreenmap";
     public static final String CAT_MAP_POS = "mappos";

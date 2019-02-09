@@ -4,7 +4,7 @@ import net.minecraft.world.DimensionType;
 
 import java.util.List;
 
-public interface IMapView {
+public interface MapView {
     int adjustZoomLevel(int n);
 
     DimensionType getDimension();
@@ -45,7 +45,7 @@ public interface IMapView {
 
     void setDimensionAndAdjustZoom(DimensionType dimension);
 
-    void setMapWH(IMapMode mapMode);
+    void setMapWH(MapMode mapMode);
 
     void setMapWH(int w, int h);
 

@@ -1,15 +1,14 @@
 package mapwriter.map;
 
-import mapwriter.Mw;
-import mapwriter.api.IMapMode;
-import mapwriter.api.IMapView;
-import mapwriter.api.MwAPI;
+import mapwriter.MapWriter;
+import mapwriter.api.MapMode;
+import mapwriter.api.MapWriterAPI;
 import mapwriter.config.Config;
 import net.minecraft.world.DimensionType;
 
 import java.util.List;
 
-public class MapView implements IMapView {
+public class MapView implements mapwriter.api.MapView {
     private int zoomLevel = 0;
     private DimensionType dimension = DimensionType.OVERWORLD;
     private int textureSize = 2048;
@@ -39,7 +38,7 @@ public class MapView implements IMapView {
     private boolean undergroundMode;
     private final boolean fullscreenMap;
 
-    public MapView(Mw mw, boolean fullscreenMap) {
+    public MapView(MapWriter mw, boolean fullscreenMap) {
 
         this.minZoom = Config.zoomInLevels;
         this.maxZoom = Config.zoomOutLevels;
@@ -171,8 +170,8 @@ public class MapView implements IMapView {
             this.setViewCentre(this.x * scale, this.z * scale);
         }
 
-        if (MwAPI.getCurrentDataProvider() != null) {
-            MwAPI.getCurrentDataProvider().onDimensionChanged(this.dimension, this);
+        if (MapWriterAPI.getCurrentDataProvider() != null) {
+            MapWriterAPI.getCurrentDataProvider().onDimensionChanged(this.dimension, this);
         }
     }
 
@@ -189,7 +188,7 @@ public class MapView implements IMapView {
     }
 
     @Override
-    public void setMapWH(IMapMode mapMode) {
+    public void setMapWH(MapMode mapMode) {
         this.setMapWH(mapMode.getWPixels(), mapMode.getHPixels());
     }
 
@@ -224,8 +223,8 @@ public class MapView implements IMapView {
         this.x = vX;
         this.z = vZ;
 
-        if (MwAPI.getCurrentDataProvider() != null) {
-            MwAPI.getCurrentDataProvider().onMapCenterChanged(vX, vZ, this);
+        if (MapWriterAPI.getCurrentDataProvider() != null) {
+            MapWriterAPI.getCurrentDataProvider().onMapCenterChanged(vX, vZ, this);
         }
     }
 
@@ -292,8 +291,8 @@ public class MapView implements IMapView {
             this.h = this.baseH >> -this.zoomLevel;
         }
 
-        if (MwAPI.getCurrentDataProvider() != null) {
-            MwAPI.getCurrentDataProvider().onZoomChanged(this.getZoomLevel(), this);
+        if (MapWriterAPI.getCurrentDataProvider() != null) {
+            MapWriterAPI.getCurrentDataProvider().onZoomChanged(this.getZoomLevel(), this);
         }
     }
 }

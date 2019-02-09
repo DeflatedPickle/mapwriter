@@ -20,7 +20,6 @@ public class MapViewRequest {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof MapViewRequest)) {
-
             return false;
         }
 

@@ -1,7 +1,7 @@
 package mapwriter;
 
 import mapwriter.config.Config;
-import mapwriter.region.MwChunk;
+import mapwriter.region.MapWriterChunk;
 import mapwriter.tasks.SaveChunkTask;
 import mapwriter.tasks.UpdateSurfaceChunksTask;
 import mapwriter.util.Utils;
@@ -19,24 +19,24 @@ public class ChunkManager {
     private static final int VISIBLE_FLAG = 0x01;
     private static final int VIEWED_FLAG = 0x02;
 
-    // create MwChunk from Minecraft chunk.
-    // only MwChunk's should be used in the background thread.
+    // create MapWriterChunk from Minecraft chunk.
+    // only MapWriterChunk's should be used in the background thread.
     // make this a full copy of chunk data to prevent possible race conditions
     // <-- done
-    public static MwChunk copyToMwChunk(Chunk chunk) {
+    public static MapWriterChunk copyToMwChunk(Chunk chunk) {
         Map<BlockPos, TileEntity> tileEntityMap = new HashMap<>(chunk.getTileEntityMap());
         final byte[] biomeArray = Arrays.copyOf(chunk.getBiomeArray(), chunk.getBiomeArray().length);
         final ExtendedBlockStorage[] dataArray = Arrays.copyOf(chunk.getBlockStorageArray(), chunk.getBlockStorageArray().length);
 
-        return new MwChunk(chunk.x, chunk.z, chunk.getWorld().provider.getDimensionType(), dataArray, biomeArray, tileEntityMap);
+        return new MapWriterChunk(chunk.x, chunk.z, chunk.getWorld().provider.getDimensionType(), dataArray, biomeArray, tileEntityMap);
     }
 
-    public Mw mw;
+    public MapWriter mw;
     private boolean closed = false;
 
     private final CircularHashMap<Chunk, Integer> chunkMap = new CircularHashMap<>();
 
-    public ChunkManager(Mw mw) {
+    public ChunkManager(MapWriter mw) {
         this.mw = mw;
     }
 
@@ -86,7 +86,7 @@ public class ChunkManager {
 
     public void updateSurfaceChunks() {
         final int chunksToUpdate = Math.min(this.chunkMap.size(), Config.chunksPerTick);
-        final MwChunk[] chunkArray = new MwChunk[chunksToUpdate];
+        final MapWriterChunk[] chunkArray = new MapWriterChunk[chunksToUpdate];
         for (int i = 0; i < chunksToUpdate; i++) {
             final Map.Entry<Chunk, Integer> entry = this.chunkMap.getNextEntry();
             if (entry != null) {
@@ -118,7 +118,7 @@ public class ChunkManager {
     public void updateUndergroundChunks() {
         final int chunkArrayX = (this.mw.playerXInt >> 4) - 1;
         final int chunkArrayZ = (this.mw.playerZInt >> 4) - 1;
-        final MwChunk[] chunkArray = new MwChunk[9];
+        final MapWriterChunk[] chunkArray = new MapWriterChunk[9];
         for (int z = 0; z < 3; z++) {
             for (int x = 0; x < 3; x++) {
                 final Chunk chunk = this.mw.mc.world.getChunkFromChunkCoords(chunkArrayX + x, chunkArrayZ + z);

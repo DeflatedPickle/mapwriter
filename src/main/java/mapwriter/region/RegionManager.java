@@ -1,7 +1,7 @@
 package mapwriter.region;
 
-import com.jarhax.map.BlockColours;
-import mapwriter.forge.MwForge;
+import mapwriter.util.BlockColours;
+import mapwriter.forge.MapWriterForge;
 import net.minecraft.world.DimensionType;
 import org.apache.logging.log4j.Logger;
 
@@ -97,17 +97,17 @@ public class RegionManager {
 
     public void printLoadedRegionStats() {
 
-        MwForge.logger.info("loaded region listing:");
+        MapWriterForge.LOGGER.info("loaded region listing:");
         final Map<String, Integer> stats = new HashMap<>();
         for (final Region region : this.regionMap.values()) {
-            MwForge.logger.info("  {}", region);
+            MapWriterForge.LOGGER.info("  {}", region);
             incrStatsCounter(stats, String.format("dim{}", region.dimension));
             incrStatsCounter(stats, String.format("zoom{}", region.zoomLevel));
             incrStatsCounter(stats, "total");
         }
-        MwForge.logger.info("loaded region stats:");
+        MapWriterForge.LOGGER.info("loaded region stats:");
         for (final Entry<String, Integer> e : stats.entrySet()) {
-            MwForge.logger.info("  {}: {}", e.getKey(), e.getValue());
+            MapWriterForge.LOGGER.info("  {}: {}", e.getKey(), e.getValue());
         }
     }
 
@@ -120,7 +120,7 @@ public class RegionManager {
         w = w + Region.SIZE & Region.MASK;
         h = h + Region.SIZE & Region.MASK;
 
-        MwForge.logger.info("rebuilding regions from ({}, {}) to ({}, {})", xStart, zStart, xStart + w, zStart + h);
+        MapWriterForge.LOGGER.info("rebuilding regions from ({}, {}) to ({}, {})", xStart, zStart, xStart + w, zStart + h);
 
         for (int rX = xStart; rX < xStart + w; rX += Region.SIZE) {
             for (int rZ = zStart; rZ < zStart + h; rZ += Region.SIZE) {
@@ -130,7 +130,7 @@ public class RegionManager {
                     for (int cz = 0; cz < 32; cz++) {
                         for (int cx = 0; cx < 32; cx++) {
                             // load chunk from anvil file
-                            final MwChunk chunk = MwChunk.read((region.x >> 4) + cx, (region.z >> 4) + cz, region.dimension, this.regionFileCache);
+                            final MapWriterChunk chunk = MapWriterChunk.read((region.x >> 4) + cx, (region.z >> 4) + cz, region.dimension, this.regionFileCache);
                             region.updateChunk(chunk);
                         }
                     }
@@ -140,7 +140,7 @@ public class RegionManager {
         }
     }
 
-    public void updateChunk(MwChunk chunk) {
+    public void updateChunk(MapWriterChunk chunk) {
 
         final Region region = this.getRegion(chunk.x << 4, chunk.z << 4, 0, chunk.dimension);
         region.updateChunk(chunk);

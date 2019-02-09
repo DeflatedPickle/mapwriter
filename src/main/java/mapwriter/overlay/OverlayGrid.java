@@ -2,14 +2,15 @@ package mapwriter.overlay;
 
 import mapwriter.api.*;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DimensionType;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OverlayGrid implements IMwDataProvider {
-    public class ChunkOverlay implements IMwChunkOverlay {
+public class OverlayGrid implements MapOverlayProvider {
+    public class ChunkOverlay implements MapChunkOverlay {
         Point coord;
 
         public ChunkOverlay(int x, int z) {
@@ -18,7 +19,7 @@ public class OverlayGrid implements IMwDataProvider {
 
         @Override
         public int getBorderColor() {
-            return 0xff000000;
+            return 0x7f000000;
         }
 
         @Override
@@ -42,13 +43,13 @@ public class OverlayGrid implements IMwDataProvider {
         }
 
         @Override
-        public boolean hasBorder() {
-            return true;
+        public byte getBorder() {
+            return 0b1111;
         }
     }
 
     @Override
-    public List<IMwChunkOverlay> getChunksOverlay(DimensionType dim, double centerX, double centerZ, double minX, double minZ, double maxX, double maxZ) {
+    public List<MapChunkOverlay> getChunksOverlay(DimensionType dim, double centerX, double centerZ, double minX, double minZ, double maxX, double maxZ) {
         final int minChunkX = (MathHelper.ceil(minX) >> 4) - 1;
         final int minChunkZ = (MathHelper.ceil(minZ) >> 4) - 1;
         final int maxChunkX = (MathHelper.ceil(maxX) >> 4) + 1;
@@ -61,7 +62,7 @@ public class OverlayGrid implements IMwDataProvider {
         final int limitMinZ = Math.max(minChunkZ, cZ - 100);
         final int limitMaxZ = Math.min(maxChunkZ, cZ + 100);
 
-        final List<IMwChunkOverlay> chunks = new ArrayList<>();
+        final List<MapChunkOverlay> chunks = new ArrayList<>();
         for (int x = limitMinX; x <= limitMaxX; x++) {
             for (int z = limitMinZ; z <= limitMaxZ; z++) {
                 chunks.add(new ChunkOverlay(x, z));
@@ -72,45 +73,45 @@ public class OverlayGrid implements IMwDataProvider {
     }
 
     @Override
-    public ILabelInfo getLabelInfo(int mouseX, int mouseY) {
+    public ITextComponent getMouseInfo(int mouseX, int mouseY) {
         return null;
     }
 
     @Override
-    public String getStatusString(DimensionType dim, int bX, int bY, int bZ) {
-        return "";
+    public ITextComponent getStatusInfo(DimensionType dim, int bX, int bY, int bZ) {
+        return null;
     }
 
     @Override
-    public void onDimensionChanged(DimensionType dimension, IMapView mapview) {
+    public void onDimensionChanged(DimensionType dimension, MapView mapview) {
     }
 
     @Override
-    public void onDraw(IMapView mapview, IMapMode mapmode) {
+    public void onDraw(MapView mapview, MapMode mapmode) {
     }
 
     @Override
-    public void onMapCenterChanged(double vX, double vZ, IMapView mapview) {
+    public void onMapCenterChanged(double vX, double vZ, MapView mapview) {
     }
 
     @Override
-    public void onMiddleClick(DimensionType dim, int bX, int bZ, IMapView mapview) {
+    public void onMiddleClick(DimensionType dim, int bX, int bZ, MapView mapview) {
     }
 
     @Override
-    public boolean onMouseInput(IMapView mapview, IMapMode mapmode) {
+    public boolean onMouseInput(MapView mapview, MapMode mapmode) {
         return false;
     }
 
     @Override
-    public void onOverlayActivated(IMapView mapview) {
+    public void onOverlayActivated(MapView mapview) {
     }
 
     @Override
-    public void onOverlayDeactivated(IMapView mapview) {
+    public void onOverlayDeactivated(MapView mapview) {
     }
 
     @Override
-    public void onZoomChanged(int level, IMapView mapview) {
+    public void onZoomChanged(int level, MapView mapview) {
     }
 }

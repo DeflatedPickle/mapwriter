@@ -1,7 +1,6 @@
-package com.jarhax.map;
+package mapwriter.util;
 
-import mapwriter.forge.MwForge;
-import mapwriter.util.Texture;
+import mapwriter.forge.MapWriterForge;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -21,16 +20,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BlockColours {
-
     private final Map<TextureAtlasSprite, Integer> averageSpriteColours = new HashMap<>();
     private final Map<IBlockState, Integer> stateColours = new HashMap<>();
     private final Map<Biome, BiomeColours> biomeColours = new HashMap<>();
     private Map<IRegistryDelegate<Block>, IBlockColor> blockColorMap;
 
     public int getColorModifier(IBlockState state, World world, BlockPos pos) {
-
         if (blockColorMap.containsKey(state.getBlock().delegate)) {
-
             return blockColorMap.get(state.getBlock().delegate).colorMultiplier(state, world, pos, 0);
         }
 
@@ -39,29 +35,26 @@ public class BlockColours {
     }
 
     public int getStateColour(IBlockState state) {
-
         // Invisible blocks should be skipped. (return 0)
         if (state.getRenderType() == EnumBlockRenderType.INVISIBLE) {
-
             return 0;
         }
 
-        return this.stateColours.containsKey(state) ? this.stateColours.get(state) : 0;
+        return this.stateColours.getOrDefault(state, 0);
     }
 
     public void loadColourData() {
-
         long time = System.currentTimeMillis();
         this.generateColourAverages();
-        MwForge.logger.info("Generating colour averages. Took {}ms.", System.currentTimeMillis() - time);
+        MapWriterForge.LOGGER.info("Generating colour averages. Took {}ms.", System.currentTimeMillis() - time);
 
         time = System.currentTimeMillis();
         this.generateBlockStateColours();
-        MwForge.logger.info("Generating BlockState colours. Took {}ms.", System.currentTimeMillis() - time);
+        MapWriterForge.LOGGER.info("Generating BlockState colours. Took {}ms.", System.currentTimeMillis() - time);
 
         time = System.currentTimeMillis();
         this.generateBiomeColours();
-        MwForge.logger.info("Generating Biome colours. Took {}ms.", System.currentTimeMillis() - time);
+        MapWriterForge.LOGGER.info("Generating Biome colours. Took {}ms.", System.currentTimeMillis() - time);
 
         blockColorMap = TextureUtils.getBlockColours();
     }
@@ -97,7 +90,7 @@ public class BlockColours {
                         }
                     } catch (final Exception e) {
 
-                        MwForge.logger.trace(e);
+                        MapWriterForge.LOGGER.trace(e);
                     }
                 }
             }
@@ -119,7 +112,7 @@ public class BlockColours {
                 this.biomeColours.put(biome, new BiomeColours(waterColour, grassColour, foliageColour));
             } catch (final Exception e) {
 
-                MwForge.logger.trace(e);
+                MapWriterForge.LOGGER.trace(e);
             }
         }
     }

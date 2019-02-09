@@ -9,7 +9,6 @@ import net.minecraft.world.DimensionType;
 import java.io.File;
 
 public class MergeTask extends Task {
-
     final RegionManager regionManager;
     final File outputDir;
     final String basename;
@@ -29,7 +28,7 @@ public class MergeTask extends Task {
     }
 
     @Override
-    public boolean CheckForDuplicate() {
+    public boolean checkForDuplicate() {
         return false;
     }
 

@@ -1,6 +1,6 @@
 package mapwriter.config;
 
-import mapwriter.forge.MwForge;
+import mapwriter.forge.MapWriterForge;
 import mapwriter.util.Reference;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -20,14 +20,13 @@ public class ConfigurationHandler {
             setMapModeDefaults();
             loadConfig();
             Config.fullScreenMap.loadConfig();
-            Config.largeMap.loadConfig();
             Config.smallMap.loadConfig();
 
             if (configuration.hasChanged()) {
                 configuration.save();
             }
 
-            configuration.get(Reference.CAT_OPTIONS, "overlayModeIndex", Config.overlayModeIndexDef).setShowInGui(false);
+            configuration.get(Reference.CAT_OPTIONS, "overlayEnabled", Config.overlayEnabledDef).setShowInGui(false);
             configuration.get(Reference.CAT_OPTIONS, "overlayZoomLevel", Config.zoomInLevelsDef).setShowInGui(false);
         }
     }
@@ -53,7 +52,7 @@ public class ConfigurationHandler {
 
         Config.configTextureSize = configuration.getInt("textureSize", Reference.CAT_OPTIONS, Config.configTextureSizeDef, 1024, 4096, "", "mw.config.textureSize");
 
-        Config.overlayModeIndex = configuration.getInt("overlayModeIndex", Reference.CAT_OPTIONS, Config.overlayModeIndexDef, 0, 1000, "", "mw.config.overlayModeIndex");
+        Config.overlayEnabled = configuration.getBoolean("overlayEnabled", Reference.CAT_OPTIONS, Config.overlayEnabledDef, "", "mw.config.overlayEnabled");
         Config.overlayZoomLevel = configuration.getInt("overlayZoomLevel", Reference.CAT_OPTIONS, Config.overlayZoomLevelDef, Config.zoomInLevels, Config.zoomOutLevels, "", "mw.config.overlayZoomLevel");
 
         Config.moreRealisticMap = configuration.getBoolean("moreRealisticMap", Reference.CAT_OPTIONS, Config.moreRealisticMapDef, "", "mw.config.moreRealisticMap");
@@ -65,15 +64,12 @@ public class ConfigurationHandler {
     }
 
     public static void setMapModeDefaults() {
-
         Config.fullScreenMap.setDefaults();
-        Config.largeMap.setDefaults();
         Config.smallMap.setDefaults();
     }
 
     @SubscribeEvent
     public void onConfigurationChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
-
         if (event.getModID().equalsIgnoreCase(Reference.MOD_ID)) {
             switch (event.getConfigID()) {
                 case Reference.CAT_OPTIONS:
@@ -82,14 +78,11 @@ public class ConfigurationHandler {
                 case Reference.CAT_FULL_MAP_CONFIG:
                     Config.fullScreenMap.loadConfig();
                     break;
-                case Reference.CAT_LARGE_MAP_CONFIG:
-                    Config.largeMap.loadConfig();
-                    break;
                 case Reference.CAT_SMALL_MAP_CONFIG:
                     Config.smallMap.loadConfig();
                     break;
                 default:
-                    MwForge.logger.error("Unknown config id: {}", event.getConfigID());
+                    MapWriterForge.LOGGER.error("Unknown config id: {}", event.getConfigID());
                     break;
             }
 

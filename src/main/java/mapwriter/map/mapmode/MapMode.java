@@ -1,14 +1,13 @@
 package mapwriter.map.mapmode;
 
-import mapwriter.api.IMapMode;
-import mapwriter.api.IMapView;
+import mapwriter.api.MapView;
 import mapwriter.config.MapModeConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
 
-public class MapMode implements IMapMode {
+public class MapMode implements mapwriter.api.MapMode {
     private int sw = 320;
     private int sh = 240;
     private double screenScalingFactor = 1.0;
@@ -45,7 +44,7 @@ public class MapMode implements IMapMode {
     }
 
     @Override
-    public Point.Double blockXZtoScreenXY(IMapView mapView, double bX, double bZ) {
+    public Point.Double blockXZtoScreenXY(MapView mapView, double bX, double bZ) {
 
         final double xNorm = (bX - mapView.getX()) / mapView.getWidth();
         final double zNorm = (bZ - mapView.getZ()) / mapView.getHeight();
@@ -53,7 +52,7 @@ public class MapMode implements IMapMode {
     }
 
     @Override
-    public Point.Double getClampedScreenXY(IMapView mapView, double bX, double bZ) {
+    public Point.Double getClampedScreenXY(MapView mapView, double bX, double bZ) {
 
         double xRel = (bX - mapView.getX()) / mapView.getWidth();
         double zRel = (bZ - mapView.getZ()) / mapView.getHeight();
@@ -206,7 +205,7 @@ public class MapMode implements IMapMode {
     }
 
     @Override
-    public Point screenXYtoBlockXZ(IMapView mapView, int sx, int sy) {
+    public Point screenXYtoBlockXZ(MapView mapView, int sx, int sy) {
 
         final double withinMapX = (double) (sx - this.xTranslation) / (double) this.w;
         final double withinMapY = (double) (sy - this.yTranslation) / (double) this.h;

@@ -108,7 +108,7 @@ public class Region {
         return String.format("(%d,%d) z%d %s", this.x, this.z, this.zoomLevel, this.dimension.getName());
     }
 
-    public void updateChunk(MwChunk chunk) {
+    public void updateChunk(MapWriterChunk chunk) {
         if (this.zoomLevel == 0) {
             this.surfacePixels.updateChunk(chunk);
         }

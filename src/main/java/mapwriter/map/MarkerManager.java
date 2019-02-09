@@ -2,7 +2,7 @@ package mapwriter.map;
 
 import mapwriter.config.Config;
 import mapwriter.config.WorldConfig;
-import mapwriter.forge.MwForge;
+import mapwriter.forge.MapWriterForge;
 import mapwriter.map.mapmode.MapMode;
 import mapwriter.util.Reference;
 import mapwriter.util.Utils;
@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MarkerManager {
-    public List<Marker> markerList = new ArrayList<>();
-    public List<String> groupList = new ArrayList<>();
+    public List<Marker> markers = new ArrayList<>();
+    public List<String> groups = new ArrayList<>();
 
     public List<Marker> visibleMarkers = new ArrayList<>();
 
@@ -32,11 +32,10 @@ public class MarkerManager {
 
     public Marker selectedMarker = null;
 
-    public MarkerManager() {
-    }
+    public MarkerManager() {}
 
     public void addMarker(Marker marker) {
-        this.markerList.add(marker);
+        this.markers.add(marker);
     }
 
     public void addMarker(String name, String groupName, int x, int y, int z, DimensionType dimension, int colour) {
@@ -45,20 +44,18 @@ public class MarkerManager {
     }
 
     public void clear() {
-
-        this.markerList.clear();
-        this.groupList.clear();
+        this.markers.clear();
+        this.groups.clear();
         this.visibleMarkers.clear();
         this.visibleGroupName = "none";
     }
 
     public int countMarkersInGroup(String group) {
-
         int count = 0;
         if (group.equals("all")) {
-            count = this.markerList.size();
+            count = this.markers.size();
         } else {
-            for (final Marker marker : this.markerList) {
+            for (final Marker marker : this.markers) {
                 if (marker.groupName.equals(group)) {
                     count++;
                 }
@@ -70,11 +67,10 @@ public class MarkerManager {
     // returns true if the marker exists in the arraylist.
     // safe to pass null.
     public boolean delMarker(Marker markerToDelete) {
-
         if (this.selectedMarker == markerToDelete) {
             this.selectedMarker = null;
         }
-        final boolean result = this.markerList.remove(markerToDelete);
+        final boolean result = this.markers.remove(markerToDelete);
 
         this.save(WorldConfig.getInstance().worldConfiguration, Reference.CAT_MARKERS);
 
@@ -84,9 +80,8 @@ public class MarkerManager {
     // deletes the first marker with matching name and group.
     // if null is passed as either name or group it means "any".
     public boolean delMarker(String name, String group) {
-
         Marker markerToDelete = null;
-        for (final Marker marker : this.markerList) {
+        for (final Marker marker : this.markers) {
             if ((name == null || marker.name.equals(name)) && (group == null || marker.groupName.equals(group))) {
                 markerToDelete = marker;
                 break;
@@ -98,9 +93,8 @@ public class MarkerManager {
     }
 
     public void drawBeam(Marker m, float partialTicks) {
-
         final Tessellator tessellator = Tessellator.getInstance();
-        final BufferBuilder vertexbuffer = tessellator.getBuffer();
+        final BufferBuilder buffer = tessellator.getBuffer();
 
         final float f2 = Minecraft.getMinecraft().world.getTotalWorldTime() + partialTicks;
         final double d3 = f2 * 0.025D * -1.5D;
@@ -119,7 +113,7 @@ public class MarkerManager {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.depthMask(false);
 
-        vertexbuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         // size of the square from middle to edge
         double d4 = 0.2D;
 
@@ -137,25 +131,25 @@ public class MarkerManager {
         final float fBlue = m.getBlue();
         final float fAlpha = 0.125f;
 
-        vertexbuffer.pos(x + d5, y + d17, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d5, y, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d7, y, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d7, y + d17, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d11, y + d17, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d11, y, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d9, y, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d9, y + d17, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d7, y + d17, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d7, y, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d11, y, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d11, y + d17, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d9, y + d17, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d9, y, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d5, y, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d5, y + d17, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d5, y + d17, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d5, y, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d7, y, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d7, y + d17, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d11, y + d17, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d11, y, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d9, y, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d9, y + d17, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d7, y + d17, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d7, y, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d11, y, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d11, y + d17, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d9, y + d17, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d9, y, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d5, y, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d5, y + d17, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
         tessellator.draw();
 
-        vertexbuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         // size of the square from middle to edge
         d4 = 0.5D;
 
@@ -168,22 +162,22 @@ public class MarkerManager {
         d11 = 0.5D + Math.sin(d3 + 5.497787143782138D) * d4;
         d12 = 0.5D + Math.cos(d3 + 5.497787143782138D) * d4;
 
-        vertexbuffer.pos(x + d5, y + d17, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d5, y, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d7, y, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d7, y + d17, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d11, y + d17, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d11, y, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d9, y, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d9, y + d17, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d7, y + d17, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d7, y, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d11, y, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d11, y + d17, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d9, y + d17, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d9, y, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d5, y, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(x + d5, y + d17, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d5, y + d17, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d5, y, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d7, y, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d7, y + d17, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d11, y + d17, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d11, y, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d9, y, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d9, y + d17, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d7, y + d17, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d7, y, z + d8).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d11, y, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d11, y + d17, z + d12).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d9, y + d17, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d9, y, z + d10).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d5, y, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(x + d5, y + d17, z + d6).color(fRed, fGreen, fBlue, fAlpha).endVertex();
         tessellator.draw();
 
         GlStateManager.enableLighting();
@@ -194,7 +188,6 @@ public class MarkerManager {
     }
 
     public void drawLabel(Marker m) {
-
         final float growFactor = 0.17F;
         final Minecraft mc = Minecraft.getMinecraft();
         final RenderManager renderManager = mc.getRenderManager();
@@ -235,22 +228,22 @@ public class MarkerManager {
         GL11.glEnable(ARBDepthClamp.GL_DEPTH_CLAMP);
 
         final Tessellator tessellator = Tessellator.getInstance();
-        final BufferBuilder vertexbuffer = tessellator.getBuffer();
+        final BufferBuilder buffer = tessellator.getBuffer();
 
         GlStateManager.disableTexture2D();
 
-        vertexbuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        vertexbuffer.pos(-strTextWidth - 1, -1, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(-strTextWidth - 1, 8, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(strTextWidth + 1, 8, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(strTextWidth + 1, -1, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.pos(-strTextWidth - 1, -1, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(-strTextWidth - 1, 8, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(strTextWidth + 1, 8, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(strTextWidth + 1, -1, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
         tessellator.draw();
 
-        vertexbuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        vertexbuffer.pos(-strDistanceWidth - 1, -1 + offstet, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(-strDistanceWidth - 1, 8 + offstet, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(strDistanceWidth + 1, 8 + offstet, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
-        vertexbuffer.pos(strDistanceWidth + 1, -1 + offstet, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.pos(-strDistanceWidth - 1, -1 + offstet, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(-strDistanceWidth - 1, 8 + offstet, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(strDistanceWidth + 1, 8 + offstet, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
+        buffer.pos(strDistanceWidth + 1, -1 + offstet, 0.0D).color(fRed, fGreen, fBlue, fAlpha).endVertex();
         tessellator.draw();
 
         GlStateManager.enableTexture2D();
@@ -268,7 +261,6 @@ public class MarkerManager {
     }
 
     public void drawMarkers(MapMode mapMode, MapView mapView) {
-
         for (final Marker marker : this.visibleMarkers) {
             // only draw markers that were set in the current dimension
             if (mapView.getDimension() == marker.dimension) {
@@ -313,7 +305,6 @@ public class MarkerManager {
     }
 
     public Marker getNearestMarkerInDirection(int x, int z, double desiredAngle) {
-
         int nearestDistance = 10000 * 10000;
         Marker nearestMarker = null;
         for (final Marker marker : this.visibleMarkers) {
@@ -334,13 +325,11 @@ public class MarkerManager {
     }
 
     public String getVisibleGroupName() {
-
         return this.visibleGroupName;
     }
 
     public void load(Configuration config, String category) {
-
-        this.markerList.clear();
+        this.markers.clear();
 
         if (config.hasCategory(category)) {
             final int markerCount = config.get(category, "markerCount", 0).getInt();
@@ -354,7 +343,7 @@ public class MarkerManager {
                     if (marker != null) {
                         this.addMarker(marker);
                     } else {
-                        MwForge.logger.info("error: could not load {} from config file", key);
+                        MapWriterForge.LOGGER.info("error: could not load {} from config file", key);
                     }
                 }
             }
@@ -364,40 +353,36 @@ public class MarkerManager {
     }
 
     public String markerToString(Marker marker) {
-
-        return String.format("%s:%d:%d:%d:%d:%06x:%s", marker.name, marker.x, marker.y, marker.z, marker.dimension, marker.colour & 0xffffff, marker.groupName);
+        return String.format("%s:%d:%d:%d:%s:%06x:%s", marker.name, marker.x, marker.y, marker.z, marker.dimension.getName(), marker.colour & 0xffffff, marker.groupName);
     }
 
     public void nextGroup() {
-
         this.nextGroup(1);
     }
 
     public void nextGroup(int n) {
-
-        if (this.groupList.size() > 0) {
-            int i = this.groupList.indexOf(this.visibleGroupName);
-            final int size = this.groupList.size();
+        if (this.groups.size() > 0) {
+            int i = this.groups.indexOf(this.visibleGroupName);
+            final int size = this.groups.size();
             if (i != -1) {
                 i = (i + size + n) % size;
             } else {
                 i = 0;
             }
-            this.visibleGroupName = this.groupList.get(i);
+            this.visibleGroupName = this.groups.get(i);
         } else {
             this.visibleGroupName = "none";
-            this.groupList.add("none");
+            this.groups.add("none");
         }
     }
 
     public void save(Configuration config, String category) {
-
         config.removeCategory(config.getCategory(category));
-        config.get(category, "markerCount", 0).set(this.markerList.size());
+        config.get(category, "markerCount", 0).set(this.markers.size());
         config.get(category, "visibleGroup", "").set(this.visibleGroupName);
 
         int i = 0;
-        for (final Marker marker : this.markerList) {
+        for (final Marker marker : this.markers) {
             final String key = "marker" + i;
             final String value = this.markerToString(marker);
             config.get(category, key, "").set(value);
@@ -410,7 +395,6 @@ public class MarkerManager {
     }
 
     public void selectNextMarker() {
-
         if (this.visibleMarkers.size() > 0) {
             int i = 0;
             if (this.selectedMarker != null) {
@@ -427,7 +411,6 @@ public class MarkerManager {
     }
 
     public void setVisibleGroupName(String groupName) {
-
         if (groupName != null) {
             this.visibleGroupName = Utils.mungeStringForConfig(groupName);
         } else {
@@ -436,7 +419,6 @@ public class MarkerManager {
     }
 
     public Marker stringToMarker(String s) {
-
         // new style delimited with colons
         String[] split = s.split(":");
         if (split.length != 7) {
@@ -458,26 +440,25 @@ public class MarkerManager {
                 marker = null;
             }
         } else {
-            MwForge.logger.info("Marker.stringToMarker: invalid marker '{}'", s);
+            MapWriterForge.LOGGER.info("Marker.stringToMarker: invalid marker '{}'", s);
         }
         return marker;
     }
 
     public void update() {
-
         this.visibleMarkers.clear();
-        this.groupList.clear();
-        this.groupList.add("none");
-        this.groupList.add("all");
-        for (final Marker marker : this.markerList) {
+        this.groups.clear();
+        this.groups.add("none");
+        this.groups.add("all");
+        for (final Marker marker : this.markers) {
             if (marker.groupName.equals(this.visibleGroupName) || this.visibleGroupName.equals("all")) {
                 this.visibleMarkers.add(marker);
             }
-            if (!this.groupList.contains(marker.groupName)) {
-                this.groupList.add(marker.groupName);
+            if (!this.groups.contains(marker.groupName)) {
+                this.groups.add(marker.groupName);
             }
         }
-        if (!this.groupList.contains(this.visibleGroupName)) {
+        if (!this.groups.contains(this.visibleGroupName)) {
             this.visibleGroupName = "none";
         }
     }

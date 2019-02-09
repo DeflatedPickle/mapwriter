@@ -19,7 +19,7 @@ Instructions for development:
 
 Reobfuscation and Packaging:
 
-1) Edit the version numbers in mapwriter.forge.MwForge and build.gradle.
+1) Edit the version numbers in mapwriter.forge.MapWriterForge and build.gradle.
    The version numbers in mcmod.info should automatically be set to the same
    versions as set in the build.gradle file.
 

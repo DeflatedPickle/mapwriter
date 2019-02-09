@@ -1,6 +1,6 @@
 package mapwriter.region;
 
-import mapwriter.forge.MwForge;
+import mapwriter.forge.MapWriterForge;
 import net.minecraft.world.DimensionType;
 
 import javax.imageio.ImageIO;
@@ -30,7 +30,6 @@ public class SurfacePixels {
     }
 
     public static int[] loadImage(File filename, int w, int h) {
-
         BufferedImage img;
         try {
             img = ImageIO.read(filename);
@@ -43,14 +42,13 @@ public class SurfacePixels {
                 pixels = new int[w * h];
                 img.getRGB(0, 0, w, h, pixels, 0, w);
             } else {
-                MwForge.logger.warn("loadImage: image '{}' does not match expected dimensions (got {}x{} expected {}x{})", filename, img.getWidth(), img.getHeight(), w, h);
+                MapWriterForge.LOGGER.warn("loadImage: image '{}' does not match expected dimensions (got {}x{} expected {}x{})", filename, img.getWidth(), img.getHeight(), w, h);
             }
         }
         return pixels;
     }
 
     public static void saveImage(File filename, int[] pixels, int w, int h) {
-
         final BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         img.setRGB(0, 0, w, h, pixels, 0, w);
 
@@ -58,7 +56,7 @@ public class SurfacePixels {
             // MwUtil.log("writing region {} to {}", this, this.imageFile);
             ImageIO.write(img, "png", filename);
         } catch (final IOException e) {
-            MwForge.logger.error("saveImage: error: could not write image to {}", filename);
+            MapWriterForge.LOGGER.error("saveImage: error: could not write image to {}", filename);
         }
     }
 
@@ -105,7 +103,7 @@ public class SurfacePixels {
         return this.pixels;
     }
 
-    public void updateChunk(MwChunk chunk) {
+    public void updateChunk(MapWriterChunk chunk) {
         final int x = chunk.x << 4;
         final int z = chunk.z << 4;
         final int offset = this.region.getPixelOffset(x, z);
@@ -118,7 +116,7 @@ public class SurfacePixels {
                 // for
                 // nether
         );
-        this.region.updateZoomLevels(x, z, MwChunk.SIZE, MwChunk.SIZE);
+        this.region.updateZoomLevels(x, z, MapWriterChunk.SIZE, MapWriterChunk.SIZE);
         this.updateCount++;
     }
 

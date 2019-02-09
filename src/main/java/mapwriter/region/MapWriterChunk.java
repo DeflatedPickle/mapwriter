@@ -1,6 +1,6 @@
 package mapwriter.region;
 
-import mapwriter.forge.MwForge;
+import mapwriter.forge.MapWriterForge;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Biomes;
@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MwChunk implements IChunk {
+public class MapWriterChunk implements MapChunk {
 
     public static final int SIZE = 16;
 
     // load from anvil file
-    public static MwChunk read(int x, int z, DimensionType dimension, RegionFileCache regionFileCache) {
+    public static MapWriterChunk read(int x, int z, DimensionType dimension, RegionFileCache regionFileCache) {
         final boolean flag = true;
         byte[] biomeArray = null;
         final ExtendedBlockStorage[] data = new ExtendedBlockStorage[16];
@@ -78,7 +78,7 @@ public class MwChunk implements IChunk {
                 final int zNbt = level.getInteger("zPos");
 
                 if (xNbt != x || zNbt != z) {
-                    MwForge.logger.warn("chunk ({}, {}) has NBT coords ({}, {})", x, z, xNbt, zNbt);
+                    MapWriterForge.LOGGER.warn("chunk ({}, {}) has NBT coords ({}, {})", x, z, xNbt, zNbt);
                 }
 
                 final NBTTagList sections = level.getTagList("Sections", 10);
@@ -116,17 +116,17 @@ public class MwChunk implements IChunk {
                 }
 
             } catch (final IOException e) {
-                MwForge.logger.error("{}: could not read chunk ({}, {}) from region file\n", e, x, z);
+                MapWriterForge.LOGGER.error("{}: could not read chunk ({}, {}) from region file\n", e, x, z);
             } finally {
                 try {
                     dis.close();
                 } catch (final IOException e) {
-                    MwForge.logger.error("MwChunk.read: {} while closing input stream", e);
+                    MapWriterForge.LOGGER.error("MapWriterChunk.read: {} while closing input stream", e);
                 }
             }
         }
 
-        return new MwChunk(x, z, dimension, data, biomeArray, teMap);
+        return new MapWriterChunk(x, z, dimension, data, biomeArray, teMap);
     }
 
     public final int x;
@@ -143,7 +143,7 @@ public class MwChunk implements IChunk {
 
     public final int maxY;
 
-    public MwChunk(int x, int z, DimensionType dimension, ExtendedBlockStorage[] data, byte[] biomeArray, Map<BlockPos, TileEntity> teMap) {
+    public MapWriterChunk(int x, int z, DimensionType dimension, ExtendedBlockStorage[] data, byte[] biomeArray, Map<BlockPos, TileEntity> teMap) {
         this.x = x;
         this.z = z;
         this.dimension = dimension;
@@ -160,16 +160,16 @@ public class MwChunk implements IChunk {
     }
 
     @Override
-    public int getBiome(int x, int y, int z) {
-        final int i = x & 15;
-        final int j = z & 15;
-        int k = this.biomeArray[j << 4 | i] & 255;
+    public Biome getBiome(int x, int y, int z) {
+        final int localX = x & 15;
+        final int localZ = z & 15;
+        int bid = this.biomeArray[localZ << 4 | localX] & 255;
 
-        if (k == 255) {
-            final Biome biome = Minecraft.getMinecraft().world.getBiomeProvider().getBiome(new BlockPos(k, k, k), Biomes.PLAINS);
-            k = Biome.getIdForBiome(biome);
+        if (bid == 255) {
+            return Minecraft.getMinecraft().world.getBiomeProvider().getBiome(new BlockPos(x, y, z), Biomes.PLAINS);
+        } else {
+            return Biome.getBiome(bid);
         }
-        return k;
     }
 
     @Override
@@ -214,20 +214,20 @@ public class MwChunk implements IChunk {
 
                     CompressedStreamTools.write(this.writeChunkToNBT(), dos);
                 } catch (final IOException e) {
-                    MwForge.logger.error("{}: could not write chunk ({}, {}) to region file", e, this.x, this.z);
+                    MapWriterForge.LOGGER.error("{}: could not write chunk ({}, {}) to region file", e, this.x, this.z);
                     error = true;
                 } finally {
                     try {
                         dos.close();
                     } catch (final IOException e) {
-                        MwForge.logger.error("{} while closing chunk data output stream", e);
+                        MapWriterForge.LOGGER.error("{} while closing chunk data output stream", e);
                     }
                 }
             } else {
-                MwForge.logger.error("error: could not get output stream for chunk ({}, {})", this.x, this.z);
+                MapWriterForge.LOGGER.error("error: could not get output stream for chunk ({}, {})", this.x, this.z);
             }
         } else {
-            MwForge.logger.error("error: could not open region file for chunk ({}, {})", this.x, this.z);
+            MapWriterForge.LOGGER.error("error: could not open region file for chunk ({}, {})", this.x, this.z);
         }
 
         return error;

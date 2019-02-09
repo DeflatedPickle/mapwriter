@@ -1,6 +1,6 @@
 package mapwriter.gui;
 
-import mapwriter.api.MwAPI;
+import mapwriter.api.MapWriterAPI;
 import mapwriter.map.Marker;
 import mapwriter.map.MarkerManager;
 import mapwriter.util.Utils;
@@ -14,7 +14,7 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 
 @net.minecraftforge.fml.relauncher.SideOnly(Side.CLIENT)
-public class MwGuiMarkerDialogNew extends GuiScreen {
+public class GuiMarkerDialogNew extends GuiScreen {
     static final int dialogWidthPercent = 40;
     static final int elementVSpacing = 20;
     static final int numberOfElements = 8;
@@ -45,7 +45,7 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
     private DimensionType dimension;
     private int colour;
 
-    public MwGuiMarkerDialogNew(GuiScreen parentScreen, MarkerManager markerManager, Marker editingMarker) {
+    public GuiMarkerDialogNew(GuiScreen parentScreen, MarkerManager markerManager, Marker editingMarker) {
 
         this.markerManager = markerManager;
         this.editingMarker = editingMarker;
@@ -60,7 +60,7 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
         this.title = this.titleEdit;
     }
 
-    public MwGuiMarkerDialogNew(GuiScreen parentScreen, MarkerManager markerManager, String markerName, String markerGroup, int x, int y, int z, DimensionType dimension) {
+    public GuiMarkerDialogNew(GuiScreen parentScreen, MarkerManager markerManager, String markerName, String markerGroup, int x, int y, int z, DimensionType dimension) {
 
         this.markerManager = markerManager;
         this.markerName = markerName;
@@ -84,9 +84,9 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
             this.drawDefaultBackground();
         }
 
-        final int w = this.width * MwGuiMarkerDialogNew.dialogWidthPercent / 100;
-        drawRect((this.width - w) / 2, (this.height - MwGuiMarkerDialogNew.elementVSpacing * (MwGuiMarkerDialogNew.numberOfElements + 2)) / 2 - 4, (this.width - w) / 2 + w, (this.height - MwGuiMarkerDialogNew.elementVSpacing * (MwGuiMarkerDialogNew.numberOfElements + 2)) / 2 + MwGuiMarkerDialogNew.elementVSpacing * (MwGuiMarkerDialogNew.numberOfElements + 1), 0x80000000);
-        this.drawCenteredString(this.fontRenderer, I18n.format(this.title), this.width / 2, (this.height - MwGuiMarkerDialogNew.elementVSpacing * (MwGuiMarkerDialogNew.numberOfElements + 1)) / 2 - MwGuiMarkerDialogNew.elementVSpacing / 4, 0xffffff);
+        final int w = this.width * GuiMarkerDialogNew.dialogWidthPercent / 100;
+        drawRect((this.width - w) / 2, (this.height - GuiMarkerDialogNew.elementVSpacing * (GuiMarkerDialogNew.numberOfElements + 2)) / 2 - 4, (this.width - w) / 2 + w, (this.height - GuiMarkerDialogNew.elementVSpacing * (GuiMarkerDialogNew.numberOfElements + 2)) / 2 + GuiMarkerDialogNew.elementVSpacing * (GuiMarkerDialogNew.numberOfElements + 1), 0x80000000);
+        this.drawCenteredString(this.fontRenderer, I18n.format(this.title), this.width / 2, (this.height - GuiMarkerDialogNew.elementVSpacing * (GuiMarkerDialogNew.numberOfElements + 1)) / 2 - GuiMarkerDialogNew.elementVSpacing / 4, 0xffffff);
         this.scrollableTextBoxName.draw();
         this.scrollableTextBoxGroup.draw();
         this.scrollableNumericTextBoxX.draw();
@@ -101,7 +101,7 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
     @Override
     public void handleMouseInput() throws IOException {
 
-        if (MwAPI.getCurrentDataProvider() != null) {
+        if (MapWriterAPI.getCurrentDataProvider() != null) {
             return;
         }
         final int x = Mouse.getEventX() * this.width / this.mc.displayWidth;
@@ -117,31 +117,31 @@ public class MwGuiMarkerDialogNew extends GuiScreen {
     public void initGui() {
 
         final int labelsWidth = this.fontRenderer.getStringWidth("Group");
-        final int width = this.width * MwGuiMarkerDialogNew.dialogWidthPercent / 100 - labelsWidth - 20;
+        final int width = this.width * GuiMarkerDialogNew.dialogWidthPercent / 100 - labelsWidth - 20;
         final int x = (this.width - width + labelsWidth) / 2;
-        final int y = (this.height - MwGuiMarkerDialogNew.elementVSpacing * MwGuiMarkerDialogNew.numberOfElements) / 2;
+        final int y = (this.height - GuiMarkerDialogNew.elementVSpacing * GuiMarkerDialogNew.numberOfElements) / 2;
 
         this.scrollableTextBoxName = new ScrollableTextBox(x, y, width, I18n.format(this.editMarkerName), this.fontRenderer);
         this.scrollableTextBoxName.setFocused(true);
         this.scrollableTextBoxName.setText(this.markerName);
 
-        this.scrollableTextBoxGroup = new ScrollableTextBox(x, y + MwGuiMarkerDialogNew.elementVSpacing, width, I18n.format(this.editMarkerGroup), this.markerManager.groupList, this.fontRenderer);
+        this.scrollableTextBoxGroup = new ScrollableTextBox(x, y + GuiMarkerDialogNew.elementVSpacing, width, I18n.format(this.editMarkerGroup), this.markerManager.groups, this.fontRenderer);
         this.scrollableTextBoxGroup.setText(this.markerGroup);
         this.scrollableTextBoxGroup.setDrawArrows(true);
 
-        this.scrollableNumericTextBoxX = new ScrollableNumericTextBox(x, y + MwGuiMarkerDialogNew.elementVSpacing * 2, width, I18n.format(this.editMarkerX), this.fontRenderer);
+        this.scrollableNumericTextBoxX = new ScrollableNumericTextBox(x, y + GuiMarkerDialogNew.elementVSpacing * 2, width, I18n.format(this.editMarkerX), this.fontRenderer);
         this.scrollableNumericTextBoxX.setText("" + this.markerX);
         this.scrollableNumericTextBoxX.setDrawArrows(true);
 
-        this.scrollableNumericTextBoxY = new ScrollableNumericTextBox(x, y + MwGuiMarkerDialogNew.elementVSpacing * 3, width, I18n.format(this.editMarkerY), this.fontRenderer);
+        this.scrollableNumericTextBoxY = new ScrollableNumericTextBox(x, y + GuiMarkerDialogNew.elementVSpacing * 3, width, I18n.format(this.editMarkerY), this.fontRenderer);
         this.scrollableNumericTextBoxY.setText("" + this.markerY);
         this.scrollableNumericTextBoxY.setDrawArrows(true);
 
-        this.scrollableNumericTextBoxZ = new ScrollableNumericTextBox(x, y + MwGuiMarkerDialogNew.elementVSpacing * 4, width, I18n.format(this.editMarkerZ), this.fontRenderer);
+        this.scrollableNumericTextBoxZ = new ScrollableNumericTextBox(x, y + GuiMarkerDialogNew.elementVSpacing * 4, width, I18n.format(this.editMarkerZ), this.fontRenderer);
         this.scrollableNumericTextBoxZ.setText("" + this.markerZ);
         this.scrollableNumericTextBoxZ.setDrawArrows(true);
 
-        this.ScrollableColorSelectorColor = new ScrollableColorSelector(x, y + MwGuiMarkerDialogNew.elementVSpacing * 5, width, I18n.format(this.editMarkerColor), this.fontRenderer);
+        this.ScrollableColorSelectorColor = new ScrollableColorSelector(x, y + GuiMarkerDialogNew.elementVSpacing * 5, width, I18n.format(this.editMarkerColor), this.fontRenderer);
         this.ScrollableColorSelectorColor.setColor(this.colour);
         this.ScrollableColorSelectorColor.setDrawArrows(true);
     }

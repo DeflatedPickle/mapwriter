@@ -13,8 +13,6 @@ mw.configgui.ctgy.general=General
 mw.configgui.ctgy.general.tooltip=Opens the General options
 mw.configgui.ctgy.fullScreenMap=Fullscreen map
 mw.configgui.ctgy.fullScreenMap.tooltip=Opens the Fullscreen map options
-mw.configgui.ctgy.largeMap=Large map
-mw.configgui.ctgy.largeMap.tooltip=Opens the Large map options
 mw.configgui.ctgy.smallMap=Small map
 mw.configgui.ctgy.smallMap.tooltip=Opens the Small map options
 
@@ -91,8 +89,6 @@ mw.config.map.circular=Circular map
 mw.config.map.circular.tooltip=True = Circular map, false = square map
 mw.config.map.borderMode=Draw border
 mw.config.map.borderMode.tooltip=Set to true to draw the borders around the map
-mw.config.map.trailMarkerSize=Trail marker size
-mw.config.map.trailMarkerSize.tooltip=The size of trail markers on the map
 mw.config.map.coordsMode=Coordinates mode
 mw.config.map.coordsMode.tooltip=Switch between no,small or large coordinates under the minimap
 mw.config.map.biomeMode=Biome mode
@@ -147,6 +143,8 @@ mw.gui.mwgui.status.cursorNoY=cursor: (%d, ?, %d)
 mw.gui.mwgui.group=group
 mw.gui.mwgui.chatmsg.regenmap=regenerating %dx%d blocks starting from (%d, %d)
 mw.gui.mwgui.chatmsg.merge=merging to '%s'
+mw.gui.mwgui.provider.none=None
+mw.gui.mwgui.provider.grid=Grid
 
 mw.gui.mwguidimensiondialog.title=Set dimension to
 mw.gui.mwguidimensiondialog.error=invalid dimension

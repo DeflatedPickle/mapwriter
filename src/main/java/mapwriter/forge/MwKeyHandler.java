@@ -1,6 +1,6 @@
 package mapwriter.forge;
 
-import mapwriter.Mw;
+import mapwriter.MapWriter;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -35,15 +35,13 @@ public class MwKeyHandler {
 
     @SubscribeEvent
     public void keyEvent(InputEvent.KeyInputEvent event) {
-
         this.checkKeys();
     }
 
     private void checkKeys() {
-
         for (final KeyBinding key : this.keys) {
             if (key != null && key.isPressed()) {
-                Mw.getInstance().onKeyDown(key);
+                MapWriter.getInstance().onKeyDown(key);
             }
         }
     }

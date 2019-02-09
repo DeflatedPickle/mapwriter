@@ -6,7 +6,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 
-public class MwGuiTextDialog extends GuiScreen {
+public class GuiTextDialog extends GuiScreen {
 
     static final int textDialogWidthPercent = 50;
 
@@ -22,7 +22,7 @@ public class MwGuiTextDialog extends GuiScreen {
     boolean showError = false;
     boolean backToGameOnSubmit = false;
 
-    public MwGuiTextDialog(GuiScreen parentScreen, String title, String text, String error) {
+    public GuiTextDialog(GuiScreen parentScreen, String title, String text, String error) {
 
         this.parentScreen = parentScreen;
         this.title = title;
@@ -39,12 +39,12 @@ public class MwGuiTextDialog extends GuiScreen {
             this.drawDefaultBackground();
         }
 
-        final int w = this.width * MwGuiTextDialog.textDialogWidthPercent / 100;
-        drawRect((this.width - w) / 2, MwGuiTextDialog.textDialogTitleY - 4, (this.width - w) / 2 + w, MwGuiTextDialog.textDialogErrorY + 14, 0x80000000);
-        this.drawCenteredString(this.fontRenderer, this.title, this.width / 2, MwGuiTextDialog.textDialogTitleY, 0xffffff);
+        final int w = this.width * GuiTextDialog.textDialogWidthPercent / 100;
+        drawRect((this.width - w) / 2, GuiTextDialog.textDialogTitleY - 4, (this.width - w) / 2 + w, GuiTextDialog.textDialogErrorY + 14, 0x80000000);
+        this.drawCenteredString(this.fontRenderer, this.title, this.width / 2, GuiTextDialog.textDialogTitleY, 0xffffff);
         this.textField.drawTextBox();
         if (this.showError) {
-            this.drawCenteredString(this.fontRenderer, this.error, this.width / 2, MwGuiTextDialog.textDialogErrorY, 0xffffff);
+            this.drawCenteredString(this.fontRenderer, this.error, this.width / 2, GuiTextDialog.textDialogErrorY, 0xffffff);
         }
 
         super.drawScreen(mouseX, mouseY, f);
@@ -110,8 +110,8 @@ public class MwGuiTextDialog extends GuiScreen {
         if (this.textField != null) {
             this.text = this.textField.getText();
         }
-        final int w = this.width * MwGuiTextDialog.textDialogWidthPercent / 100;
-        this.textField = new GuiTextField(0, this.fontRenderer, (this.width - w) / 2 + 5, MwGuiTextDialog.textDialogY, w - 10, 12);
+        final int w = this.width * GuiTextDialog.textDialogWidthPercent / 100;
+        this.textField = new GuiTextField(0, this.fontRenderer, (this.width - w) / 2 + 5, GuiTextDialog.textDialogY, w - 10, 12);
         this.textField.setMaxStringLength(32);
         this.textField.setFocused(true);
         this.textField.setCanLoseFocus(false);

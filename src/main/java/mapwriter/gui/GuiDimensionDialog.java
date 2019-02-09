@@ -1,6 +1,6 @@
 package mapwriter.gui;
 
-import mapwriter.Mw;
+import mapwriter.MapWriter;
 import mapwriter.config.WorldConfig;
 import mapwriter.map.MapView;
 import net.minecraft.client.gui.GuiScreen;
@@ -10,12 +10,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class MwGuiDimensionDialog extends MwGuiTextDialog {
-    final Mw mw;
+public class GuiDimensionDialog extends GuiTextDialog {
+    final MapWriter mw;
     final MapView mapView;
     final DimensionType dimension;
 
-    public MwGuiDimensionDialog(GuiScreen parentScreen, Mw mw, MapView mapView, DimensionType dimension) {
+    public GuiDimensionDialog(GuiScreen parentScreen, MapWriter mw, MapView mapView, DimensionType dimension) {
         super(parentScreen, I18n.format("mw.gui.mwguidimensiondialog.title") + ":", dimension.getName(), I18n.format("mw.gui.mwguidimensiondialog.error"));
         this.mw = mw;
         this.mapView = mapView;

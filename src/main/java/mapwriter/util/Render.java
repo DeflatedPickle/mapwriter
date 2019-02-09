@@ -1,6 +1,6 @@
 package mapwriter.util;
 
-import mapwriter.forge.MwForge;
+import mapwriter.forge.MapWriterForge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -22,7 +22,6 @@ public class Render {
     public static final double circleSteps = 30.0;
 
     public static int adjustPixelBrightness(int colour, int brightness) {
-
         int r = colour >> 16 & 0xff;
         int g = colour >> 8 & 0xff;
         int b = colour >> 0 & 0xff;
@@ -131,15 +130,23 @@ public class Render {
         GlStateManager.disableBlend();
     }
 
-    public static void drawRectBorder(double x, double y, double w, double h, double bw) {
+    public static void drawRectBorder(double x, double y, double w, double h, double bw, byte border) {
         // top border
-        Render.drawRect(x - bw, y - bw, w + bw + bw, bw);
+        if ((border & 0b1000) > 0) {
+            Render.drawRect(x - bw, y - bw, w + bw + bw, bw);
+        }
         // bottom border
-        Render.drawRect(x - bw, y + h, w + bw + bw, bw);
+        if ((border & 0b0100) > 0) {
+            Render.drawRect(x - bw, y + h, w + bw + bw, bw);
+        }
         // left border
-        Render.drawRect(x - bw, y, bw, h);
+        if ((border & 0b0010) > 0) {
+            Render.drawRect(x - bw, y, bw, h);
+        }
         // right border
-        Render.drawRect(x + w, y, bw, h);
+        if ((border & 0b0001) > 0) {
+            Render.drawRect(x + w, y, bw, h);
+        }
     }
 
     public static void drawString(int x, int y, int colour, String formatString, Object... args) {
@@ -173,7 +180,7 @@ public class Render {
             tessellator.draw();
             GlStateManager.disableBlend();
         } catch (final NullPointerException e) {
-            MwForge.logger.info("MwRender.drawTexturedRect: null pointer exception");
+            MapWriterForge.LOGGER.info("MwRender.drawTexturedRect: null pointer exception");
         }
     }
 
@@ -196,7 +203,7 @@ public class Render {
     /*
      * Drawing Methods Note that EntityRenderer.setupOverlayRendering must be called before
      * drawing for the scene to appear correctly on the overlay. If these functions are called
-     * from the hookUpdateCameraAndRender method of Mw this will have already been done.
+     * from the hookUpdateCameraAndRender method of MapWriter this will have already been done.
      */
 
     public static int getAverageColourOfArray(int[] pixels) {
@@ -280,7 +287,7 @@ public class Render {
         final int h = getTextureHeight();
         final int depth = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL12.GL_TEXTURE_DEPTH);
         final int format = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_INTERNAL_FORMAT);
-        MwForge.logger.info("texture {} parameters: width={}, height={}, depth={}, format=%08x", texture, w, h, depth, format);
+        MapWriterForge.LOGGER.info("texture {} parameters: width={}, height={}, depth={}, format=%08x", texture, w, h, depth, format);
     }
 
     public static void resetColour() {

@@ -1,6 +1,6 @@
 package mapwriter.region;
 
-import mapwriter.forge.MwForge;
+import mapwriter.forge.MapWriterForge;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -113,10 +113,10 @@ public class RegionFile {
                         // data
                         dis = new DataInputStream(new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compressedChunkData))));
                     } else {
-                        MwForge.logger.error("data length ({}) or version ({}) invalid for chunk ({}, {})", length, version, x, z);
+                        MapWriterForge.LOGGER.error("data length ({}) or version ({}) invalid for chunk ({}, {})", length, version, x, z);
                     }
                 } catch (final Exception e) {
-                    MwForge.logger.error("exception while reading chunk ({}, {}): {}", x, z, e);
+                    MapWriterForge.LOGGER.error("exception while reading chunk ({}, {}): {}", x, z, e);
                     dis = null;
                 }
             }
@@ -139,12 +139,12 @@ public class RegionFile {
         final File dir = this.file.getParentFile();
         if (dir.exists()) {
             if (!dir.isDirectory()) {
-                MwForge.logger.error("path {} exists and is not a directory", dir);
+                MapWriterForge.LOGGER.error("path {} exists and is not a directory", dir);
                 return true;
             }
         } else {
             if (!dir.mkdirs()) {
-                MwForge.logger.error("could not create directory {}", dir);
+                MapWriterForge.LOGGER.error("could not create directory {}", dir);
                 return true;
             }
         }
@@ -177,7 +177,7 @@ public class RegionFile {
                             this.chunkSectionsArray[i] = section;
                             this.setFilledSectorArray(section, true);
                         } else {
-                            MwForge.logger.error("chunk {} overlaps another chunk, file may be corrupt", i);
+                            MapWriterForge.LOGGER.error("chunk {} overlaps another chunk, file may be corrupt", i);
                         }
                     }
                 }
@@ -190,7 +190,7 @@ public class RegionFile {
 
         } catch (final Exception e) {
             this.fin = null;
-            MwForge.logger.error("exception when opening region file '{}': {}", this.file, e);
+            MapWriterForge.LOGGER.error("exception when opening region file '{}': {}", this.file, e);
 
         }
 
@@ -209,7 +209,7 @@ public class RegionFile {
                 freeCount++;
             }
         }
-        MwForge.logger.info("Region File {}: filled sectors = {}, free sectors = {}", this, filledCount, freeCount);
+        MapWriterForge.LOGGER.info("Region File {}: filled sectors = {}, free sectors = {}", this, filledCount, freeCount);
 
         String s = "";
         int i;
@@ -219,11 +219,11 @@ public class RegionFile {
             }
             s += this.filledSectorArray.get(i) ? '1' : '0';
             if ((i & 31) == 31) {
-                MwForge.logger.info("{}", s);
+                MapWriterForge.LOGGER.info("{}", s);
             }
         }
         if ((i & 31) != 31) {
-            MwForge.logger.info("{}", s);
+            MapWriterForge.LOGGER.info("{}", s);
         }
     }
 
@@ -308,7 +308,7 @@ public class RegionFile {
         }
         for (int i = section.startSector; i < endSector; i++) {
             if (filled && this.filledSectorArray.get(i)) {
-                MwForge.logger.error("sector {} already filled, possible chunk overlap", i);
+                MapWriterForge.LOGGER.error("sector {} already filled, possible chunk overlap", i);
             }
             this.filledSectorArray.set(i, Boolean.valueOf(filled));
         }
@@ -359,7 +359,7 @@ public class RegionFile {
         // the file (append).
 
         if (length <= 0) {
-            MwForge.logger.warn("not writing chunk ({}, {}) with length {}", x, z, length);
+            MapWriterForge.LOGGER.warn("not writing chunk ({}, {}) with length {}", x, z, length);
             return true;
         }
 
@@ -396,7 +396,7 @@ public class RegionFile {
             this.updateChunkSection(x, z, newSection);
             error = false;
         } catch (final IOException e) {
-            MwForge.logger.error("could not write chunk ({}, {}) to region file: {}", x, z, e);
+            MapWriterForge.LOGGER.error("could not write chunk ({}, {}) to region file: {}", x, z, e);
         }
 
         return error;

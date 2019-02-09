@@ -5,63 +5,53 @@ import com.google.common.collect.HashBiMap;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MwAPI {
-
-    private static HashBiMap<String, IMwDataProvider> dataProviders = HashBiMap.create();
-    private static IMwDataProvider currentProvider = null;
+public class MapWriterAPI {
+    private static HashBiMap<String, MapOverlayProvider> dataProviders = HashBiMap.create();
+    private static MapOverlayProvider currentProvider = null;
     private static ArrayList<String> providerKeys = new ArrayList<>();
 
-    public static IMwDataProvider getCurrentDataProvider() {
-
+    public static MapOverlayProvider getCurrentDataProvider() {
         return currentProvider;
     }
 
     public static String getCurrentProviderName() {
-
         if (currentProvider != null) {
             return getProviderName(currentProvider);
         } else {
-            return "None";
+            return "none";
         }
     }
 
     // Returns the data provider based on its name //
-    public static IMwDataProvider getDataProvider(String name) {
-
+    public static MapOverlayProvider getDataProvider(String name) {
         return dataProviders.get(name);
     }
 
-    public static Collection<IMwDataProvider> getDataProviders() {
-
+    public static Collection<MapOverlayProvider> getDataProviders() {
         return dataProviders.values();
     }
 
     // Returns the name based on the data provider //
-    public static String getProviderName(IMwDataProvider provider) {
-
+    public static String getProviderName(MapOverlayProvider provider) {
         return dataProviders.inverse().get(provider);
     }
 
-    public static void registerDataProvider(String name, IMwDataProvider handler) {
-
+    public static void registerDataProvider(String name, MapOverlayProvider handler) {
         dataProviders.put(name, handler);
         providerKeys.add(name);
     }
 
-    public static IMwDataProvider setCurrentDataProvider(IMwDataProvider provider) {
-
+    public static MapOverlayProvider setCurrentDataProvider(MapOverlayProvider provider) {
         currentProvider = provider;
         return currentProvider;
     }
 
-    public static IMwDataProvider setCurrentDataProvider(String name) {
-
+    public static MapOverlayProvider setCurrentDataProvider(String name) {
         currentProvider = dataProviders.get(name);
         return currentProvider;
     }
 
-    public static IMwDataProvider setNextProvider() {
-
+    public static MapOverlayProvider setNextProvider() {
         if (currentProvider != null) {
             final int index = providerKeys.indexOf(getCurrentProviderName());
             if (index + 1 >= providerKeys.size()) {
@@ -76,8 +66,7 @@ public class MwAPI {
         return currentProvider;
     }
 
-    public static IMwDataProvider setPrevProvider() {
-
+    public static MapOverlayProvider setPrevProvider() {
         if (currentProvider != null) {
             final int index = providerKeys.indexOf(getCurrentProviderName());
             if (index - 1 < 0) {
@@ -87,7 +76,6 @@ public class MwAPI {
                 currentProvider = getDataProvider(prevKey);
             }
         } else if (!providerKeys.isEmpty()) {
-
             currentProvider = getDataProvider(providerKeys.get(providerKeys.size() - 1));
         }
         return currentProvider;

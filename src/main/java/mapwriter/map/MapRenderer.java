@@ -1,9 +1,9 @@
 package mapwriter.map;
 
-import mapwriter.Mw;
-import mapwriter.api.IMwChunkOverlay;
-import mapwriter.api.IMwDataProvider;
-import mapwriter.api.MwAPI;
+import mapwriter.MapWriter;
+import mapwriter.api.MapChunkOverlay;
+import mapwriter.api.MapOverlayProvider;
+import mapwriter.api.MapWriterAPI;
 import mapwriter.config.Config;
 import mapwriter.config.MapModeConfig;
 import mapwriter.map.mapmode.MapMode;
@@ -15,7 +15,7 @@ import java.awt.*;
 import java.util.List;
 
 public class MapRenderer {
-    private static void paintChunk(MapMode mapMode, MapView mapView, IMwChunkOverlay overlay) {
+    private static void paintChunk(MapMode mapMode, MapView mapView, MapChunkOverlay overlay) {
         final int chunkX = overlay.getCoordinates().x;
         final int chunkZ = overlay.getCoordinates().y;
         final float filling = overlay.getFilling();
@@ -38,19 +38,21 @@ public class MapRenderer {
         final double offsetX = (botCorner.x - topCorner.x - sizeX) / 2;
         final double offsetY = (botCorner.y - topCorner.y - sizeY) / 2;
 
-        if (overlay.hasBorder()) {
+        byte border = overlay.getBorder();
+
+        if (border != 0) {
             Render.setColour(overlay.getBorderColor());
-            Render.drawRectBorder(topCorner.x + 1, topCorner.y + 1, botCorner.x - topCorner.x - 1, botCorner.y - topCorner.y - 1, overlay.getBorderWidth());
+            Render.drawRectBorder(topCorner.x + 1, topCorner.y + 1, botCorner.x - topCorner.x - 1, botCorner.y - topCorner.y - 1, overlay.getBorderWidth(), border);
         }
 
         Render.setColour(overlay.getColor());
         Render.drawRect(topCorner.x + offsetX + 1, topCorner.y + offsetY + 1, sizeX - 1, sizeY - 1);
     }
 
-    private final Mw mw;
+    private final MapWriter mw;
     private final MapMode mapMode;
     private final MapView mapView;
-    // accessed by the MwGui to check whether the mouse cursor is near the
+    // accessed by the GuiFullScreenMap to check whether the mouse cursor is near the
     // player arrow on the rendered map
     private Point.Double playerArrowScreenPos = new Point.Double(0, 0);
     private int textOffset = 12;
@@ -58,7 +60,7 @@ public class MapRenderer {
 
     private int textX = 0;
 
-    public MapRenderer(Mw mw, MapMode mapMode, MapView mapView) {
+    public MapRenderer(MapWriter mw, MapMode mapMode, MapView mapView) {
         this.mw = mw;
         this.mapMode = mapMode;
         this.mapView = mapView;
@@ -312,7 +314,7 @@ public class MapRenderer {
             }
         }
 
-        final IMwDataProvider provider = this.drawOverlay();
+        final MapOverlayProvider provider = this.drawOverlay();
 
         // overlay onDraw event
         if (provider != null) {
@@ -335,13 +337,13 @@ public class MapRenderer {
         }
     }
 
-    private IMwDataProvider drawOverlay() {
+    private MapOverlayProvider drawOverlay() {
         // draw overlays from registered providers
-        final IMwDataProvider provider = MwAPI.getCurrentDataProvider();
+        final MapOverlayProvider provider = MapWriterAPI.getCurrentDataProvider();
         if (provider != null) {
-            final List<IMwChunkOverlay> overlays = provider.getChunksOverlay(this.mapView.getDimension(), this.mapView.getX(), this.mapView.getZ(), this.mapView.getMinX(), this.mapView.getMinZ(), this.mapView.getMaxX(), this.mapView.getMaxZ());
+            final List<MapChunkOverlay> overlays = provider.getChunksOverlay(this.mapView.getDimension(), this.mapView.getX(), this.mapView.getZ(), this.mapView.getMinX(), this.mapView.getMinZ(), this.mapView.getMaxX(), this.mapView.getMaxZ());
             if (overlays != null) {
-                for (final IMwChunkOverlay overlay : overlays) {
+                for (final MapChunkOverlay overlay : overlays) {
                     paintChunk(this.mapMode, this.mapView, overlay);
                 }
             }
