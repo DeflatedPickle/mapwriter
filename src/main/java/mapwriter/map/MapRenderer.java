@@ -6,10 +6,10 @@ import mapwriter.api.MapOverlayProvider;
 import mapwriter.api.MapWriterAPI;
 import mapwriter.config.Config;
 import mapwriter.config.MapModeConfig;
-import mapwriter.map.mapmode.MapMode;
 import mapwriter.util.Reference;
 import mapwriter.util.Render;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.EnumDyeColor;
 
 import java.awt.*;
 import java.util.List;
@@ -191,10 +191,10 @@ public class MapRenderer {
     }
 
     private void drawBiomeName() {
-        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODE[0])) {
+        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODES[0])) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(this.textX, this.textY, 0);
-            if (this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODE[1])) {
+            if (this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODES[1])) {
                 GlStateManager.scale(0.5f, 0.5f, 1f);
                 this.textOffset = (int) (this.textOffset * 0.5f);
             }
@@ -204,18 +204,29 @@ public class MapRenderer {
         }
     }
 
+    private EnumDyeColor getBorderColor(String name) {
+        for (EnumDyeColor color : EnumDyeColor.values()) {
+            if (color.getUnlocalizedName().equals(name)) {
+                return color;
+            }
+        }
+        return EnumDyeColor.WHITE;
+    }
+
     private void drawBorder() {
-        this.mw.mc.renderEngine.bindTexture(this.mapMode.getConfig().circular ? Reference.ROUND_MAP_TEXTURE : Reference.SQUARE_MAP_TEXTURE);
-        Render.setColor(0xffffffff);
-        Render.drawTexturedRect(this.mapMode.getX() * 1.1, this.mapMode.getY() * 1.1, this.mapMode.getW() * 1.1, this.mapMode.getH() * 1.1, 0.0, 0.0, 1.0, 1.0);
+        MapModeConfig config = this.mapMode.getConfig();
+        this.mw.mc.renderEngine.bindTexture(config.circular ? Reference.ROUND_MAP_TEXTURE : Reference.SQUARE_MAP_TEXTURE);
+        int borderColor = this.getBorderColor(config.borderColor).getColorValue();
+        Render.setColor(0xff000000 | borderColor);
+        Render.drawTexturedRect(this.mapMode.getX() * 1.01, this.mapMode.getY() * 1.01, this.mapMode.getW() * 1.01, this.mapMode.getH() * 1.01, 0.0, 0.0, 1.0, 1.0);
     }
 
     private void drawCoords() {
         // draw coordinates
-        if (!this.mapMode.getConfig().coordsMode.equals(MapModeConfig.TEXT_MODE[0])) {
+        if (!this.mapMode.getConfig().coordsMode.equals(MapModeConfig.TEXT_MODES[0])) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(this.textX, this.textY, 0);
-            if (this.mapMode.getConfig().coordsMode.equals(MapModeConfig.TEXT_MODE[1])) {
+            if (this.mapMode.getConfig().coordsMode.equals(MapModeConfig.TEXT_MODES[1])) {
                 GlStateManager.scale(0.5f, 0.5f, 1f);
                 this.textOffset = (int) (this.textOffset * 0.5f);
             }

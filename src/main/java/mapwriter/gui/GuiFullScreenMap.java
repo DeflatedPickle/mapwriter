@@ -10,9 +10,9 @@ import mapwriter.forge.MapWriterKeyHandler;
 import mapwriter.map.MapRenderer;
 import mapwriter.map.MapView;
 import mapwriter.map.Marker;
-import mapwriter.map.mapmode.MapMode;
-import mapwriter.tasks.MergeTask;
-import mapwriter.tasks.RebuildRegionsTask;
+import mapwriter.map.MapMode;
+import mapwriter.tasks.TaskMerge;
+import mapwriter.tasks.TaskRebuildRegions;
 import mapwriter.util.Reference;
 import mapwriter.util.Utils;
 import net.minecraft.client.gui.GuiButton;
@@ -113,7 +113,7 @@ public class GuiFullScreenMap extends GuiScreen {
 
     public void deleteSelectedMarker() {
         if (this.mw.markerManager.selectedMarker != null) {
-            this.mw.markerManager.delMarker(this.mw.markerManager.selectedMarker);
+            this.mw.markerManager.delMarker(this.mw.markerManager.selectedMarker, true);
             this.mw.markerManager.update();
             this.mw.markerManager.selectedMarker = null;
         }
@@ -283,7 +283,7 @@ public class GuiFullScreenMap extends GuiScreen {
 
     public void mergeMapViewToImage() {
         this.mw.chunkManager.saveChunks();
-        this.mw.executor.addTask(new MergeTask(this.mw.regionManager, (int) this.mapView.getX(), (int) this.mapView.getZ(), (int) this.mapView.getWidth(), (int) this.mapView.getHeight(), this.mapView.getDimension(), this.mw.worldDir, this.mw.worldDir.getName()));
+        this.mw.executor.addTask(new TaskMerge(this.mw.regionManager, (int) this.mapView.getX(), (int) this.mapView.getZ(), (int) this.mapView.getWidth(), (int) this.mapView.getHeight(), this.mapView.getDimension(), this.mw.worldDir, this.mw.worldDir.getName()));
         Utils.printBoth(I18n.format("mw.gui.mwgui.chatmsg.merge", this.mw.worldDir.getAbsolutePath()));
     }
 
@@ -368,7 +368,7 @@ public class GuiFullScreenMap extends GuiScreen {
 
     public void regenerateView() {
         Utils.printBoth(I18n.format("mw.gui.mwgui.chatmsg.regenmap", (int) this.mapView.getWidth(), (int) this.mapView.getHeight(), (int) this.mapView.getMinX(), (int) this.mapView.getMinZ()));
-        this.mw.executor.addTask(new RebuildRegionsTask(this.mw, (int) this.mapView.getMinX(), (int) this.mapView.getMinZ(), (int) this.mapView.getWidth(), (int) this.mapView.getHeight(), this.mapView.getDimension()));
+        this.mw.executor.addTask(new TaskRebuildRegions(this.mw, (int) this.mapView.getMinX(), (int) this.mapView.getMinZ(), (int) this.mapView.getWidth(), (int) this.mapView.getHeight(), this.mapView.getDimension()));
     }
 
     @Override

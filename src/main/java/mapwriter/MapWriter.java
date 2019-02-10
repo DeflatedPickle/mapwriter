@@ -11,7 +11,7 @@ import mapwriter.gui.GuiMarkerDialog;
 import mapwriter.gui.GuiMarkerDialogNew;
 import mapwriter.map.*;
 import mapwriter.region.RegionManager;
-import mapwriter.tasks.CloseRegionManagerTask;
+import mapwriter.tasks.TaskCloseRegionManager;
 import mapwriter.util.Reference;
 import mapwriter.util.Render;
 import mapwriter.util.Utils;
@@ -66,7 +66,7 @@ public class MapWriter {
     public float mapRotationDegrees = 0f;
     // instances of components
     public MapTexture mapTexture = null;
-    public UndergroundTexture undergroundMapTexture = null;
+    public MapTextureUnderground undergroundMapTexture = null;
     public BackgroundExecutor executor = null;
     public MiniMap miniMap = null;
     public MarkerManager markerManager = null;
@@ -101,7 +101,7 @@ public class MapWriter {
 
             // close all loaded regions, saving modified images.
             // this will create extra tasks that need to be completed.
-            this.executor.addTask(new CloseRegionManagerTask(this.regionManager));
+            this.executor.addTask(new TaskCloseRegionManager(this.regionManager));
             this.regionManager = null;
 
             MapWriterForge.LOGGER.info("waiting for {} tasks to finish...", this.executor.tasksRemaining());
@@ -175,7 +175,7 @@ public class MapWriter {
 
         // mapTexture depends on config being loaded
         this.mapTexture = new MapTexture(this.textureSize, Config.linearTextureScaling);
-        this.undergroundMapTexture = new UndergroundTexture(this, this.textureSize, Config.linearTextureScaling);
+        this.undergroundMapTexture = new MapTextureUnderground(this, this.textureSize, Config.linearTextureScaling);
         // region manager depends on config, mapTexture, and block colors
         this.regionManager = new RegionManager(this.worldDir, this.imageDir, this.blockColors, Config.zoomInLevels, Config.zoomOutLevels);
         // overlay manager depends on mapTexture
@@ -257,19 +257,11 @@ public class MapWriter {
     // from onTick when mc.currentScreen is an instance of GuiGameOver
     // it's the only option to detect death client side
     public void onPlayerDeath() {
-
         if (this.ready && Config.maxDeathMarkers > 0) {
             this.updatePlayer();
             final int deleteCount = this.markerManager.countMarkersInGroup("playerDeaths") - Config.maxDeathMarkers + 1;
-            for (int i = 0; i < deleteCount; i++) {
-                // delete the first marker found in the group "playerDeaths".
-                // as new markers are only ever appended to the marker list this
-                // will delete the
-                // earliest death marker added.
-                this.markerManager.delMarker(null, "playerDeaths");
-            }
-
-            this.markerManager.addMarker(Utils.getCurrentDateString(), "playerDeaths", this.playerXInt, this.playerYInt, this.playerZInt, this.playerDimension, 0xffff0000);
+            this.markerManager.delMarker(m -> "playerDeaths".equals(m.group), deleteCount, true);
+            this.markerManager.addMarker(Utils.getCurrentDateString(), "playerDeaths", this.playerXInt, this.playerYInt, this.playerZInt, this.playerDimension, 0xffff0000, true);
             this.markerManager.setVisibleGroupName("playerDeaths");
             this.markerManager.update();
         }
@@ -324,7 +316,7 @@ public class MapWriter {
 
     public void reloadMapTexture() {
 
-        this.executor.addTask(new CloseRegionManagerTask(this.regionManager));
+        this.executor.addTask(new TaskCloseRegionManager(this.regionManager));
         this.executor.close();
         final MapTexture oldMapTexture = this.mapTexture;
         final MapTexture newMapTexture = new MapTexture(this.textureSize, Config.linearTextureScaling);
@@ -335,8 +327,8 @@ public class MapWriter {
         this.executor = new BackgroundExecutor();
         this.regionManager = new RegionManager(this.worldDir, this.imageDir, this.blockColors, Config.zoomInLevels, Config.zoomOutLevels);
 
-        final UndergroundTexture oldTexture = this.undergroundMapTexture;
-        final UndergroundTexture newTexture = new UndergroundTexture(this, this.textureSize, Config.linearTextureScaling);
+        final MapTextureUnderground oldTexture = this.undergroundMapTexture;
+        final MapTextureUnderground newTexture = new MapTextureUnderground(this, this.textureSize, Config.linearTextureScaling);
         this.undergroundMapTexture = newTexture;
         if (oldTexture != null) {
             this.undergroundMapTexture.close();

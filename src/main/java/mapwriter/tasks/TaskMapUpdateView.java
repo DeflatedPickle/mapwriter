@@ -4,7 +4,7 @@ import mapwriter.map.MapTexture;
 import mapwriter.map.MapViewRequest;
 import mapwriter.region.RegionManager;
 
-public class MapUpdateViewTask extends Task {
+public class TaskMapUpdateView extends Task {
     final MapViewRequest req;
     RegionManager regionManager;
     MapTexture mapTexture;
@@ -12,7 +12,7 @@ public class MapUpdateViewTask extends Task {
     // chunkmanager will need to keep a list of chunks to update.
     // it should also keep a 2D chunkSum array so that only modified chunks are
     // updated.
-    public MapUpdateViewTask(MapTexture mapTexture, RegionManager regionManager, MapViewRequest req) {
+    public TaskMapUpdateView(MapTexture mapTexture, RegionManager regionManager, MapViewRequest req) {
         this.mapTexture = mapTexture;
         this.regionManager = regionManager;
         this.req = req;

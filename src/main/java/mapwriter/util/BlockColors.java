@@ -75,10 +75,10 @@ public class BlockColors {
             for (final IBlockState state : block.getBlockState().getValidStates()) {
                 if (state != null && state.getRenderType() != EnumBlockRenderType.INVISIBLE) {
                     try {
-                        final TextureAtlasSprite icon = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state);
-
-                        if (icon != null) {
-                            this.stateColors.put(state, this.averageSpriteColors.get(icon));
+                        TextureAtlasSprite icon = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state);
+                        Integer color = this.averageSpriteColors.get(icon);
+                        if (color != null) {
+                            this.stateColors.put(state, color);
                         }
                     } catch (final Exception e) {
                         MapWriterForge.LOGGER.trace(e);

@@ -1,4 +1,4 @@
-package mapwriter.map.mapmode;
+package mapwriter.map;
 
 import mapwriter.api.MapView;
 import mapwriter.config.MapModeConfig;
@@ -44,7 +44,6 @@ public class MapMode implements mapwriter.api.MapMode {
 
     @Override
     public Point.Double blockXZtoScreenXY(MapView mapView, double bX, double bZ) {
-
         final double xNorm = (bX - mapView.getX()) / mapView.getWidth();
         final double zNorm = (bZ - mapView.getZ()) / mapView.getHeight();
         return new Point.Double(this.w * xNorm, this.h * zNorm);
@@ -98,25 +97,21 @@ public class MapMode implements mapwriter.api.MapMode {
 
     @Override
     public MapModeConfig getConfig() {
-
         return this.config;
     }
 
     @Override
     public int getH() {
-
         return this.h;
     }
 
     @Override
     public int getHPixels() {
-
         return this.hPixels;
     }
 
     @Override
     public Point.Double getNewPosPoint(double mouseX, double mouseY) {
-
         int newX = (int) (mouseX - this.mouseXOffset);
         int newY = (int) (mouseY - this.mouseYOffset);
 
@@ -137,67 +132,56 @@ public class MapMode implements mapwriter.api.MapMode {
         final double x = (newX - this.w / 2) * 100.0 / (this.sw - this.w);
         final double y = (newY - this.h / 2) * 100.0 / (this.sh - this.h);
 
-        final Point.Double pos = new Point.Double(x, y);
-        return pos;
+        return new Point.Double(x, y);
     }
 
     @Override
     public int getTextColor() {
-
         return this.textColor;
     }
 
     @Override
     public int getTextX() {
-
         return this.textX;
     }
 
     @Override
     public int getTextY() {
-
         return this.textY;
     }
 
     @Override
     public int getW() {
-
         return this.w;
     }
 
     @Override
     public int getWPixels() {
-
         return this.wPixels;
     }
 
     @Override
     public int getX() {
-
         return this.x;
     }
 
     @Override
     public int getXTranslation() {
-
         return this.xTranslation;
     }
 
     @Override
     public int getY() {
-
         return this.y;
     }
 
     @Override
     public int getYTranslation() {
-
         return this.yTranslation;
     }
 
     @Override
     public boolean posWithin(int mouseX, int mouseY) {
-
         this.mouseXOffset = mouseX - this.xTranslation;
         this.mouseYOffset = mouseY - this.yTranslation;
         return this.isMouseYWithinSlotBounds(mouseY) && this.isMouseXWithinSlotBounds(mouseX);
@@ -205,7 +189,6 @@ public class MapMode implements mapwriter.api.MapMode {
 
     @Override
     public Point screenXYtoBlockXZ(MapView mapView, int sx, int sy) {
-
         final double withinMapX = (double) (sx - this.xTranslation) / (double) this.w;
         final double withinMapY = (double) (sy - this.yTranslation) / (double) this.h;
         final int bx = (int) Math.floor(mapView.getX() + withinMapX * mapView.getWidth());
@@ -215,7 +198,6 @@ public class MapMode implements mapwriter.api.MapMode {
 
     @Override
     public void setScreenRes() {
-
         final Minecraft mc = Minecraft.getMinecraft();
         final ScaledResolution sRes = new ScaledResolution(mc);
         this.setScreenRes(mc.displayWidth, mc.displayHeight, sRes.getScaledWidth(), sRes.getScaledHeight(), sRes.getScaleFactor());
@@ -223,7 +205,6 @@ public class MapMode implements mapwriter.api.MapMode {
 
     @Override
     public void setScreenRes(int dw, int dh, int sw, int sh, double scaling) {
-
         if (sw != this.sw || sh != this.sh || scaling != this.screenScalingFactor) {
             this.sw = sw;
             this.sh = sh;
@@ -234,7 +215,6 @@ public class MapMode implements mapwriter.api.MapMode {
 
     @Override
     public void updateMargin() {
-
         if (this.widthPercent != this.config.widthPercent || this.heightPercent != this.config.heightPercent || this.xPos != this.config.xPos || this.yPos != this.config.yPos) {
             this.widthPercent = this.config.widthPercent;
             this.heightPercent = this.config.heightPercent;
@@ -246,17 +226,14 @@ public class MapMode implements mapwriter.api.MapMode {
     }
 
     private boolean isMouseXWithinSlotBounds(int mouseX) {
-
         return mouseX >= this.xTranslation + this.x && mouseX <= this.xTranslation - this.x;
     }
 
     private boolean isMouseYWithinSlotBounds(int mouseY) {
-
         return mouseY >= this.yTranslation + this.y && mouseY <= this.yTranslation - this.y;
     }
 
     private void update() {
-
         double x, y;
 
         this.w = (int) (this.sw * (this.widthPercent / 100.0));

@@ -10,14 +10,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class UpdateSurfaceChunksTask extends Task {
-    private static Map<Long, UpdateSurfaceChunksTask> chunksUpdating = new HashMap<>();
+public class TaskUpdateSurfaceChunks extends Task {
+    private static Map<Long, TaskUpdateSurfaceChunks> chunksUpdating = new HashMap<>();
     private MapWriterChunk chunk;
     private final RegionManager regionManager;
     private final MapTexture mapTexture;
     private final AtomicBoolean running = new AtomicBoolean();
 
-    public UpdateSurfaceChunksTask(MapWriter mw, MapWriterChunk chunk) {
+    public TaskUpdateSurfaceChunks(MapWriter mw, MapWriterChunk chunk) {
         this.mapTexture = mw.mapTexture;
         this.regionManager = mw.regionManager;
         this.chunk = chunk;
@@ -27,15 +27,15 @@ public class UpdateSurfaceChunksTask extends Task {
     public boolean checkForDuplicate() {
         final Long coords = ChunkPos.asLong(this.chunk.x, this.chunk.z);
 
-        if (!UpdateSurfaceChunksTask.chunksUpdating.containsKey(coords)) {
-            UpdateSurfaceChunksTask.chunksUpdating.put(coords, this);
+        if (!TaskUpdateSurfaceChunks.chunksUpdating.containsKey(coords)) {
+            TaskUpdateSurfaceChunks.chunksUpdating.put(coords, this);
             return false;
         } else {
-            final UpdateSurfaceChunksTask task2 = UpdateSurfaceChunksTask.chunksUpdating.get(coords);
+            final TaskUpdateSurfaceChunks task2 = TaskUpdateSurfaceChunks.chunksUpdating.get(coords);
             if (!task2.running.get()) {
                 task2.updateChunkData(this.chunk);
             } else {
-                UpdateSurfaceChunksTask.chunksUpdating.put(coords, this);
+                TaskUpdateSurfaceChunks.chunksUpdating.put(coords, this);
                 return false;
             }
         }
@@ -45,7 +45,7 @@ public class UpdateSurfaceChunksTask extends Task {
     @Override
     public void onComplete() {
         final Long coords = this.chunk.getCoordIntPair();
-        UpdateSurfaceChunksTask.chunksUpdating.remove(coords);
+        TaskUpdateSurfaceChunks.chunksUpdating.remove(coords);
         this.running.set(false);
     }
 

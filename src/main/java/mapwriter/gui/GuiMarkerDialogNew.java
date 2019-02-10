@@ -43,7 +43,7 @@ public class GuiMarkerDialogNew extends GuiScreen {
         this.markerManager = markerManager;
         this.editingMarker = editingMarker;
         this.markerName = editingMarker.name;
-        this.markerGroup = editingMarker.groupName;
+        this.markerGroup = editingMarker.group;
         this.markerX = editingMarker.x;
         this.markerY = editingMarker.y;
         this.markerZ = editingMarker.z;
@@ -191,10 +191,10 @@ public class GuiMarkerDialogNew extends GuiScreen {
 
         if (inputCorrect) {
             if (this.editingMarker != null) {
-                this.markerManager.delMarker(this.editingMarker);
+                this.markerManager.delMarker(this.editingMarker, true);
                 this.editingMarker = null;
             }
-            this.markerManager.addMarker(this.markerName, this.markerGroup, this.markerX, this.markerY, this.markerZ, this.dimension, this.color);
+            this.markerManager.addMarker(this.markerName, this.markerGroup, this.markerX, this.markerY, this.markerZ, this.dimension, this.color, true);
             this.markerManager.setVisibleGroupName(this.markerGroup);
             this.markerManager.update();
         }

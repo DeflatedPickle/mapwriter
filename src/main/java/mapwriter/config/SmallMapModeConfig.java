@@ -1,7 +1,9 @@
 package mapwriter.config;
 
+import mapwriter.gui.ModGuiConfig;
 import mapwriter.gui.ModGuiConfig.ModBooleanEntry;
 import mapwriter.gui.ModGuiConfigHUD.MapPosConfigEntry;
+import net.minecraft.item.EnumDyeColor;
 
 public class SmallMapModeConfig extends MapModeConfig {
     public SmallMapModeConfig(String configCategory) {
@@ -14,9 +16,14 @@ public class SmallMapModeConfig extends MapModeConfig {
         this.enabled = ConfigurationHandler.configuration.getBoolean("enabled", this.configCategory, this.enabledDef, "", "mw.config.map.enabled");
         this.rotate = ConfigurationHandler.configuration.getBoolean("rotate", this.configCategory, this.rotateDef, "", "mw.config.map.rotate");
         this.circular = ConfigurationHandler.configuration.getBoolean("circular", this.configCategory, this.circularDef, "", "mw.config.map.circular");
-        this.coordsMode = ConfigurationHandler.configuration.getString("coordsMode", this.configCategory, this.coordsModeDef, "", TEXT_MODE, "mw.config.map.coordsMode");
+        this.coordsMode = ConfigurationHandler.configuration.get(this.configCategory, "coordsMode", this.coordsModeDef, "", TEXT_MODES).setLanguageKey("mw.config.map.coordsMode").setConfigEntryClass(ModGuiConfig.ModCycleValueEntry.class).getString();
+        this.biomeMode = ConfigurationHandler.configuration.get(this.configCategory, "biomeMode", this.biomeModeDef, "", TEXT_MODES).setLanguageKey("mw.config.map.biomeMode").setConfigEntryClass(ModGuiConfig.ModCycleValueEntry.class).getString();
         this.borderMode = ConfigurationHandler.configuration.getBoolean("borderMode", this.configCategory, this.borderModeDef, "", "mw.config.map.borderMode");
-        this.biomeMode = ConfigurationHandler.configuration.getString("biomeMode", this.configCategory, this.biomeModeDef, "", TEXT_MODE, "mw.config.map.biomeMode");
+        String[] colors = new String[EnumDyeColor.values().length];
+        for (EnumDyeColor color : EnumDyeColor.values()) {
+            colors[color.ordinal()] = color.getUnlocalizedName();
+        }
+        this.borderColor = ConfigurationHandler.configuration.get(this.configCategory, "borderColor", this.borderColorDef, "", colors).setLanguageKey("mw.config.map.borderColor").setConfigEntryClass(ModGuiConfig.ModCycleColorEntry.class).getString();
         ConfigurationHandler.configuration.getCategory(this.configCategory).remove("Position");
         ConfigurationHandler.configuration.getCategory(this.configCategory).remove("heightPercent");
     }
@@ -26,10 +33,10 @@ public class SmallMapModeConfig extends MapModeConfig {
         this.rotateDef = true;
         this.circularDef = true;
         this.borderModeDef = true;
-        this.coordsModeDef = TEXT_MODE[1];
-        this.biomeModeDef = TEXT_MODE[0];
-        this.playerArrowSizeDef = 4;
-        this.markerSizeDef = 3;
+        this.coordsModeDef = TEXT_MODES[1];
+        this.biomeModeDef = TEXT_MODES[0];
+        this.playerArrowSizeDef = 6;
+        this.markerSizeDef = 4;
         this.xPosDef = 2;
         this.yPosDef = 4;
         this.heightPercentDef = 30;

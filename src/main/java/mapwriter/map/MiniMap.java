@@ -2,7 +2,6 @@ package mapwriter.map;
 
 import mapwriter.MapWriter;
 import mapwriter.config.Config;
-import mapwriter.map.mapmode.MapMode;
 
 public class MiniMap {
     public MapMode smallMapMode;

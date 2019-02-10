@@ -3,14 +3,11 @@ package mapwriter.config;
 import mapwriter.gui.ModGuiConfig.ModNumberSliderEntry;
 import mapwriter.gui.ModGuiConfigHUD.MapPosConfigEntry;
 import mapwriter.util.Reference;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.common.config.Configuration;
 
 public class MapModeConfig implements mapwriter.api.MapModeConfig {
-    public static final String[] TEXT_MODE = {
-        "mw.config.map.textMode.disabled",
-        "mw.config.map.textMode.small",
-        "mw.config.map.textMode.large"
-    };
+    public static final String[] TEXT_MODES = {"disabled", "small", "large"};
     public final String configCategory;
     public final String mapPosCategory;
 
@@ -20,17 +17,19 @@ public class MapModeConfig implements mapwriter.api.MapModeConfig {
     public boolean rotate = this.rotateDef;
     public boolean circularDef = false;
     public boolean circular = this.circularDef;
-    public String coordsModeDef = TEXT_MODE[0];
+    public String coordsModeDef = TEXT_MODES[0];
     public String coordsMode = this.coordsModeDef;
     public boolean borderModeDef = false;
     public boolean borderMode = this.borderModeDef;
-    public int playerArrowSizeDef = 5;
+    public String borderColorDef = EnumDyeColor.WHITE.getUnlocalizedName();
+    public String borderColor = this.borderColorDef;
+    public int playerArrowSizeDef = 8;
     public int playerArrowSize = this.playerArrowSizeDef;
-    public int markerSizeDef = 5;
+    public int markerSizeDef = 6;
     public int markerSize = this.markerSizeDef;
     public int alphaPercentDef = 100;
     public int alphaPercent = this.alphaPercentDef;
-    public String biomeModeDef = TEXT_MODE[0];
+    public String biomeModeDef = TEXT_MODES[0];
     public String biomeMode = this.biomeModeDef;
     public double xPosDef = 0;
     public double xPos = this.xPosDef;
@@ -57,7 +56,7 @@ public class MapModeConfig implements mapwriter.api.MapModeConfig {
     }
 
     @Override
-    public boolean isBorderMode() {
+    public boolean isBordered() {
         return this.borderMode;
     }
 
@@ -102,7 +101,7 @@ public class MapModeConfig implements mapwriter.api.MapModeConfig {
     }
 
     @Override
-    public boolean isRotate() {
+    public boolean isRotating() {
         return this.rotate;
     }
 

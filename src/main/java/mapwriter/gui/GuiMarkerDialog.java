@@ -22,12 +22,11 @@ public class GuiMarkerDialog extends GuiTextDialog {
     private DimensionType dimension;
 
     public GuiMarkerDialog(GuiScreen parentScreen, MarkerManager markerManager, Marker editingMarker) {
-
         super(parentScreen, I18n.format("mw.gui.mwguimarkerdialog.title.edit") + ":", editingMarker.name, I18n.format("mw.gui.mwguimarkerdialog.error"));
         this.markerManager = markerManager;
         this.editingMarker = editingMarker;
         this.markerName = editingMarker.name;
-        this.markerGroup = editingMarker.groupName;
+        this.markerGroup = editingMarker.group;
         this.markerX = editingMarker.x;
         this.markerY = editingMarker.y;
         this.markerZ = editingMarker.z;
@@ -93,10 +92,10 @@ public class GuiMarkerDialog extends GuiTextDialog {
                     int color = Utils.getCurrentColor();
                     if (this.editingMarker != null) {
                         color = this.editingMarker.color;
-                        this.markerManager.delMarker(this.editingMarker);
+                        this.markerManager.delMarker(this.editingMarker, true);
                         this.editingMarker = null;
                     }
-                    this.markerManager.addMarker(this.markerName, this.markerGroup, this.markerX, this.markerY, this.markerZ, this.dimension, color);
+                    this.markerManager.addMarker(this.markerName, this.markerGroup, this.markerX, this.markerY, this.markerZ, this.dimension, color, true);
                     this.markerManager.setVisibleGroupName(this.markerGroup);
                     this.markerManager.update();
                 }

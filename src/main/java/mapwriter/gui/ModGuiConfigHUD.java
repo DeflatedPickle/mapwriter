@@ -5,7 +5,7 @@ import mapwriter.config.MapModeConfig;
 import mapwriter.config.SmallMapModeConfig;
 import mapwriter.gui.ModGuiConfig.ModNumberSliderEntry;
 import mapwriter.map.MapRenderer;
-import mapwriter.map.mapmode.MapMode;
+import mapwriter.map.MapMode;
 import mapwriter.util.Reference;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -190,10 +190,10 @@ public class ModGuiConfigHUD extends GuiConfig {
     @Override
     protected void actionPerformed(GuiButton button) {
         double bottomOffset = 0;
-        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODE[0])) {
+        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODES[0])) {
             bottomOffset = bottomOffset + this.mc.fontRenderer.FONT_HEIGHT + 3;
         }
-        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODE[0])) {
+        if (!this.mapMode.getConfig().biomeMode.equals(MapModeConfig.TEXT_MODES[0])) {
             bottomOffset = bottomOffset + this.mc.fontRenderer.FONT_HEIGHT + 3;
         }
         bottomOffset = bottomOffset / this.height * 100;

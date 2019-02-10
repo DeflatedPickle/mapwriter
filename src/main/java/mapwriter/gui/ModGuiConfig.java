@@ -20,14 +20,14 @@ public class ModGuiConfig extends GuiConfig {
 
         @Override
         protected GuiScreen buildChildScreen() {
-            final String QualifiedName = this.configElement.getQualifiedName();
+            final String qualifiedName = this.configElement.getQualifiedName();
             // This GuiConfig object specifies the configID of the object
             // and as
             // such will force-save when it is closed. The parent
             // GuiConfig object's entryList will also be refreshed to
             // reflect
             // the changes.
-            return new GuiConfig(this.owningScreen, this.getConfigElement().getChildElements(), this.owningScreen.modID, QualifiedName, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart, this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, this.owningScreen.title);
+            return new GuiConfig(this.owningScreen, this.getConfigElement().getChildElements(), this.owningScreen.modID, qualifiedName, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart, this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart, this.owningScreen.title);
         }
     }
 
@@ -113,11 +113,109 @@ public class ModGuiConfig extends GuiConfig {
         }
     }
 
+    public static class ModCycleValueEntry extends GuiConfigEntries.ButtonEntry {
+        protected final int beforeIndex;
+        protected final int defaultIndex;
+        protected int currentIndex;
+
+        public ModCycleValueEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
+            super(owningScreen, owningEntryList, configElement);
+            this.beforeIndex = this.getIndex(configElement.get().toString());
+            this.defaultIndex = this.getIndex(configElement.getDefault().toString());
+            this.currentIndex = this.beforeIndex;
+            this.btnValue.enabled = this.enabled();
+            this.updateValueButtonText();
+        }
+
+        private int getIndex(String s) {
+            for(int i = 0; i < this.configElement.getValidValues().length; ++i) {
+                if (this.configElement.getValidValues()[i].equalsIgnoreCase(s)) {
+                    return i;
+                }
+            }
+
+            return 0;
+        }
+
+        @Override
+        public void updateValueButtonText() {
+            this.btnValue.displayString = I18n.format(this.configElement.getLanguageKey() + "." + this.configElement.getValidValues()[this.currentIndex]);
+        }
+
+        @Override
+        public void valueButtonPressed(int slotIndex) {
+            if (this.enabled()) {
+                if (++this.currentIndex >= this.configElement.getValidValues().length) {
+                    this.currentIndex = 0;
+                }
+
+                this.updateValueButtonText();
+            }
+        }
+
+        @Override
+        public boolean isDefault() {
+            return this.currentIndex == this.defaultIndex;
+        }
+
+        @Override
+        public void setToDefault() {
+            if (this.enabled()) {
+                this.currentIndex = this.defaultIndex;
+                this.updateValueButtonText();
+            }
+
+        }
+
+        @Override
+        public boolean isChanged() {
+            return this.currentIndex != this.beforeIndex;
+        }
+
+        @Override
+        public void undoChanges() {
+            if (this.enabled()) {
+                this.currentIndex = this.beforeIndex;
+                this.updateValueButtonText();
+            }
+        }
+
+        @Override
+        public boolean saveConfigElement() {
+            if (this.enabled() && this.isChanged()) {
+                this.configElement.set(this.configElement.getValidValues()[this.currentIndex]);
+                return this.configElement.requiresMcRestart();
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String getCurrentValue() {
+            return this.configElement.getValidValues()[this.currentIndex];
+        }
+
+        @Override
+        public String[] getCurrentValues() {
+            return new String[]{this.getCurrentValue()};
+        }
+    }
+
+    public static class ModCycleColorEntry extends ModCycleValueEntry {
+        public ModCycleColorEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
+            super(owningScreen, owningEntryList, configElement);
+        }
+
+        @Override
+        public void updateValueButtonText() {
+            this.btnValue.displayString = I18n.format("item.fireworksCharge." + this.configElement.getValidValues()[this.currentIndex]);
+        }
+    }
+
     public static class ModNumberSliderEntry extends NumberSliderEntry {
         private boolean enabled = true;
 
         public ModNumberSliderEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
-
             super(owningScreen, owningEntryList, configElement);
             ((GuiSlider) this.btnValue).precision = 2;
             this.updateValueButtonText();

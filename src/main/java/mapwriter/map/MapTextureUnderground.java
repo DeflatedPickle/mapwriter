@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.Arrays;
 
-public class UndergroundTexture extends Texture {
+public class MapTextureUnderground extends Texture {
 
     class RenderChunk implements MapChunk {
         Chunk chunk;
@@ -69,7 +69,7 @@ public class UndergroundTexture extends Texture {
 
     private final int[] pixels;
 
-    public UndergroundTexture(MapWriter mw, int textureSize, boolean linearScaling) {
+    public MapTextureUnderground(MapWriter mw, int textureSize, boolean linearScaling) {
 
         super(textureSize, textureSize, 0x00000000, GL11.GL_NEAREST, GL11.GL_NEAREST, GL11.GL_REPEAT);
         this.setLinearScaling(false);

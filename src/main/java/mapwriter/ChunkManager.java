@@ -2,8 +2,8 @@ package mapwriter;
 
 import mapwriter.config.Config;
 import mapwriter.region.MapWriterChunk;
-import mapwriter.tasks.SaveChunkTask;
-import mapwriter.tasks.UpdateSurfaceChunksTask;
+import mapwriter.tasks.TaskSaveChunk;
+import mapwriter.tasks.TaskUpdateSurfaceChunks;
 import mapwriter.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
@@ -104,14 +104,14 @@ public class ChunkManager {
 
                 if ((flags & ChunkManager.VISIBLE_FLAG) != 0) {
                     chunkArray[i] = copyToMwChunk(chunk);
-                    this.mw.executor.addTask(new UpdateSurfaceChunksTask(this.mw, chunkArray[i]));
+                    this.mw.executor.addTask(new TaskUpdateSurfaceChunks(this.mw, chunkArray[i]));
                 } else {
                     chunkArray[i] = null;
                 }
             }
         }
 
-        // this.mw.executor.addTask(new UpdateSurfaceChunksTask(this.mw,
+        // this.mw.executor.addTask(new TaskUpdateSurfaceChunks(this.mw,
         // chunkArray));
     }
 
@@ -132,7 +132,7 @@ public class ChunkManager {
     private void addSaveChunkTask(Chunk chunk) {
         if (Minecraft.getMinecraft().isSingleplayer() && Config.regionFileOutputEnabledMP || !Minecraft.getMinecraft().isSingleplayer() && Config.regionFileOutputEnabledSP) {
             if (!chunk.isEmpty()) {
-                this.mw.executor.addTask(new SaveChunkTask(copyToMwChunk(chunk), this.mw.regionManager));
+                this.mw.executor.addTask(new TaskSaveChunk(copyToMwChunk(chunk), this.mw.regionManager));
             }
         }
     }

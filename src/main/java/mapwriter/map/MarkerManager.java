@@ -3,7 +3,6 @@ package mapwriter.map;
 import mapwriter.config.Config;
 import mapwriter.config.WorldConfig;
 import mapwriter.forge.MapWriterForge;
-import mapwriter.map.mapmode.MapMode;
 import mapwriter.util.Reference;
 import mapwriter.util.Utils;
 import net.minecraft.client.Minecraft;
@@ -16,16 +15,16 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import org.lwjgl.opengl.ARBDepthClamp;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class MarkerManager {
-    public List<Marker> markers = new ArrayList<>();
+    public Map<UUID, Marker> markers = new HashMap<>();
     public List<String> groups = new ArrayList<>();
-
     public List<Marker> visibleMarkers = new ArrayList<>();
 
     private String visibleGroupName = "none";
@@ -35,12 +34,17 @@ public class MarkerManager {
     public MarkerManager() {}
 
     public void addMarker(Marker marker) {
-        this.markers.add(marker);
+        this.markers.put(marker.id, marker);
     }
 
-    public void addMarker(String name, String groupName, int x, int y, int z, DimensionType dimension, int color) {
-        this.addMarker(new Marker(name, groupName, x, y, z, dimension, color));
-        this.save(WorldConfig.getInstance().worldConfiguration, Reference.CAT_MARKERS);
+    public UUID addMarker(String name, String groupName, int x, int y, int z, DimensionType dimension, int color, boolean save) {
+        UUID id;
+        while (this.markers.containsKey(id = UUID.randomUUID())) {}
+        this.addMarker(new Marker(id, name, groupName, x, y, z, dimension, color));
+        if (save) {
+            this.save(WorldConfig.getInstance().worldConfiguration, Reference.CAT_MARKERS);
+        }
+        return id;
     }
 
     public void clear() {
@@ -55,8 +59,8 @@ public class MarkerManager {
         if (group.equals("all")) {
             count = this.markers.size();
         } else {
-            for (final Marker marker : this.markers) {
-                if (marker.groupName.equals(group)) {
+            for (final Marker marker : this.markers.values()) {
+                if (marker.group.equals(group)) {
                     count++;
                 }
             }
@@ -64,32 +68,27 @@ public class MarkerManager {
         return count;
     }
 
-    // returns true if the marker exists in the arraylist.
-    // safe to pass null.
-    public boolean delMarker(Marker markerToDelete) {
-        if (this.selectedMarker == markerToDelete) {
+    public boolean delMarker(Marker marker, boolean save) {
+        if (this.selectedMarker == marker) {
             this.selectedMarker = null;
         }
-        final boolean result = this.markers.remove(markerToDelete);
+        final boolean result = this.markers.remove(marker.id) != null;
 
         this.save(WorldConfig.getInstance().worldConfiguration, Reference.CAT_MARKERS);
 
         return result;
     }
 
-    // deletes the first marker with matching name and group.
-    // if null is passed as either name or group it means "any".
-    public boolean delMarker(String name, String group) {
-        Marker markerToDelete = null;
-        for (final Marker marker : this.markers) {
-            if ((name == null || marker.name.equals(name)) && (group == null || marker.groupName.equals(group))) {
-                markerToDelete = marker;
-                break;
+    public int delMarker(Predicate<Marker> filter, int max, boolean save) {
+        int count = 0;
+        for (final Marker marker : this.markers.values()) {
+            if (filter.test(marker)) {
+                if (count < max && this.delMarker(marker, save)) {
+                    count++;
+                }
             }
         }
-        // will return false if a marker matching the criteria is not found
-        // (i.e. if markerToDelete is null)
-        return this.delMarker(markerToDelete);
+        return count;
     }
 
     public void drawBeam(Marker m, float partialTicks) {
@@ -336,10 +335,10 @@ public class MarkerManager {
             this.visibleGroupName = config.get(category, "visibleGroup", "").getString();
 
             if (markerCount > 0) {
-                for (int i = 0; i < markerCount; i++) {
-                    final String key = "marker" + i;
-                    final String value = config.get(category, key, "").getString();
-                    final Marker marker = this.stringToMarker(value);
+                for (Map.Entry<String, Property> entry : config.getCategory(category).getValues().entrySet()) {
+                    final UUID key = UUID.fromString(entry.getKey());
+                    final String value = entry.getValue().getString();
+                    final Marker marker = this.stringToMarker(key, value);
                     if (marker != null) {
                         this.addMarker(marker);
                     } else {
@@ -353,7 +352,7 @@ public class MarkerManager {
     }
 
     public String markerToString(Marker marker) {
-        return String.format("%s:%d:%d:%d:%s:%06x:%s", marker.name, marker.x, marker.y, marker.z, marker.dimension.getName(), marker.color & 0xffffff, marker.groupName);
+        return String.format("%s:%d:%d:%d:%s:%06x:%s", marker.name, marker.x, marker.y, marker.z, marker.dimension.getName(), marker.color & 0xffffff, marker.group);
     }
 
     public void nextGroup() {
@@ -381,12 +380,9 @@ public class MarkerManager {
         config.get(category, "markerCount", 0).set(this.markers.size());
         config.get(category, "visibleGroup", "").set(this.visibleGroupName);
 
-        int i = 0;
-        for (final Marker marker : this.markers) {
-            final String key = "marker" + i;
+        for (final Marker marker : this.markers.values()) {
             final String value = this.markerToString(marker);
-            config.get(category, key, "").set(value);
-            i++;
+            config.get(category, marker.id.toString(), "").set(value);
         }
 
         if (config.hasChanged()) {
@@ -418,7 +414,7 @@ public class MarkerManager {
         }
     }
 
-    public Marker stringToMarker(String s) {
+    public Marker stringToMarker(UUID id, String s) {
         // new style delimited with colons
         String[] split = s.split(":");
         if (split.length != 7) {
@@ -434,7 +430,7 @@ public class MarkerManager {
                 final DimensionType dimension = DimensionType.byName(split[4]);
                 final int color = 0xff000000 | Integer.parseInt(split[5], 16);
 
-                marker = new Marker(split[0], split[6], x, y, z, dimension, color);
+                marker = new Marker(id, split[0], split[6], x, y, z, dimension, color);
 
             } catch (final IllegalArgumentException e) {
                 marker = null;
@@ -450,12 +446,12 @@ public class MarkerManager {
         this.groups.clear();
         this.groups.add("none");
         this.groups.add("all");
-        for (final Marker marker : this.markers) {
-            if (marker.groupName.equals(this.visibleGroupName) || this.visibleGroupName.equals("all")) {
+        for (final Marker marker : this.markers.values()) {
+            if (marker.group.equals(this.visibleGroupName) || this.visibleGroupName.equals("all")) {
                 this.visibleMarkers.add(marker);
             }
-            if (!this.groups.contains(marker.groupName)) {
-                this.groups.add(marker.groupName);
+            if (!this.groups.contains(marker.group)) {
+                this.groups.add(marker.group);
             }
         }
         if (!this.groups.contains(this.visibleGroupName)) {

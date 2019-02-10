@@ -1,14 +1,20 @@
 package mapwriter.api;
 
+import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import mapwriter.MapWriter;
+import mapwriter.map.MarkerManager;
+import net.minecraft.world.DimensionType;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 public class MapWriterAPI {
-    private static HashBiMap<String, MapOverlayProvider> dataProviders = HashBiMap.create();
+    private static BiMap<String, MapOverlayProvider> dataProviders = HashBiMap.create();
     private static MapOverlayProvider currentProvider = null;
-    private static ArrayList<String> providerKeys = new ArrayList<>();
+    private static List<String> providerKeys = new ArrayList<>();
 
     public static MapOverlayProvider getCurrentDataProvider() {
         return currentProvider;
@@ -79,5 +85,23 @@ public class MapWriterAPI {
             currentProvider = getDataProvider(providerKeys.get(providerKeys.size() - 1));
         }
         return currentProvider;
+    }
+
+    public static UUID addMarker(String name, String group, int x, int y, int z, DimensionType dimension, int color, boolean save) {
+        MapWriter mw = MapWriter.getInstance();
+        MarkerManager markerManager = mw.markerManager;
+        return markerManager != null ? markerManager.addMarker(name, group, x, y, z, dimension, color, save) : null;
+    }
+
+    public static boolean deleteMarker(UUID id, boolean save) {
+        MapWriter mw = MapWriter.getInstance();
+        MarkerManager markerManager = mw.markerManager;
+        return markerManager != null && markerManager.delMarker(m -> m.id.equals(id), Integer.MAX_VALUE, save) > 0;
+    }
+
+    public static int deleteMarker(String group, int max, boolean save) {
+        MapWriter mw = MapWriter.getInstance();
+        MarkerManager markerManager = mw.markerManager;
+        return markerManager != null ? markerManager.delMarker(m -> m.group.equals(group), max, save) : 0;
     }
 }

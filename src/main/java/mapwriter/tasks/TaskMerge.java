@@ -8,7 +8,7 @@ import net.minecraft.world.DimensionType;
 
 import java.io.File;
 
-public class MergeTask extends Task {
+public class TaskMerge extends Task {
     final RegionManager regionManager;
     final File outputDir;
     final String basename;
@@ -16,7 +16,7 @@ public class MergeTask extends Task {
     final DimensionType dimension;
     String msg = "";
 
-    public MergeTask(RegionManager regionManager, int x, int z, int w, int h, DimensionType dimension, File outputDir, String basename) {
+    public TaskMerge(RegionManager regionManager, int x, int z, int w, int h, DimensionType dimension, File outputDir, String basename) {
         this.regionManager = regionManager;
         this.x = x;
         this.z = z;

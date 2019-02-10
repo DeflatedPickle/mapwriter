@@ -5,7 +5,7 @@ public interface MapModeConfig {
 
     String getBiomeMode();
 
-    boolean isBorderMode();
+    boolean isBordered();
 
     boolean isCircular();
 
@@ -21,7 +21,7 @@ public interface MapModeConfig {
 
     int getPlayerArrowSize();
 
-    boolean isRotate();
+    boolean isRotating();
 
     double getHeightPercent();
 

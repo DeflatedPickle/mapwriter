@@ -7,7 +7,7 @@ import mapwriter.util.Utils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.world.DimensionType;
 
-public class RebuildRegionsTask extends Task {
+public class TaskRebuildRegions extends Task {
 
     final RegionManager regionManager;
     final BlockColors blockColors;
@@ -15,7 +15,7 @@ public class RebuildRegionsTask extends Task {
     final DimensionType dimension;
     String msg = "";
 
-    public RebuildRegionsTask(MapWriter mw, int x, int z, int w, int h, DimensionType dimension) {
+    public TaskRebuildRegions(MapWriter mw, int x, int z, int w, int h, DimensionType dimension) {
         this.regionManager = mw.regionManager;
         this.blockColors = mw.blockColors;
         this.x = x;

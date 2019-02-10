@@ -6,13 +6,13 @@ import mapwriter.region.RegionManager;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SaveChunkTask extends Task {
-    private static HashMap<Long, SaveChunkTask> chunksUpdating = new HashMap<>();
+public class TaskSaveChunk extends Task {
+    private static HashMap<Long, TaskSaveChunk> chunksUpdating = new HashMap<>();
     private MapWriterChunk chunk;
     private RegionManager regionManager;
     private final AtomicBoolean running = new AtomicBoolean();
 
-    public SaveChunkTask(MapWriterChunk chunk, RegionManager regionManager) {
+    public TaskSaveChunk(MapWriterChunk chunk, RegionManager regionManager) {
         this.chunk = chunk;
         this.regionManager = regionManager;
     }
@@ -21,15 +21,15 @@ public class SaveChunkTask extends Task {
     public boolean checkForDuplicate() {
         final Long coords = this.chunk.getCoordIntPair();
 
-        if (!SaveChunkTask.chunksUpdating.containsKey(coords)) {
-            SaveChunkTask.chunksUpdating.put(coords, this);
+        if (!TaskSaveChunk.chunksUpdating.containsKey(coords)) {
+            TaskSaveChunk.chunksUpdating.put(coords, this);
             return false;
         } else {
-            final SaveChunkTask task2 = SaveChunkTask.chunksUpdating.get(coords);
+            final TaskSaveChunk task2 = TaskSaveChunk.chunksUpdating.get(coords);
             if (!task2.running.get()) {
                 task2.updateChunkData(this.chunk, this.regionManager);
             } else {
-                SaveChunkTask.chunksUpdating.put(coords, this);
+                TaskSaveChunk.chunksUpdating.put(coords, this);
                 return false;
             }
         }
@@ -39,7 +39,7 @@ public class SaveChunkTask extends Task {
     @Override
     public void onComplete() {
         final Long coords = this.chunk.getCoordIntPair();
-        SaveChunkTask.chunksUpdating.remove(coords);
+        TaskSaveChunk.chunksUpdating.remove(coords);
         this.running.set(false);
     }
 

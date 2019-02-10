@@ -2,11 +2,11 @@ package mapwriter.tasks;
 
 import mapwriter.region.RegionManager;
 
-public class CloseRegionManagerTask extends Task {
+public class TaskCloseRegionManager extends Task {
 
     private final RegionManager regionManager;
 
-    public CloseRegionManagerTask(RegionManager regionManager) {
+    public TaskCloseRegionManager(RegionManager regionManager) {
         this.regionManager = regionManager;
     }
 

@@ -46,7 +46,6 @@ public class ScrollableColorSelector extends ScrollableField {
     }
 
     public int getColor() {
-
         return this.color;
     }
 

@@ -1,6 +1,7 @@
 package mapwriter.config;
 
 import mapwriter.forge.MapWriterForge;
+import mapwriter.gui.ModGuiConfig;
 import mapwriter.util.Reference;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -46,7 +47,7 @@ public class ConfigurationHandler {
         Config.undergroundMode = configuration.getBoolean("undergroundMode", Reference.CAT_OPTIONS, Config.undergroundModeDef, "", "mw.config.undergroundMode");
         Config.regionFileOutputEnabledSP = configuration.getBoolean("regionFileOutputEnabledSP", Reference.CAT_OPTIONS, Config.regionFileOutputEnabledSPDef, "", "mw.config.regionFileOutputEnabledSP");
         Config.regionFileOutputEnabledMP = configuration.getBoolean("regionFileOutputEnabledMP", Reference.CAT_OPTIONS, Config.regionFileOutputEnabledMPDef, "", "mw.config.regionFileOutputEnabledMP");
-        Config.backgroundTextureMode = configuration.getString("backgroundTextureMode", Reference.CAT_OPTIONS, Config.backgroundTextureModeDef, "", Config.BACKGROUND_MODES, "mw.config.backgroundTextureMode");
+        Config.backgroundTextureMode = configuration.get(Reference.CAT_OPTIONS, "backgroundTextureMode", Config.backgroundTextureModeDef, "", Config.BACKGROUND_MODES).setLanguageKey("mw.config.backgroundTextureMode").setConfigEntryClass(ModGuiConfig.ModCycleValueEntry.class).getString();
         Config.zoomOutLevels = configuration.getInt("zoomOutLevels", Reference.CAT_OPTIONS, Config.zoomOutLevelsDef, 1, 256, "", "mw.config.zoomOutLevels");
         Config.zoomInLevels = -configuration.getInt("zoomInLevels", Reference.CAT_OPTIONS, -Config.zoomInLevelsDef, 1, 256, "", "mw.config.zoomInLevels");
 

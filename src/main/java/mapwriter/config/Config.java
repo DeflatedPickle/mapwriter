@@ -4,7 +4,7 @@ import mapwriter.util.Reference;
 
 public class Config {
 
-    public static final String[] BACKGROUND_MODES = {"mw.config.backgroundTextureMode.none", "mw.config.backgroundTextureMode.static", "mw.config.backgroundTextureMode.panning"};
+    public static final String[] BACKGROUND_MODES = {"none", "static", "panning"};
 
     // configuration options
     public static boolean linearTextureScalingDef = true;

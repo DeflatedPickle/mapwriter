@@ -1,6 +1,5 @@
 package mapwriter.map;
 
-import mapwriter.map.mapmode.MapMode;
 import mapwriter.util.Render;
 import mapwriter.util.Utils;
 import net.minecraft.entity.Entity;
@@ -8,25 +7,27 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DimensionType;
 
 import java.awt.*;
+import java.util.UUID;
 
 public class Marker {
+    public final UUID id;
     public final String name;
-    public final String groupName;
+    public final String group;
     public int x, y, z;
     public DimensionType dimension;
     public int color;
 
     public Point.Double screenPos = new Point.Double(0, 0);
 
-    public Marker(String name, String groupName, int x, int y, int z, DimensionType dimension, int color) {
-
+    public Marker(UUID id, String name, String group, int x, int y, int z, DimensionType dimension, int color) {
+        this.id = id;
         this.name = Utils.mungeStringForConfig(name);
         this.x = x;
         this.y = y;
         this.z = z;
         this.dimension = dimension;
         this.color = color;
-        this.groupName = Utils.mungeStringForConfig(groupName);
+        this.group = Utils.mungeStringForConfig(group);
     }
 
     public void colorNext() {
@@ -58,9 +59,14 @@ public class Marker {
         }
         if (o instanceof Marker) {
             final Marker m = (Marker) o;
-            return this.name.equals(m.name) && this.groupName.equals(m.groupName) && this.x == m.x && this.y == m.y && this.z == m.z && this.dimension == m.dimension;
+            return this.name.equals(m.name) && this.group.equals(m.group) && this.x == m.x && this.y == m.y && this.z == m.z && this.dimension == m.dimension;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s (%d, %d, %d) %s %06x", this.name, this.group, this.x, this.y, this.z, this.dimension.getName(), this.color & 0xffffff);
     }
 
     public float getBlue() {
@@ -80,9 +86,5 @@ public class Marker {
 
     public float getRed() {
         return (this.color >> 16 & 0xff) / 255f;
-    }
-
-    public String getString() {
-        return String.format("%s %s (%d, %d, %d) %d %06x", this.name, this.groupName, this.x, this.y, this.z, this.dimension, this.color & 0xffffff);
     }
 }

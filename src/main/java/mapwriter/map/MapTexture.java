@@ -3,7 +3,7 @@ package mapwriter.map;
 import mapwriter.BackgroundExecutor;
 import mapwriter.region.Region;
 import mapwriter.region.RegionManager;
-import mapwriter.tasks.MapUpdateViewTask;
+import mapwriter.tasks.TaskMapUpdateView;
 import mapwriter.util.Texture;
 import net.minecraft.world.DimensionType;
 import org.lwjgl.opengl.GL11;
@@ -107,7 +107,7 @@ public class MapTexture extends Texture {
     public void requestView(MapViewRequest req, BackgroundExecutor executor, RegionManager regionManager) {
         if (this.requestedView == null || !this.requestedView.equals(req)) {
             this.requestedView = req;
-            executor.addTask(new MapUpdateViewTask(this, regionManager, req));
+            executor.addTask(new TaskMapUpdateView(this, regionManager, req));
         }
     }
 
