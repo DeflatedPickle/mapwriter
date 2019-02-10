@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL12;
 /*
  * MwRender contains most of the code for drawing the overlay. This includes: -
  * loading textures from images - saving textures to images - allocating and
- * setting up GL textures - drawing coloured and textured quads (using minecraft
+ * setting up GL textures - drawing colored and textured quads (using minecraft
  * Tesselator class)
  */
 
@@ -21,14 +21,14 @@ public class Render {
     public static double zDepth = 0.0D;
     public static final double circleSteps = 30.0;
 
-    public static int adjustPixelBrightness(int colour, int brightness) {
-        int r = colour >> 16 & 0xff;
-        int g = colour >> 8 & 0xff;
-        int b = colour >> 0 & 0xff;
+    public static int adjustPixelBrightness(int color, int brightness) {
+        int r = color >> 16 & 0xff;
+        int g = color >> 8 & 0xff;
+        int b = color >> 0 & 0xff;
         r = Math.min(Math.max(0, r + brightness), 0xff);
         g = Math.min(Math.max(0, g + brightness), 0xff);
         b = Math.min(Math.max(0, b + brightness), 0xff);
-        return colour & 0xff000000 | r << 16 | g << 8 | b;
+        return color & 0xff000000 | r << 16 | g << 8 | b;
     }
 
     public static void disableStencil() {
@@ -61,13 +61,13 @@ public class Render {
         GlStateManager.disableBlend();
     }
 
-    public static void drawCentredString(int x, int y, int colour, String formatString, Object... args) {
+    public static void drawCentredString(int x, int y, int color, String formatString, Object... args) {
         final Minecraft mc = Minecraft.getMinecraft();
         // mc.renderEngine.resetBoundTexture();
         final FontRenderer fr = mc.fontRenderer;
         final String s = String.format(formatString, args);
         final int w = fr.getStringWidth(s);
-        fr.drawStringWithShadow(s, x - w / 2, y, colour);
+        fr.drawStringWithShadow(s, x - w / 2, y, color);
     }
 
     public static void drawCircle(double x, double y, double r) {
@@ -149,12 +149,12 @@ public class Render {
         }
     }
 
-    public static void drawString(int x, int y, int colour, String formatString, Object... args) {
+    public static void drawString(int x, int y, int color, String formatString, Object... args) {
         final Minecraft mc = Minecraft.getMinecraft();
         // mc.renderEngine.resetBoundTexture();
         final FontRenderer fr = mc.fontRenderer;
         final String s = String.format(formatString, args);
-        fr.drawStringWithShadow(s, x, y, colour);
+        fr.drawStringWithShadow(s, x, y, color);
     }
 
     // draw rectangle with texture stretched to fill the shape
@@ -206,7 +206,7 @@ public class Render {
      * from the hookUpdateCameraAndRender method of MapWriter this will have already been done.
      */
 
-    public static int getAverageColourOfArray(int[] pixels) {
+    public static int getAverageColorOfArray(int[] pixels) {
         int count = 0;
         double totalA = 0.0;
         double totalR = 0.0;
@@ -266,7 +266,7 @@ public class Render {
         return GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
     }
 
-    public static int multiplyColours(int c1, int c2) {
+    public static int multiplyColors(int c1, int c2) {
         final float c1A = c1 >> 24 & 0xff;
         final float c1R = c1 >> 16 & 0xff;
         final float c1G = c1 >> 8 & 0xff;
@@ -290,7 +290,7 @@ public class Render {
         MapWriterForge.LOGGER.info("texture {} parameters: width={}, height={}, depth={}, format=%08x", texture, w, h, depth, format);
     }
 
-    public static void resetColour() {
+    public static void resetColor() {
         GlStateManager.color(1f, 1f, 1f, 1f);
     }
 
@@ -320,12 +320,12 @@ public class Render {
 
         // draw stencil pattern (filled circle at z = 0000.0)
         // map will be drawn behind the stencil
-        Render.setColour(0xffffffff);
+        Render.setColor(0xffffffff);
         Render.zDepth = 0.0;
         Render.drawCircle(x, y, r);
         Render.zDepth = -1.0;
 
-        // re-enable drawing to colour buffer
+        // re-enable drawing to color buffer
         GlStateManager.colorMask(true, true, true, true);
         // disable drawing to depth buffer
         GlStateManager.depthMask(false);
@@ -336,17 +336,16 @@ public class Render {
         GlStateManager.depthFunc(GL11.GL_GREATER);
     }
 
-    public static void setColour(int colour) {
+    public static void setColor(int color) {
 
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.color((colour >> 16 & 0xff) / 255f, (colour >> 8 & 0xff) / 255f, (colour & 0xff) / 255f, (colour >> 24 & 0xff) / 255f);
+        GlStateManager.color((color >> 16 & 0xff) / 255f, (color >> 8 & 0xff) / 255f, (color & 0xff) / 255f, (color >> 24 & 0xff) / 255f);
         GlStateManager.disableBlend();
     }
 
-    public static void setColourWithAlphaPercent(int colour, int alphaPercent) {
-
-        setColour((alphaPercent * 0xff / 100 & 0xff) << 24 | colour & 0xffffff);
+    public static void setColorWithAlphaPercent(int color, int alphaPercent) {
+        setColor((alphaPercent * 0xff / 100 & 0xff) << 24 | color & 0xffffff);
     }
 
     // A better implementation of a circular stencil using the stencil buffer
@@ -380,7 +379,7 @@ public class Render {
      * GL11.glStencilOp(GL11.GL_REPLACE, GL11.GL_KEEP, GL11.GL_KEEP); // enable writing to 8
      * bits of the stencil buffer GL11.glStencilMask(0x01); // clear stencil buffer, with mask
      * 0xff GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // draw stencil pattern
-     * Render.setColour(0xffffffff); Render.drawCircle(x, y, r); // re-enable drawing to colour
+     * Render.setColor(0xffffffff); Render.drawCircle(x, y, r); // re-enable drawing to color
      * and depth buffers GL11.glColorMask(true, true, true, true); // probably shouldn't
      * enable? -> GL11.glDepthMask(true); // disable writing to stencil buffer
      * GL11.glStencilMask(0x00); // draw only when stencil buffer value == 1 (inside circle)

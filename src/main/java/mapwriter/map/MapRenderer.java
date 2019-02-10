@@ -41,11 +41,11 @@ public class MapRenderer {
         byte border = overlay.getBorder();
 
         if (border != 0) {
-            Render.setColour(overlay.getBorderColor());
+            Render.setColor(overlay.getBorderColor());
             Render.drawRectBorder(topCorner.x + 1, topCorner.y + 1, botCorner.x - topCorner.x - 1, botCorner.y - topCorner.y - 1, overlay.getBorderWidth(), border);
         }
 
-        Render.setColour(overlay.getColor());
+        Render.setColor(overlay.getColor());
         Render.drawRect(topCorner.x + offsetX + 1, topCorner.y + offsetY + 1, sizeX - 1, sizeY - 1);
     }
 
@@ -130,7 +130,7 @@ public class MapRenderer {
         }
 
         this.mw.mc.renderEngine.bindTexture(Reference.DUMMY_MAP_TEXTURE);
-        Render.setColourWithAlphaPercent(0xffffff, 60);
+        Render.setColorWithAlphaPercent(0xffffff, 60);
         Render.drawTexturedRect(this.mapMode.getX(), this.mapMode.getY(), this.mapMode.getW(), this.mapMode.getH(), u, v, u + w, v + h);
 
         if (this.mapMode.getConfig().circular) {
@@ -181,11 +181,11 @@ public class MapRenderer {
                 bv2 = (v + h) * bSize;
             }
             this.mw.mc.renderEngine.bindTexture(Reference.BACKGROUND_TEXTURE);
-            Render.setColourWithAlphaPercent(0xffffff, this.mapMode.getConfig().alphaPercent);
+            Render.setColorWithAlphaPercent(0xffffff, this.mapMode.getConfig().alphaPercent);
             Render.drawTexturedRect(this.mapMode.getX(), this.mapMode.getY(), this.mapMode.getW(), this.mapMode.getH(), bu1, bv1, bu2, bv2);
         } else {
             // mode 0, no background texture
-            Render.setColourWithAlphaPercent(0x000000, this.mapMode.getConfig().alphaPercent);
+            Render.setColorWithAlphaPercent(0x000000, this.mapMode.getConfig().alphaPercent);
             Render.drawRect(this.mapMode.getX(), this.mapMode.getY(), this.mapMode.getW(), this.mapMode.getH());
         }
     }
@@ -198,7 +198,7 @@ public class MapRenderer {
                 GlStateManager.scale(0.5f, 0.5f, 1f);
                 this.textOffset = (int) (this.textOffset * 0.5f);
             }
-            Render.drawCentredString(0, 0, this.mapMode.getTextColour(), this.mw.playerBiome.equals("") ? "BiomeName" : this.mw.playerBiome);
+            Render.drawCentredString(0, 0, this.mapMode.getTextColor(), this.mw.playerBiome.equals("") ? "BiomeName" : this.mw.playerBiome);
             this.textY += this.textOffset;
             GlStateManager.popMatrix();
         }
@@ -206,7 +206,7 @@ public class MapRenderer {
 
     private void drawBorder() {
         this.mw.mc.renderEngine.bindTexture(this.mapMode.getConfig().circular ? Reference.ROUND_MAP_TEXTURE : Reference.SQUARE_MAP_TEXTURE);
-        Render.setColour(0xffffffff);
+        Render.setColor(0xffffffff);
         Render.drawTexturedRect(this.mapMode.getX() * 1.1, this.mapMode.getY() * 1.1, this.mapMode.getW() * 1.1, this.mapMode.getH() * 1.1, 0.0, 0.0, 1.0, 1.0);
     }
 
@@ -219,7 +219,7 @@ public class MapRenderer {
                 GlStateManager.scale(0.5f, 0.5f, 1f);
                 this.textOffset = (int) (this.textOffset * 0.5f);
             }
-            Render.drawCentredString(0, 0, this.mapMode.getTextColour(), "%d, %d, %d", this.mw.playerXInt, this.mw.playerYInt, this.mw.playerZInt);
+            Render.drawCentredString(0, 0, this.mapMode.getTextColor(), "%d, %d, %d", this.mw.playerXInt, this.mw.playerYInt, this.mw.playerZInt);
             this.textY += this.textOffset;
             GlStateManager.popMatrix();
         }
@@ -292,9 +292,9 @@ public class MapRenderer {
             // draw the underground map
             this.mw.undergroundMapTexture.requestView(this.mapView);
             // underground map needs to have a black background
-            Render.setColourWithAlphaPercent(0x000000, this.mapMode.getConfig().alphaPercent);
+            Render.setColorWithAlphaPercent(0x000000, this.mapMode.getConfig().alphaPercent);
             Render.drawRect(this.mapMode.getX(), this.mapMode.getY(), this.mapMode.getW(), this.mapMode.getH());
-            Render.setColourWithAlphaPercent(0xffffff, this.mapMode.getConfig().alphaPercent);
+            Render.setColorWithAlphaPercent(0xffffff, this.mapMode.getConfig().alphaPercent);
             this.mw.undergroundMapTexture.bind();
             Render.drawTexturedRect(this.mapMode.getX(), this.mapMode.getY(), this.mapMode.getW(), this.mapMode.getH(), u, v, u + w, v + h);
         } else {
@@ -309,7 +309,7 @@ public class MapRenderer {
             // loaded by the background thread)
             if (this.mw.mapTexture.isLoaded(req)) {
                 this.mw.mapTexture.bind();
-                Render.setColourWithAlphaPercent(0xffffff, this.mapMode.getConfig().alphaPercent);
+                Render.setColorWithAlphaPercent(0xffffff, this.mapMode.getConfig().alphaPercent);
                 Render.drawTexturedRect(this.mapMode.getX(), this.mapMode.getY(), this.mapMode.getW(), this.mapMode.getH(), u, v, u + w, v + h);
             }
         }
@@ -331,7 +331,7 @@ public class MapRenderer {
 
     private void drawCompass() {
         if (this.mapMode.getConfig().rotate) {
-            Render.setColour(0xffffffff);
+            Render.setColor(0xffffffff);
             this.mw.mc.renderEngine.bindTexture(Reference.COMPASS_TEXTURE);
             Render.drawTexturedRect(this.mapMode.getX(), this.mapMode.getY(), this.mapMode.getW(), this.mapMode.getH(), 0.0, 0.0, 1.0, 1.0);
         }
@@ -364,7 +364,7 @@ public class MapRenderer {
         }
 
         final double arrowSize = this.mapMode.getConfig().playerArrowSize;
-        Render.setColour(0xffffffff);
+        Render.setColor(0xffffffff);
         this.mw.mc.renderEngine.bindTexture(Reference.PLAYER_ARROW_TEXTURE);
         Render.drawTexturedRect(-arrowSize, -arrowSize, arrowSize * 2, arrowSize * 2, 0.0, 0.0, 1.0, 1.0);
         GlStateManager.popMatrix();
@@ -385,7 +385,7 @@ public class MapRenderer {
             GlStateManager.translate(this.textX, this.textY, 0);
             GlStateManager.scale(0.5f, 0.5f, 1f);
             this.textOffset = (int) (this.textOffset * 0.5f);
-            Render.drawCentredString(0, 0, this.mapMode.getTextColour(), "underground mode");
+            Render.drawCentredString(0, 0, this.mapMode.getTextColor(), "underground mode");
             this.textY += this.textOffset;
             GlStateManager.popMatrix();
         }

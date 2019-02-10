@@ -42,6 +42,6 @@ public class MapWriterForge {
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
         MinecraftForge.EVENT_BUS.register(new ConfigurationHandler());
         MinecraftForge.EVENT_BUS.register(new MapWriterEventHandler(MapWriter.getInstance()));
-        MinecraftForge.EVENT_BUS.register(new MwKeyHandler());
+        MinecraftForge.EVENT_BUS.register(new MapWriterKeyHandler());
     }
 }

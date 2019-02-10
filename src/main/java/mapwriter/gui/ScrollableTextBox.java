@@ -16,22 +16,19 @@ public class ScrollableTextBox extends ScrollableField {
 
     protected GuiTextField textField;
 
-    ScrollableTextBox(int x, int y, int width, String label, FontRenderer fontrendererObj) {
-
-        super(x, y, width, label, fontrendererObj);
+    ScrollableTextBox(int x, int y, int width, String label, FontRenderer fontRenderer) {
+        super(x, y, width, label, fontRenderer);
         this.init();
     }
 
-    ScrollableTextBox(int x, int y, int width, String label, List<String> scrollableElements, FontRenderer fontrendererObj) {
-
-        super(x, y, width, label, fontrendererObj);
+    ScrollableTextBox(int x, int y, int width, String label, List<String> scrollableElements, FontRenderer fontRenderer) {
+        super(x, y, width, label, fontRenderer);
         this.scrollableElements = scrollableElements;
         this.init();
     }
 
     @Override
     public void draw() {
-
         super.draw();
         this.textField.drawTextBox();
         if (!this.validateTextFieldData()) {
@@ -41,46 +38,40 @@ public class ScrollableTextBox extends ScrollableField {
             final int y1 = this.textFieldY - 1;
             final int x2 = this.textFieldX + this.textFieldWidth;
             final int y2 = this.textFieldY + ScrollableTextBox.textFieldHeight;
-            final int colour = 0xff900000;
+            final int color = 0xff900000;
 
-            this.drawHorizontalLine(x1, x2, y1, colour);
-            this.drawHorizontalLine(x1, x2, y2, colour);
+            this.drawHorizontalLine(x1, x2, y1, color);
+            this.drawHorizontalLine(x1, x2, y2, color);
 
-            this.drawVerticalLine(x1, y1, y2, colour);
-            this.drawVerticalLine(x2, y1, y2, colour);
+            this.drawVerticalLine(x1, y1, y2, color);
+            this.drawVerticalLine(x2, y1, y2, color);
         }
     }
 
     public int getCursorPosition() {
-
         return this.textField.getCursorPosition();
     }
 
     public String getText() {
-
         return this.textField.getText();
     }
 
     @Override
     public Boolean isFocused() {
-
         return this.textField.isFocused();
     }
 
-    public void KeyTyped(char c, int key) {
-
-        this.textField.textboxKeyTyped(c, key);
+    public void keyTyped(char symbol, int key) {
+        this.textField.textboxKeyTyped(symbol, key);
     }
 
     @Override
     public void mouseClicked(int x, int y, int button) {
-
         super.mouseClicked(x, y, button);
         this.textField.mouseClicked(x, y, button);
     }
 
     public void mouseDWheelScrolled(int x, int y, int direction) {
-
         if (this.posWithinTextField(x, y)) {
             this.textFieldScroll(-direction);
         }
@@ -88,23 +79,19 @@ public class ScrollableTextBox extends ScrollableField {
 
     @Override
     public void nextElement() {
-
         this.textFieldScroll(1);
     }
 
     public boolean posWithinTextField(int x, int y) {
-
         return x >= this.textFieldX && y >= this.textFieldY && x <= this.textFieldWidth + this.textFieldX && y <= ScrollableTextBox.textFieldHeight + this.textFieldY;
     }
 
     @Override
     public void previousElement() {
-
         this.textFieldScroll(-1);
     }
 
     public void setCursorPositionEnd() {
-
         this.textField.setCursorPositionEnd();
     }
 
@@ -178,13 +165,13 @@ class ScrollableNumericTextBox extends ScrollableTextBox {
     }
 
     @Override
-    public void KeyTyped(char c, int key) {
+    public void keyTyped(char symbol, int key) {
 
-        if (c >= '0' && c <= '9' || key == Keyboard.KEY_BACK || key == Keyboard.KEY_LEFT || key == Keyboard.KEY_RIGHT || c == '-' && this.getCursorPosition() == 0) {
-            if (Character.isDigit(c) && this.maxValue > -1 && Integer.parseInt(this.getText() + c) > this.maxValue) {
+        if (symbol >= '0' && symbol <= '9' || key == Keyboard.KEY_BACK || key == Keyboard.KEY_LEFT || key == Keyboard.KEY_RIGHT || symbol == '-' && this.getCursorPosition() == 0) {
+            if (Character.isDigit(symbol) && this.maxValue > -1 && Integer.parseInt(this.getText() + symbol) > this.maxValue) {
                 return;
             }
-            super.KeyTyped(c, key);
+            super.keyTyped(symbol, key);
         }
     }
 

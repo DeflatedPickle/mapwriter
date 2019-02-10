@@ -15,7 +15,7 @@ public interface MapMode {
 
     Point.Double getNewPosPoint(double mouseX, double mouseY);
 
-    int getTextColour();
+    int getTextColor();
 
     int getTextX();
 

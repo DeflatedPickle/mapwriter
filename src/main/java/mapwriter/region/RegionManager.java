@@ -1,6 +1,6 @@
 package mapwriter.region;
 
-import mapwriter.util.BlockColours;
+import mapwriter.util.BlockColors;
 import mapwriter.forge.MapWriterForge;
 import net.minecraft.world.DimensionType;
 import org.apache.logging.log4j.Logger;
@@ -54,18 +54,18 @@ public class RegionManager {
     private final LruCache regionMap;
     public final File worldDir;
     public final File imageDir;
-    public BlockColours blockColours;
+    public BlockColors blockColors;
 
     public final RegionFileCache regionFileCache;
     public int maxZoom;
 
     public int minZoom;
 
-    public RegionManager(File worldDir, File imageDir, BlockColours blockColours, int minZoom, int maxZoom) {
+    public RegionManager(File worldDir, File imageDir, BlockColors blockColors, int minZoom, int maxZoom) {
 
         this.worldDir = worldDir;
         this.imageDir = imageDir;
-        this.blockColours = blockColours;
+        this.blockColors = blockColors;
         this.regionMap = new LruCache();
         this.regionFileCache = new RegionFileCache(worldDir);
         this.minZoom = minZoom;

@@ -38,8 +38,8 @@ public class MarkerManager {
         this.markers.add(marker);
     }
 
-    public void addMarker(String name, String groupName, int x, int y, int z, DimensionType dimension, int colour) {
-        this.addMarker(new Marker(name, groupName, x, y, z, dimension, colour));
+    public void addMarker(String name, String groupName, int x, int y, int z, DimensionType dimension, int color) {
+        this.addMarker(new Marker(name, groupName, x, y, z, dimension, color));
         this.save(WorldConfig.getInstance().worldConfiguration, Reference.CAT_MARKERS);
     }
 
@@ -353,7 +353,7 @@ public class MarkerManager {
     }
 
     public String markerToString(Marker marker) {
-        return String.format("%s:%d:%d:%d:%s:%06x:%s", marker.name, marker.x, marker.y, marker.z, marker.dimension.getName(), marker.colour & 0xffffff, marker.groupName);
+        return String.format("%s:%d:%d:%d:%s:%06x:%s", marker.name, marker.x, marker.y, marker.z, marker.dimension.getName(), marker.color & 0xffffff, marker.groupName);
     }
 
     public void nextGroup() {
@@ -432,9 +432,9 @@ public class MarkerManager {
                 final int y = Integer.parseInt(split[2]);
                 final int z = Integer.parseInt(split[3]);
                 final DimensionType dimension = DimensionType.byName(split[4]);
-                final int colour = 0xff000000 | Integer.parseInt(split[5], 16);
+                final int color = 0xff000000 | Integer.parseInt(split[5], 16);
 
-                marker = new Marker(split[0], split[6], x, y, z, dimension, colour);
+                marker = new Marker(split[0], split[6], x, y, z, dimension, color);
 
             } catch (final IllegalArgumentException e) {
                 marker = null;

@@ -22,12 +22,6 @@ public class GuiMarkerDialogNew extends GuiScreen {
     String title = "";
     String titleNew = "mw.gui.mwguimarkerdialognew.title.new";
     String titleEdit = "mw.gui.mwguimarkerdialognew.title.edit";
-    private final String editMarkerName = "mw.gui.mwguimarkerdialognew.editMarkerName";
-    private final String editMarkerGroup = "mw.gui.mwguimarkerdialognew.editMarkerGroup";
-    private final String editMarkerX = "mw.gui.mwguimarkerdialognew.editMarkerX";
-    private final String editMarkerY = "mw.gui.mwguimarkerdialognew.editMarkerY";
-    private final String editMarkerZ = "mw.gui.mwguimarkerdialognew.editMarkerZ";
-    private final String editMarkerColor = "mw.gui.mwguimarkerdialognew.editMarkerColor";
     ScrollableTextBox scrollableTextBoxName = null;
     ScrollableTextBox scrollableTextBoxGroup = null;
     ScrollableNumericTextBox scrollableNumericTextBoxX = null;
@@ -43,10 +37,9 @@ public class GuiMarkerDialogNew extends GuiScreen {
     private int markerY;
     private int markerZ;
     private DimensionType dimension;
-    private int colour;
+    private int color;
 
     public GuiMarkerDialogNew(GuiScreen parentScreen, MarkerManager markerManager, Marker editingMarker) {
-
         this.markerManager = markerManager;
         this.editingMarker = editingMarker;
         this.markerName = editingMarker.name;
@@ -55,13 +48,12 @@ public class GuiMarkerDialogNew extends GuiScreen {
         this.markerY = editingMarker.y;
         this.markerZ = editingMarker.z;
         this.dimension = editingMarker.dimension;
-        this.colour = editingMarker.colour;
+        this.color = editingMarker.color;
         this.parentScreen = parentScreen;
         this.title = this.titleEdit;
     }
 
     public GuiMarkerDialogNew(GuiScreen parentScreen, MarkerManager markerManager, String markerName, String markerGroup, int x, int y, int z, DimensionType dimension) {
-
         this.markerManager = markerManager;
         this.markerName = markerName;
         this.markerGroup = markerGroup;
@@ -69,7 +61,7 @@ public class GuiMarkerDialogNew extends GuiScreen {
         this.markerY = y;
         this.markerZ = z;
         this.dimension = dimension;
-        this.colour = Utils.getCurrentColour();
+        this.color = Utils.getCurrentColor();
         this.editingMarker = null;
         this.parentScreen = parentScreen;
         this.title = this.titleNew;
@@ -77,7 +69,6 @@ public class GuiMarkerDialogNew extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float f) {
-
         if (this.parentScreen != null) {
             this.parentScreen.drawScreen(mouseX, mouseY, f);
         } else {
@@ -100,7 +91,6 @@ public class GuiMarkerDialogNew extends GuiScreen {
     // the scroll wheel.
     @Override
     public void handleMouseInput() throws IOException {
-
         if (MapWriterAPI.getCurrentDataProvider() != null) {
             return;
         }
@@ -115,39 +105,43 @@ public class GuiMarkerDialogNew extends GuiScreen {
 
     @Override
     public void initGui() {
-
         final int labelsWidth = this.fontRenderer.getStringWidth("Group");
         final int width = this.width * GuiMarkerDialogNew.dialogWidthPercent / 100 - labelsWidth - 20;
         final int x = (this.width - width + labelsWidth) / 2;
         final int y = (this.height - GuiMarkerDialogNew.elementVSpacing * GuiMarkerDialogNew.numberOfElements) / 2;
 
-        this.scrollableTextBoxName = new ScrollableTextBox(x, y, width, I18n.format(this.editMarkerName), this.fontRenderer);
+        String editMarkerName = "mw.gui.mwguimarkerdialognew.editMarkerName";
+        this.scrollableTextBoxName = new ScrollableTextBox(x, y, width, I18n.format(editMarkerName), this.fontRenderer);
         this.scrollableTextBoxName.setFocused(true);
         this.scrollableTextBoxName.setText(this.markerName);
 
-        this.scrollableTextBoxGroup = new ScrollableTextBox(x, y + GuiMarkerDialogNew.elementVSpacing, width, I18n.format(this.editMarkerGroup), this.markerManager.groups, this.fontRenderer);
+        String editMarkerGroup = "mw.gui.mwguimarkerdialognew.editMarkerGroup";
+        this.scrollableTextBoxGroup = new ScrollableTextBox(x, y + GuiMarkerDialogNew.elementVSpacing, width, I18n.format(editMarkerGroup), this.markerManager.groups, this.fontRenderer);
         this.scrollableTextBoxGroup.setText(this.markerGroup);
         this.scrollableTextBoxGroup.setDrawArrows(true);
 
-        this.scrollableNumericTextBoxX = new ScrollableNumericTextBox(x, y + GuiMarkerDialogNew.elementVSpacing * 2, width, I18n.format(this.editMarkerX), this.fontRenderer);
+        String editMarkerX = "mw.gui.mwguimarkerdialognew.editMarkerX";
+        this.scrollableNumericTextBoxX = new ScrollableNumericTextBox(x, y + GuiMarkerDialogNew.elementVSpacing * 2, width, I18n.format(editMarkerX), this.fontRenderer);
         this.scrollableNumericTextBoxX.setText("" + this.markerX);
         this.scrollableNumericTextBoxX.setDrawArrows(true);
 
-        this.scrollableNumericTextBoxY = new ScrollableNumericTextBox(x, y + GuiMarkerDialogNew.elementVSpacing * 3, width, I18n.format(this.editMarkerY), this.fontRenderer);
+        String editMarkerY = "mw.gui.mwguimarkerdialognew.editMarkerY";
+        this.scrollableNumericTextBoxY = new ScrollableNumericTextBox(x, y + GuiMarkerDialogNew.elementVSpacing * 3, width, I18n.format(editMarkerY), this.fontRenderer);
         this.scrollableNumericTextBoxY.setText("" + this.markerY);
         this.scrollableNumericTextBoxY.setDrawArrows(true);
 
-        this.scrollableNumericTextBoxZ = new ScrollableNumericTextBox(x, y + GuiMarkerDialogNew.elementVSpacing * 4, width, I18n.format(this.editMarkerZ), this.fontRenderer);
+        String editMarkerZ = "mw.gui.mwguimarkerdialognew.editMarkerZ";
+        this.scrollableNumericTextBoxZ = new ScrollableNumericTextBox(x, y + GuiMarkerDialogNew.elementVSpacing * 4, width, I18n.format(editMarkerZ), this.fontRenderer);
         this.scrollableNumericTextBoxZ.setText("" + this.markerZ);
         this.scrollableNumericTextBoxZ.setDrawArrows(true);
 
-        this.ScrollableColorSelectorColor = new ScrollableColorSelector(x, y + GuiMarkerDialogNew.elementVSpacing * 5, width, I18n.format(this.editMarkerColor), this.fontRenderer);
-        this.ScrollableColorSelectorColor.setColor(this.colour);
+        String editMarkerColor = "mw.gui.mwguimarkerdialognew.editMarkerColor";
+        this.ScrollableColorSelectorColor = new ScrollableColorSelector(x, y + GuiMarkerDialogNew.elementVSpacing * 5, width, I18n.format(editMarkerColor), this.fontRenderer);
+        this.ScrollableColorSelectorColor.setColor(this.color);
         this.ScrollableColorSelectorColor.setDrawArrows(true);
     }
 
     public void mouseDWheelScrolled(int x, int y, int direction) {
-
         this.scrollableTextBoxName.mouseDWheelScrolled(x, y, direction);
         this.scrollableTextBoxGroup.mouseDWheelScrolled(x, y, direction);
         this.scrollableNumericTextBoxX.mouseDWheelScrolled(x, y, direction);
@@ -157,7 +151,6 @@ public class GuiMarkerDialogNew extends GuiScreen {
     }
 
     public boolean submit() {
-
         boolean inputCorrect = true;
 
         if (this.scrollableTextBoxName.validateTextFieldData()) {
@@ -191,7 +184,7 @@ public class GuiMarkerDialogNew extends GuiScreen {
         }
 
         if (this.ScrollableColorSelectorColor.validateColorData()) {
-            this.colour = this.ScrollableColorSelectorColor.getColor();
+            this.color = this.ScrollableColorSelectorColor.getColor();
         } else {
             inputCorrect = false;
         }
@@ -201,7 +194,7 @@ public class GuiMarkerDialogNew extends GuiScreen {
                 this.markerManager.delMarker(this.editingMarker);
                 this.editingMarker = null;
             }
-            this.markerManager.addMarker(this.markerName, this.markerGroup, this.markerX, this.markerY, this.markerZ, this.dimension, this.colour);
+            this.markerManager.addMarker(this.markerName, this.markerGroup, this.markerX, this.markerY, this.markerZ, this.dimension, this.color);
             this.markerManager.setVisibleGroupName(this.markerGroup);
             this.markerManager.update();
         }
@@ -209,8 +202,7 @@ public class GuiMarkerDialogNew extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped(char c, int key) {
-
+    protected void keyTyped(char symbol, int key) {
         switch (key) {
             case Keyboard.KEY_ESCAPE:
                 this.mc.displayGuiScreen(this.parentScreen);
@@ -269,19 +261,18 @@ public class GuiMarkerDialogNew extends GuiScreen {
 
                 break;
             default:
-                this.scrollableTextBoxName.KeyTyped(c, key);
-                this.scrollableTextBoxGroup.KeyTyped(c, key);
-                this.scrollableNumericTextBoxX.KeyTyped(c, key);
-                this.scrollableNumericTextBoxY.KeyTyped(c, key);
-                this.scrollableNumericTextBoxZ.KeyTyped(c, key);
-                this.ScrollableColorSelectorColor.KeyTyped(c, key);
+                this.scrollableTextBoxName.keyTyped(symbol, key);
+                this.scrollableTextBoxGroup.keyTyped(symbol, key);
+                this.scrollableNumericTextBoxX.keyTyped(symbol, key);
+                this.scrollableNumericTextBoxY.keyTyped(symbol, key);
+                this.scrollableNumericTextBoxZ.keyTyped(symbol, key);
+                this.ScrollableColorSelectorColor.keyTyped(symbol, key);
                 break;
         }
     }
 
     @Override
     protected void mouseClicked(int x, int y, int button) throws IOException {
-
         super.mouseClicked(x, y, button);
 
         this.scrollableTextBoxName.mouseClicked(x, y, button);

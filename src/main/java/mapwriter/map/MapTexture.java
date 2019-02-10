@@ -125,11 +125,11 @@ public class MapTexture extends Texture {
             this.setPixelBufPosition(bufOffset + i * this.w);
             final int rowOffset = offset + i * scanSize;
             for (int j = 0; j < w; j++) {
-                int colour = pixels[rowOffset + j];
-                if (colour != 0) {
-                    colour |= 0xff000000;
+                int color = pixels[rowOffset + j];
+                if (color != 0) {
+                    color |= 0xff000000;
                 }
-                this.pixelBufPut(colour);
+                this.pixelBufPut(color);
             }
         }
     }

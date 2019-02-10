@@ -1,11 +1,11 @@
 package mapwriter;
 
-import mapwriter.util.BlockColours;
+import mapwriter.util.BlockColors;
 import mapwriter.config.Config;
 import mapwriter.config.ConfigurationHandler;
 import mapwriter.config.WorldConfig;
 import mapwriter.forge.MapWriterForge;
-import mapwriter.forge.MwKeyHandler;
+import mapwriter.forge.MapWriterKeyHandler;
 import mapwriter.gui.GuiFullScreenMap;
 import mapwriter.gui.GuiMarkerDialog;
 import mapwriter.gui.GuiMarkerDialogNew;
@@ -70,7 +70,7 @@ public class MapWriter {
     public BackgroundExecutor executor = null;
     public MiniMap miniMap = null;
     public MarkerManager markerManager = null;
-    public BlockColours blockColours = null;
+    public BlockColors blockColors = null;
     public RegionManager regionManager = null;
 
     public ChunkManager chunkManager = null;
@@ -176,8 +176,8 @@ public class MapWriter {
         // mapTexture depends on config being loaded
         this.mapTexture = new MapTexture(this.textureSize, Config.linearTextureScaling);
         this.undergroundMapTexture = new UndergroundTexture(this, this.textureSize, Config.linearTextureScaling);
-        // region manager depends on config, mapTexture, and block colours
-        this.regionManager = new RegionManager(this.worldDir, this.imageDir, this.blockColours, Config.zoomInLevels, Config.zoomOutLevels);
+        // region manager depends on config, mapTexture, and block colors
+        this.regionManager = new RegionManager(this.worldDir, this.imageDir, this.blockColors, Config.zoomInLevels, Config.zoomOutLevels);
         // overlay manager depends on mapTexture
         this.miniMap = new MiniMap(this);
         this.miniMap.view.setDimension(this.mc.player.world.provider.getDimensionType());
@@ -212,14 +212,14 @@ public class MapWriter {
         // make sure not in GUI element (e.g. chat box)
         if (this.mc.currentScreen == null && this.ready) {
 
-            if (kb == MwKeyHandler.keyMapMode) {
+            if (kb == MapWriterKeyHandler.keyMapMode) {
                 // map mode toggle
                 this.miniMap.toggleMap();
-            } else if (kb == MwKeyHandler.keyMapGui) {
+            } else if (kb == MapWriterKeyHandler.keyMapGui) {
                 // open map gui
                 this.mc.displayGuiScreen(new GuiFullScreenMap(this));
 
-            } else if (kb == MwKeyHandler.keyNewMarker) {
+            } else if (kb == MapWriterKeyHandler.keyNewMarker) {
                 // open new marker dialog
                 String group = this.markerManager.getVisibleGroupName();
                 if (group.equals("none")) {
@@ -230,25 +230,25 @@ public class MapWriter {
                 } else {
                     this.mc.displayGuiScreen(new GuiMarkerDialog(null, this.markerManager, "", group, this.playerXInt, this.playerYInt, this.playerZInt, this.playerDimension));
                 }
-            } else if (kb == MwKeyHandler.keyNextGroup) {
+            } else if (kb == MapWriterKeyHandler.keyNextGroup) {
                 // toggle marker mode
                 this.markerManager.nextGroup();
                 this.markerManager.update();
                 this.mc.player.sendMessage(new TextComponentTranslation("mw.msg.groupselected", this.markerManager.getVisibleGroupName()));
 
-            } else if (kb == MwKeyHandler.keyTeleport) {
+            } else if (kb == MapWriterKeyHandler.keyTeleport) {
                 // set or remove marker
                 final Marker marker = this.markerManager.getNearestMarkerInDirection(this.playerXInt, this.playerZInt, this.playerHeading);
                 if (marker != null) {
                     this.teleportToMarker(marker);
                 }
-            } else if (kb == MwKeyHandler.keyZoomIn) {
+            } else if (kb == MapWriterKeyHandler.keyZoomIn) {
                 // zoom in
                 this.miniMap.view.adjustZoomLevel(-1);
-            } else if (kb == MwKeyHandler.keyZoomOut) {
+            } else if (kb == MapWriterKeyHandler.keyZoomOut) {
                 // zoom out
                 this.miniMap.view.adjustZoomLevel(1);
-            } else if (kb == MwKeyHandler.keyUndergroundMode) {
+            } else if (kb == MapWriterKeyHandler.keyUndergroundMode) {
                 MapWriter.toggleUndergroundMode();
             }
         }
@@ -314,13 +314,12 @@ public class MapWriter {
         }
     }
 
-    public void reloadBlockColours() {
-
-        final BlockColours bc = new BlockColours();
-        bc.loadColourData();
+    public void reloadBlockColors() {
+        final BlockColors bc = new BlockColors();
+        bc.loadColorData();
         // TODO overrides? -dh
         // TODO save? -dh
-        this.blockColours = bc;
+        this.blockColors = bc;
     }
 
     public void reloadMapTexture() {
@@ -334,7 +333,7 @@ public class MapWriter {
             oldMapTexture.close();
         }
         this.executor = new BackgroundExecutor();
-        this.regionManager = new RegionManager(this.worldDir, this.imageDir, this.blockColours, Config.zoomInLevels, Config.zoomOutLevels);
+        this.regionManager = new RegionManager(this.worldDir, this.imageDir, this.blockColors, Config.zoomInLevels, Config.zoomOutLevels);
 
         final UndergroundTexture oldTexture = this.undergroundMapTexture;
         final UndergroundTexture newTexture = new UndergroundTexture(this, this.textureSize, Config.linearTextureScaling);

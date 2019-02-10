@@ -30,8 +30,8 @@ public class SmallMapModeConfig extends MapModeConfig {
         this.biomeModeDef = TEXT_MODE[0];
         this.playerArrowSizeDef = 4;
         this.markerSizeDef = 3;
-        this.xPosDef = 10;
-        this.yPosDef = 10;
+        this.xPosDef = 2;
+        this.yPosDef = 4;
         this.heightPercentDef = 30;
         this.widthPercentDef = 30;
 

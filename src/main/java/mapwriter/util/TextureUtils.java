@@ -17,11 +17,11 @@ public class TextureUtils {
         return ReflectionHelper.getPrivateValue(TextureMap.class, map, "field_110574_e", "mapRegisteredSprites");
     }
 
-    public static Map<IRegistryDelegate<Block>, IBlockColor> getBlockColours() {
+    public static Map<IRegistryDelegate<Block>, IBlockColor> getBlockColors() {
         return ReflectionHelper.getPrivateValue(BlockColors.class, Minecraft.getMinecraft().getBlockColors(), "blockColorMap");
     }
 
-    public static int getIconMapColour(TextureAtlasSprite icon, Texture terrainTexture) {
+    public static int getIconMapColor(TextureAtlasSprite icon, Texture terrainTexture) {
         final int iconX = Math.round(terrainTexture.w * Math.min(icon.getMinU(), icon.getMaxU()));
         final int iconY = Math.round(terrainTexture.h * Math.min(icon.getMinV(), icon.getMaxV()));
         final int iconWidth = Math.round(terrainTexture.w * Math.abs(icon.getMaxU() - icon.getMinU()));
@@ -30,6 +30,6 @@ public class TextureUtils {
         final int[] pixels = new int[iconWidth * iconHeight];
 
         terrainTexture.getRGB(iconX, iconY, iconWidth, iconHeight, pixels, 0, iconWidth, icon);
-        return Render.getAverageColourOfArray(pixels);
+        return Render.getAverageColorOfArray(pixels);
     }
 }

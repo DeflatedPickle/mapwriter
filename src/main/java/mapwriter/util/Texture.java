@@ -25,17 +25,17 @@ public class Texture {
         MapWriterForge.LOGGER.info("created new MwTexture from GL texture id {} ({}x{}) ({} pixels)", this.id, this.w, this.h, this.pixelBuf.limit());
     }
 
-    public Texture(int w, int h, int fillColour) {
-        this(w, h, fillColour, GL11.GL_LINEAR, GL11.GL_NEAREST, GL12.GL_CLAMP_TO_EDGE);
+    public Texture(int w, int h, int fillColor) {
+        this(w, h, fillColor, GL11.GL_LINEAR, GL11.GL_NEAREST, GL12.GL_CLAMP_TO_EDGE);
     }
 
     // allocate new texture and fill from IntBuffer
-    public Texture(int w, int h, int fillColour, int minFilter, int maxFilter, int textureWrap) {
+    public Texture(int w, int h, int fillColor, int minFilter, int maxFilter, int textureWrap) {
         this.id = GlStateManager.generateTexture();
         this.w = w;
         this.h = h;
         this.pixelBuf = Utils.allocateDirectIntBuffer(w * h);
-        this.fillRect(0, 0, w, h, fillColour);
+        this.fillRect(0, 0, w, h, fillColor);
         this.pixelBuf.position(0);
         this.bind();
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, w, h, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, this.pixelBuf);
@@ -60,12 +60,12 @@ public class Texture {
         }
     }
 
-    public synchronized void fillRect(int x, int y, int w, int h, int colour) {
+    public synchronized void fillRect(int x, int y, int w, int h, int color) {
         final int offset = y * this.w + x;
         for (int j = 0; j < h; j++) {
             this.pixelBuf.position(offset + j * this.w);
             for (int i = 0; i < w; i++) {
-                this.pixelBuf.put(colour);
+                this.pixelBuf.put(color);
             }
         }
     }
@@ -110,8 +110,8 @@ public class Texture {
         this.pixelBuf.position(i);
     }
 
-    public synchronized void setRGB(int x, int y, int colour) {
-        this.pixelBuf.put(y * this.w + x, colour);
+    public synchronized void setRGB(int x, int y, int color) {
+        this.pixelBuf.put(y * this.w + x, color);
     }
 
     // Copy a rectangular sub-region of dimensions 'w' x 'h' from the array

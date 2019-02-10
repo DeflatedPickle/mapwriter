@@ -6,7 +6,7 @@ import mapwriter.api.MapWriterAPI;
 import mapwriter.config.Config;
 import mapwriter.config.WorldConfig;
 import mapwriter.forge.MapWriterForge;
-import mapwriter.forge.MwKeyHandler;
+import mapwriter.forge.MapWriterKeyHandler;
 import mapwriter.map.MapRenderer;
 import mapwriter.map.MapView;
 import mapwriter.map.Marker;
@@ -47,7 +47,7 @@ public class GuiFullScreenMap extends GuiScreen {
 
     private final MapRenderer map;
     private final String[] helpText1 = new String[]{"mw.gui.mwgui.keys", "", "  Space", "  Delete", "  C", "  Home", "  End", "  N", "  T", "  P", "  R", "  U", "  L", "", "mw.gui.mwgui.helptext.1", "mw.gui.mwgui.helptext.2", "mw.gui.mwgui.helptext.3", "mw.gui.mwgui.helptext.4", "mw.gui.mwgui.helptext.5", "mw.gui.mwgui.helptext.6", "", "mw.gui.mwgui.helptext.7", "mw.gui.mwgui.helptext.8", "mw.gui.mwgui.helptext.9"};
-    private final String[] helpText2 = new String[]{"", "", "mw.gui.mwgui.helptext.nextmarkergroup", "mw.gui.mwgui.helptext.deletemarker", "mw.gui.mwgui.helptext.cyclecolour", "mw.gui.mwgui.helptext.centermap", "mw.gui.mwgui.helptext.centermapplayer", "mw.gui.mwgui.helptext.selectnextmarker", "mw.gui.mwgui.helptext.teleport", "mw.gui.mwgui.helptext.savepng", "mw.gui.mwgui.helptext.regenerate", "mw.gui.mwgui.helptext.undergroundmap", "mw.gui.mwgui.helptext.markerlist"};
+    private final String[] helpText2 = new String[]{"", "", "mw.gui.mwgui.helptext.nextmarkergroup", "mw.gui.mwgui.helptext.deletemarker", "mw.gui.mwgui.helptext.cyclecolor", "mw.gui.mwgui.helptext.centermap", "mw.gui.mwgui.helptext.centermapplayer", "mw.gui.mwgui.helptext.selectnextmarker", "mw.gui.mwgui.helptext.teleport", "mw.gui.mwgui.helptext.savepng", "mw.gui.mwgui.helptext.regenerate", "mw.gui.mwgui.helptext.undergroundmap", "mw.gui.mwgui.helptext.markerlist"};
     private int mouseLeftHeld = 0;
     private int mouseLeftDragStartX = 0;
     private int mouseLeftDragStartY = 0;
@@ -292,9 +292,9 @@ public class GuiFullScreenMap extends GuiScreen {
         final Marker marker = this.getMarkerNearScreenPos(x, y);
         if (marker != null && marker == this.mw.markerManager.selectedMarker) {
             if (direction > 0) {
-                marker.colourNext();
+                marker.colorNext();
             } else {
-                marker.colourPrev();
+                marker.colorPrev();
             }
         } else if (this.dimensionLabel.posWithin(x, y)) {
             final int n = direction > 0 ? 1 : -1;
@@ -440,9 +440,9 @@ public class GuiFullScreenMap extends GuiScreen {
                 this.mw.markerManager.update();
                 break;
             case Keyboard.KEY_C:
-                // cycle selected marker colour
+                // cycle selected marker color
                 if (this.mw.markerManager.selectedMarker != null) {
-                    this.mw.markerManager.selectedMarker.colourNext();
+                    this.mw.markerManager.selectedMarker.colorNext();
                 }
                 break;
             case Keyboard.KEY_N:
@@ -489,16 +489,16 @@ public class GuiFullScreenMap extends GuiScreen {
                 this.markerOverlay.setEnabled(!this.markerOverlay.getEnabled());
                 break;
             default:
-                if (key == MwKeyHandler.keyMapGui.getKeyCode()) {
+                if (key == MapWriterKeyHandler.keyMapGui.getKeyCode()) {
                     this.exitGui();
-                } else if (key == MwKeyHandler.keyZoomIn.getKeyCode()) {
+                } else if (key == MapWriterKeyHandler.keyZoomIn.getKeyCode()) {
                     this.mapView.adjustZoomLevel(-1);
-                } else if (key == MwKeyHandler.keyZoomOut.getKeyCode()) {
+                } else if (key == MapWriterKeyHandler.keyZoomOut.getKeyCode()) {
                     this.mapView.adjustZoomLevel(1);
-                } else if (key == MwKeyHandler.keyNextGroup.getKeyCode()) {
+                } else if (key == MapWriterKeyHandler.keyNextGroup.getKeyCode()) {
                     this.mw.markerManager.nextGroup();
                     this.mw.markerManager.update();
-                } else if (key == MwKeyHandler.keyUndergroundMode.getKeyCode()) {
+                } else if (key == MapWriterKeyHandler.keyUndergroundMode.getKeyCode()) {
                     MapWriter.toggleUndergroundMode();
                 }
                 break;

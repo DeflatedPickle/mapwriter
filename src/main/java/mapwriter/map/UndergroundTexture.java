@@ -161,7 +161,7 @@ public class UndergroundTexture extends Texture {
                     final int tz = cz << 4 & this.textureSize - 1;
                     final int pixelOffset = tz * this.textureSize + tx;
                     final byte[] mask = this.updateFlags[flagOffset];
-                    ChunkRender.renderUnderground(this.mw.blockColours, new RenderChunk(chunk), this.pixels, pixelOffset, this.textureSize, this.py, mask);
+                    ChunkRender.renderUnderground(this.mw.blockColors, new RenderChunk(chunk), this.pixels, pixelOffset, this.textureSize, this.py, mask);
                 }
                 flagOffset += 1;
             }
@@ -217,13 +217,13 @@ public class UndergroundTexture extends Texture {
     void renderToTexture(int y) {
 
         this.setPixelBufPosition(0);
-        for (final int colour : this.pixels) {
-            final int height = colour >> 24 & 0xff;
+        for (final int color : this.pixels) {
+            final int height = color >> 24 & 0xff;
             int alpha = y >= height ? 255 - (y - height) * 8 : 0;
             if (alpha < 0) {
                 alpha = 0;
             }
-            this.pixelBufPut(alpha << 24 & 0xff000000 | colour & 0xffffff);
+            this.pixelBufPut(alpha << 24 & 0xff000000 | color & 0xffffff);
         }
         this.updateTexture();
     }

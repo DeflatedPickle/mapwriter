@@ -42,7 +42,7 @@ public class Utils {
         return dx * dx + dz * dz;
     }
 
-    public static int getCurrentColour() {
+    public static int getCurrentColor() {
         return 0xff000000 | Utils.colors[Utils.colorIndex];
     }
 
@@ -102,14 +102,14 @@ public class Utils {
         return Width;
     }
 
-    public static int getNextColour() {
+    public static int getNextColor() {
         Utils.colorIndex = (Utils.colorIndex + 1) % Utils.getColorsLength();
-        return Utils.getCurrentColour();
+        return Utils.getCurrentColor();
     }
 
-    public static int getPrevColour() {
+    public static int getPrevColor() {
         Utils.colorIndex = (Utils.colorIndex + Utils.getColorsLength() - 1) % Utils.getColorsLength();
-        return Utils.getCurrentColour();
+        return Utils.getCurrentColor();
     }
 
     public static String getWorldName() {

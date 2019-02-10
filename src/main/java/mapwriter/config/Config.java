@@ -21,8 +21,8 @@ public class Config {
     public static int zoomOutLevels = zoomOutLevelsDef;
     public static int zoomInLevelsDef = -5;
     public static int zoomInLevels = zoomInLevelsDef;
-    public static boolean useSavedBlockColoursDef = false;
-    public static boolean useSavedBlockColours = useSavedBlockColoursDef;
+    public static boolean useSavedBlockColorsDef = false;
+    public static boolean useSavedBlockColors = useSavedBlockColorsDef;
     public static int maxChunkSaveDistSqDef = 128 * 128;
     public static int maxChunkSaveDistSq = maxChunkSaveDistSqDef;
     public static boolean mapPixelSnapEnabledDef = true;
@@ -65,5 +65,5 @@ public class Config {
     public static SmallMapModeConfig smallMap = new SmallMapModeConfig(Reference.CAT_SMALL_MAP_CONFIG);
     public static MapModeConfig fullScreenMap = new MapModeConfig(Reference.CAT_FULL_MAP_CONFIG);
 
-    public static boolean reloadColours = Boolean.parseBoolean(System.getProperty("fml.skipFirstTextureLoad", "true"));
+    public static boolean reloadColors = Boolean.parseBoolean(System.getProperty("fml.skipFirstTextureLoad", "true"));
 }

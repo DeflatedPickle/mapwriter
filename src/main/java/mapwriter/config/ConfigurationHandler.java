@@ -34,7 +34,7 @@ public class ConfigurationHandler {
     public static void loadConfig() {
 
         Config.linearTextureScaling = configuration.getBoolean("linearTextureScaling", Reference.CAT_OPTIONS, Config.linearTextureScalingDef, "", "mw.config.linearTextureScaling");
-        Config.useSavedBlockColours = configuration.getBoolean("useSavedBlockColours", Reference.CAT_OPTIONS, Config.useSavedBlockColoursDef, "", "mw.config.useSavedBlockColours");
+        Config.useSavedBlockColors = configuration.getBoolean("useSavedBlockColors", Reference.CAT_OPTIONS, Config.useSavedBlockColorsDef, "", "mw.config.useSavedBlockColors");
         Config.teleportEnabled = configuration.getBoolean("teleportEnabled", Reference.CAT_OPTIONS, Config.teleportEnabledDef, "", "mw.config.teleportEnabled");
         Config.teleportCommand = configuration.getString("teleportCommand", Reference.CAT_OPTIONS, Config.teleportCommandDef, "", "mw.config.teleportCommand");
         Config.maxChunkSaveDistSq = configuration.getInt("maxChunkSaveDistSq", Reference.CAT_OPTIONS, Config.maxChunkSaveDistSqDef, 1, 256 * 256, "", "mw.config.maxChunkSaveDistSq");

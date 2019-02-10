@@ -42,14 +42,14 @@ public class MapWriterEventHandler {
         }
     }
 
-    // a bit odd way to reload the blockcolours. if the models are not loaded
+    // a bit odd way to reload the blockcolors. if the models are not loaded
     // yet then the uv values and icons will be wrong.
     // this only happens if fml.skipFirstTextureLoad is enabled.
     @SubscribeEvent
     public void onGuiOpenEvent(GuiOpenEvent event) {
-        if (event.getGui() instanceof GuiMainMenu && Config.reloadColours) {
-            this.mw.reloadBlockColours();
-            Config.reloadColours = false;
+        if (event.getGui() instanceof GuiMainMenu && Config.reloadColors) {
+            this.mw.reloadBlockColors();
+            Config.reloadColors = false;
         } else if (event.getGui() instanceof GuiGameOver) {
             this.mw.onPlayerDeath();
         } else if (event.getGui() instanceof GuiScreenRealmsProxy) {
@@ -91,10 +91,10 @@ public class MapWriterEventHandler {
 
     @SubscribeEvent
     public void onTextureStitchEventPost(TextureStitchEvent.Post event) {
-        if (Config.reloadColours) {
-            MapWriterForge.LOGGER.info("Skipping the first generation of blockcolours, models are not loaded yet");
+        if (Config.reloadColors) {
+            MapWriterForge.LOGGER.info("Skipping the first generation of blockcolors, models are not loaded yet");
         } else {
-            this.mw.reloadBlockColours();
+            this.mw.reloadBlockColors();
         }
     }
 

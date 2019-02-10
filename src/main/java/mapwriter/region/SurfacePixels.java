@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class SurfacePixels {
 
-    // get the averaged colour of a 2x2 pixel area in the given pixels
+    // get the averaged color of a 2x2 pixel area in the given pixels
     public static int getAverageOfPixelQuad(int[] pixels, int offset, int scanSize) {
 
         final int p00 = pixels[offset];
@@ -108,9 +108,9 @@ public class SurfacePixels {
         final int z = chunk.z << 4;
         final int offset = this.region.getPixelOffset(x, z);
         final int[] pixels = this.getOrAllocatePixels();
-        // TODO: refactor so that blockColours can be accessed
+        // TODO: refactor so that blockColors can be accessed
         // more directly
-        ChunkRender.renderSurface(this.region.regionManager.blockColours, chunk, pixels, offset, Region.SIZE, chunk.dimension == DimensionType.NETHER // use
+        ChunkRender.renderSurface(this.region.regionManager.blockColors, chunk, pixels, offset, Region.SIZE, chunk.dimension == DimensionType.NETHER // use
                 // ceiling
                 // algorithm
                 // for
@@ -142,8 +142,8 @@ public class SurfacePixels {
                 // set opaque black pixels to transparent so that
                 // background texture shows
                 for (int i = 0; i < this.pixels.length; i++) {
-                    final int colour = this.pixels[i];
-                    if (colour == 0xff000000) {
+                    final int color = this.pixels[i];
+                    if (color == 0xff000000) {
                         this.pixels[i] = 0;
                     }
                 }

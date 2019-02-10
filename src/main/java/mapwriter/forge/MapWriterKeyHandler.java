@@ -9,7 +9,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 
-public class MwKeyHandler {
+public class MapWriterKeyHandler {
     public static KeyBinding keyMapGui = new KeyBinding("key.mw_open_gui", Keyboard.KEY_M, "Mapwriter");
     public static KeyBinding keyNewMarker = new KeyBinding("key.mw_new_marker", Keyboard.KEY_INSERT, "Mapwriter");
     public static KeyBinding keyMapMode = new KeyBinding("key.mw_next_map_mode", Keyboard.KEY_N, "Mapwriter");
@@ -21,7 +21,7 @@ public class MwKeyHandler {
 
     public final KeyBinding[] keys = {keyMapGui, keyNewMarker, keyMapMode, keyNextGroup, keyTeleport, keyZoomIn, keyZoomOut, keyUndergroundMode};
 
-    public MwKeyHandler() {
+    public MapWriterKeyHandler() {
 
         final ArrayList<String> listKeyDescs = new ArrayList<>();
         // Register bindings

@@ -1,6 +1,6 @@
 package mapwriter.region;
 
-import mapwriter.util.BlockColours;
+import mapwriter.util.BlockColors;
 import mapwriter.config.Config;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -18,7 +18,7 @@ public class ChunkRender {
     public static final double BRIGHTEN_AMP = 0.7;
     public static final double DARKEN_AMP = 1.4;
 
-    // calculate the colour of a pixel by alpha blending the colour of each
+    // calculate the color of a pixel by alpha blending the color of each
     // block
     // in a column until an opaque block is reached.
     // y is topmost block height to start rendering at.
@@ -29,21 +29,21 @@ public class ChunkRender {
     // the ceiling.
     //
     // for every block in the column starting from the highest:
-    // - get the block colour
+    // - get the block color
     // - get the biome shading
-    // - extract colour components as doubles in the range [0.0, 1.0]
-    // - the shaded block colour is simply the block colour multiplied
+    // - extract color components as doubles in the range [0.0, 1.0]
+    // - the shaded block color is simply the block color multiplied
     // by the biome shading for each component
-    // - this shaded block colour is alpha blended with the running
-    // colour for this column
+    // - this shaded block color is alpha blended with the running
+    // color for this column
     //
-    // so the final map colour is an alpha blended stack of all the
-    // individual shaded block colours in the sequence [yStart .. yEnd]
+    // so the final map color is an alpha blended stack of all the
+    // individual shaded block colors in the sequence [yStart .. yEnd]
     //
     // note that the "front to back" alpha blending algorithm is used
     // rather than the more common "back to front".
     //
-    public static int getColumnColour(BlockColours bc, MapChunk chunk, int x, int y, int z, int heightW, int heightN) {
+    public static int getColumnColor(BlockColors bc, MapChunk chunk, int x, int y, int z, int heightW, int heightN) {
 
         double a = 1.0;
         double r = 0.0;
@@ -51,7 +51,7 @@ public class ChunkRender {
         double b = 0.0;
         for (; y > 0; y--) {
             final IBlockState blockState = chunk.getBlockState(x, y, z);
-            final int c1 = bc.getStateColour(blockState);
+            final int c1 = bc.getStateColor(blockState);
             int alpha = c1 >> 24 & 0xff;
 
             // this is the color that gets returned for air, so set aplha to 0
@@ -65,7 +65,7 @@ public class ChunkRender {
 
                 final int c2 = bc.getColorModifier(blockState, Minecraft.getMinecraft().world, new BlockPos(x, y, z));
 
-                // extract colour components as normalized doubles
+                // extract color components as normalized doubles
                 final double c1A = alpha / 255.0;
                 final double c1R = (c1 >> 16 & 0xff) / 255.0;
                 final double c1G = (c1 >> 8 & 0xff) / 255.0;
@@ -140,7 +140,7 @@ public class ChunkRender {
         return heightDiffFactor >= 0.0 ? Math.pow(heightDiffFactor * (1 / 255.0), BRIGHTEN_EXP) * BRIGHTEN_AMP : -Math.pow(-(heightDiffFactor * (1 / 255.0)), DARKEN_EXP) * DARKEN_AMP;
     }
 
-    public static void renderSurface(BlockColours bc, MapChunk chunk, int[] pixels, int offset, int scanSize, boolean dimensionHasCeiling) {
+    public static void renderSurface(BlockColors bc, MapChunk chunk, int[] pixels, int offset, int scanSize, boolean dimensionHasCeiling) {
 
         final int chunkMaxY = chunk.getMaxY();
         for (int z = 0; z < MapWriterChunk.SIZE; z++) {
@@ -154,7 +154,7 @@ public class ChunkRender {
                 if (dimensionHasCeiling) {
                     for (y = 127; y >= 0; y--) {
                         final IBlockState blockState = chunk.getBlockState(x, y, z);
-                        final int color = bc.getStateColour(blockState);
+                        final int color = bc.getStateColor(blockState);
                         int alpha = color >> 24 & 0xff;
 
                         if (color == -8650628) {
@@ -170,12 +170,12 @@ public class ChunkRender {
                 }
 
                 final int pixelOffset = offset + z * scanSize + x;
-                pixels[pixelOffset] = getColumnColour(bc, chunk, x, y, z, getPixelHeightW(pixels, pixelOffset, scanSize), getPixelHeightN(pixels, pixelOffset, scanSize));
+                pixels[pixelOffset] = getColumnColor(bc, chunk, x, y, z, getPixelHeightW(pixels, pixelOffset, scanSize), getPixelHeightN(pixels, pixelOffset, scanSize));
             }
         }
     }
 
-    public static void renderUnderground(BlockColours bc, MapChunk chunk, int[] pixels, int offset, int scanSize, int startY, byte[] mask) {
+    public static void renderUnderground(BlockColors bc, MapChunk chunk, int[] pixels, int offset, int scanSize, int startY, byte[] mask) {
 
         startY = Math.min(Math.max(0, startY), 255);
         for (int z = 0; z < MapWriterChunk.SIZE; z++) {
@@ -193,7 +193,7 @@ public class ChunkRender {
                 int lastNonTransparentY = startY;
                 for (int y = startY; y < chunk.getMaxY(); y++) {
                     final IBlockState blockState = chunk.getBlockState(x, y, z);
-                    final int color = bc.getStateColour(blockState);
+                    final int color = bc.getStateColor(blockState);
                     int alpha = color >> 24 & 0xff;
 
                     if (color == -8650628) {
@@ -209,7 +209,7 @@ public class ChunkRender {
                 }
 
                 final int pixelOffset = offset + z * scanSize + x;
-                pixels[pixelOffset] = getColumnColour(bc, chunk, x, lastNonTransparentY, z, getPixelHeightW(pixels, pixelOffset, scanSize), getPixelHeightN(pixels, pixelOffset, scanSize));
+                pixels[pixelOffset] = getColumnColor(bc, chunk, x, lastNonTransparentY, z, getPixelHeightW(pixels, pixelOffset, scanSize), getPixelHeightN(pixels, pixelOffset, scanSize));
             }
         }
     }

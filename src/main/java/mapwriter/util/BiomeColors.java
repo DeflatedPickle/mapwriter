@@ -1,11 +1,11 @@
 package mapwriter.util;
 
-public class BiomeColours {
+public class BiomeColors {
     private final int water;
     private final int grass;
     private final int foliage;
 
-    public BiomeColours(int water, int grass, int foliage) {
+    public BiomeColors(int water, int grass, int foliage) {
         this.water = water;
         this.grass = grass;
         this.foliage = foliage;

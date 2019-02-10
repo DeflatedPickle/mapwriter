@@ -24,7 +24,7 @@ public class MapMode implements mapwriter.api.MapMode {
 
     private int textX = 0;
     private int textY = 0;
-    private final int textColour = 0xffffffff;
+    private final int textColor = 0xffffffff;
 
     // config settings
     private double widthPercent;
@@ -142,9 +142,9 @@ public class MapMode implements mapwriter.api.MapMode {
     }
 
     @Override
-    public int getTextColour() {
+    public int getTextColor() {
 
-        return this.textColour;
+        return this.textColor;
     }
 
     @Override

@@ -90,13 +90,13 @@ public class GuiMarkerDialog extends GuiTextDialog {
                 this.markerZ = this.getInputAsInt();
                 if (this.inputValid) {
                     done = true;
-                    int colour = Utils.getCurrentColour();
+                    int color = Utils.getCurrentColor();
                     if (this.editingMarker != null) {
-                        colour = this.editingMarker.colour;
+                        color = this.editingMarker.color;
                         this.markerManager.delMarker(this.editingMarker);
                         this.editingMarker = null;
                     }
-                    this.markerManager.addMarker(this.markerName, this.markerGroup, this.markerX, this.markerY, this.markerZ, this.dimension, colour);
+                    this.markerManager.addMarker(this.markerName, this.markerGroup, this.markerX, this.markerY, this.markerZ, this.dimension, color);
                     this.markerManager.setVisibleGroupName(this.markerGroup);
                     this.markerManager.update();
                 }

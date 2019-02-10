@@ -6,32 +6,26 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
 
 public class ScrollableColorSelector extends ScrollableField {
-    private final String editRed = "mw.gui.ScrollableColorSelector.Red";
-    private final String editGreen = "mw.gui.ScrollableColorSelector.Green";
-    private final String editBlue = "mw.gui.ScrollableColorSelector.Blue";
+    private ScrollableNumericTextBox colorComponentRed;
+    private ScrollableNumericTextBox colorComponentGreen;
+    private ScrollableNumericTextBox colorComponentBlue;
 
-    private ScrollableNumericTextBox ScrollableNumericTextBoxColourRed;
-    private ScrollableNumericTextBox ScrollableNumericTextBoxColourGreen;
-    private ScrollableNumericTextBox ScrollableNumericTextBoxColourBlue;
+    private int color = 0;
 
-    private int colour = 0;
-
-    private int colourFieldX = 0;
-    private int colourFieldY = 0;
-    private int colourFieldW = 0;
-    private int colourFieldH = 0;
+    private int colorFieldX = 0;
+    private int colorFieldY = 0;
+    private int colorFieldW = 0;
+    private int colorFieldH = 0;
 
     private final int y;
 
-    public ScrollableColorSelector(int x, int y, int width, String label, FontRenderer fontrendererObj) {
-
-        super(x, y + GuiMarkerDialogNew.elementVSpacing, width, label, fontrendererObj);
+    public ScrollableColorSelector(int x, int y, int width, String label, FontRenderer fontRenderer) {
+        super(x, y + GuiMarkerDialogNew.elementVSpacing, width, label, fontRenderer);
         this.y = y;
         this.init();
     }
 
-    public void colourFieldScroll(int direction) {
-
+    public void colorFieldScroll(int direction) {
         if (direction > 0) {
             this.nextElement();
         } else if (direction < 0) {
@@ -41,166 +35,150 @@ public class ScrollableColorSelector extends ScrollableField {
 
     @Override
     public void draw() {
-
         super.draw();
-        this.ScrollableNumericTextBoxColourRed.draw();
-        this.ScrollableNumericTextBoxColourGreen.draw();
-        this.ScrollableNumericTextBoxColourBlue.draw();
+        this.colorComponentRed.draw();
+        this.colorComponentGreen.draw();
+        this.colorComponentBlue.draw();
+        this.updateColor();
 
-        this.UpdateColour();
-
-        Gui.drawRect(this.colourFieldX - 1, this.colourFieldY - 1, this.colourFieldX + this.colourFieldW + 1, this.colourFieldY + this.colourFieldH + 1, 0xff000000);
-        Gui.drawRect(this.colourFieldX, this.colourFieldY, this.colourFieldX + this.colourFieldW, this.colourFieldY + this.colourFieldH, this.colour);
+        Gui.drawRect(this.colorFieldX - 1, this.colorFieldY - 1, this.colorFieldX + this.colorFieldW + 1, this.colorFieldY + this.colorFieldH + 1, 0xff000000);
+        Gui.drawRect(this.colorFieldX, this.colorFieldY, this.colorFieldX + this.colorFieldW, this.colorFieldY + this.colorFieldH, this.color);
     }
 
     public int getColor() {
 
-        return this.colour;
+        return this.color;
     }
 
     @Override
     public Boolean isFocused() {
-
-        if (this.ScrollableNumericTextBoxColourRed.isFocused() || this.ScrollableNumericTextBoxColourGreen.isFocused() || this.ScrollableNumericTextBoxColourBlue.isFocused()) {
-            return true;
-        }
-        return false;
+        return this.colorComponentRed.isFocused() || this.colorComponentGreen.isFocused() || this.colorComponentBlue.isFocused();
     }
 
-    public void KeyTyped(char c, int key) {
-
-        this.ScrollableNumericTextBoxColourRed.KeyTyped(c, key);
-        this.ScrollableNumericTextBoxColourGreen.KeyTyped(c, key);
-        this.ScrollableNumericTextBoxColourBlue.KeyTyped(c, key);
+    public void keyTyped(char symbol, int key) {
+        this.colorComponentRed.keyTyped(symbol, key);
+        this.colorComponentGreen.keyTyped(symbol, key);
+        this.colorComponentBlue.keyTyped(symbol, key);
     }
 
     @Override
     public void mouseClicked(int x, int y, int button) {
-
         super.mouseClicked(x, y, button);
-        this.ScrollableNumericTextBoxColourRed.mouseClicked(x, y, button);
-        this.ScrollableNumericTextBoxColourGreen.mouseClicked(x, y, button);
-        this.ScrollableNumericTextBoxColourBlue.mouseClicked(x, y, button);
+        this.colorComponentRed.mouseClicked(x, y, button);
+        this.colorComponentGreen.mouseClicked(x, y, button);
+        this.colorComponentBlue.mouseClicked(x, y, button);
     }
 
     public void mouseDWheelScrolled(int x, int y, int direction) {
+        this.colorComponentRed.mouseDWheelScrolled(x, y, direction);
+        this.colorComponentGreen.mouseDWheelScrolled(x, y, direction);
+        this.colorComponentBlue.mouseDWheelScrolled(x, y, direction);
 
-        this.ScrollableNumericTextBoxColourRed.mouseDWheelScrolled(x, y, direction);
-        this.ScrollableNumericTextBoxColourGreen.mouseDWheelScrolled(x, y, direction);
-        this.ScrollableNumericTextBoxColourBlue.mouseDWheelScrolled(x, y, direction);
-
-        if (this.posWithinColourField(x, y)) {
-            this.colourFieldScroll(-direction);
+        if (this.posWithinColorField(x, y)) {
+            this.colorFieldScroll(-direction);
         }
     }
 
     @Override
     public void nextElement() {
-
-        this.setColor(Utils.getNextColour());
+        this.setColor(Utils.getNextColor());
     }
 
     public ScrollableField nextField(ScrollableField field) {
-
-        if (this.ScrollableNumericTextBoxColourRed.isFocused()) {
-            return this.ScrollableNumericTextBoxColourGreen;
-        } else if (this.ScrollableNumericTextBoxColourGreen.isFocused()) {
-            return this.ScrollableNumericTextBoxColourBlue;
+        if (this.colorComponentRed.isFocused()) {
+            return this.colorComponentGreen;
+        } else if (this.colorComponentGreen.isFocused()) {
+            return this.colorComponentBlue;
         }
         return field;
     }
 
-    public boolean posWithinColourField(int x, int y) {
-
-        return x >= this.colourFieldX && y >= this.colourFieldY && x <= this.colourFieldW + this.colourFieldX && y <= this.colourFieldH + this.colourFieldY;
+    public boolean posWithinColorField(int x, int y) {
+        return x >= this.colorFieldX && y >= this.colorFieldY && x <= this.colorFieldW + this.colorFieldX && y <= this.colorFieldH + this.colorFieldY;
     }
 
     public ScrollableField prevField(ScrollableField field) {
-
-        if (this.ScrollableNumericTextBoxColourGreen.isFocused()) {
-            return this.ScrollableNumericTextBoxColourRed;
-        } else if (this.ScrollableNumericTextBoxColourBlue.isFocused()) {
-            return this.ScrollableNumericTextBoxColourGreen;
+        if (this.colorComponentGreen.isFocused()) {
+            return this.colorComponentRed;
+        } else if (this.colorComponentBlue.isFocused()) {
+            return this.colorComponentGreen;
         }
         return field;
     }
 
     @Override
     public void previousElement() {
-
-        this.setColor(Utils.getPrevColour());
+        this.setColor(Utils.getPrevColor());
     }
 
-    public void setColor(int colour) {
+    public void setColor(int color) {
+        this.color = color;
 
-        this.colour = colour;
-
-        final int red = colour >> 16 & 0xff;
-        final int green = colour >> 8 & 0xff;
-        final int blue = colour & 0xff;
-        this.ScrollableNumericTextBoxColourRed.setText(red);
-        this.ScrollableNumericTextBoxColourGreen.setText(green);
-        this.ScrollableNumericTextBoxColourBlue.setText(blue);
+        final int red = color >> 16 & 0xff;
+        final int green = color >> 8 & 0xff;
+        final int blue = color & 0xff;
+        this.colorComponentRed.setText(red);
+        this.colorComponentGreen.setText(green);
+        this.colorComponentBlue.setText(blue);
     }
 
     @Override
     public void setFocused(Boolean focus) {
-
-        this.ScrollableNumericTextBoxColourRed.setFocused(focus);
+        this.colorComponentRed.setFocused(focus);
     }
 
     public ScrollableField thisField() {
-
-        if (this.ScrollableNumericTextBoxColourRed.isFocused()) {
-            return this.ScrollableNumericTextBoxColourRed;
+        if (this.colorComponentRed.isFocused()) {
+            return this.colorComponentRed;
         }
-        if (this.ScrollableNumericTextBoxColourGreen.isFocused()) {
-            return this.ScrollableNumericTextBoxColourGreen;
+        if (this.colorComponentGreen.isFocused()) {
+            return this.colorComponentGreen;
         }
-        if (this.ScrollableNumericTextBoxColourBlue.isFocused()) {
-            return this.ScrollableNumericTextBoxColourBlue;
+        if (this.colorComponentBlue.isFocused()) {
+            return this.colorComponentBlue;
         }
-        return this.ScrollableNumericTextBoxColourRed;
+        return this.colorComponentRed;
     }
 
     public boolean validateColorData() {
 
-        return this.ScrollableNumericTextBoxColourRed.getText().length() > 0 && this.ScrollableNumericTextBoxColourGreen.getText().length() > 0 && this.ScrollableNumericTextBoxColourBlue.getText().length() > 0;
+        return this.colorComponentRed.getText().length() > 0 && this.colorComponentGreen.getText().length() > 0 && this.colorComponentBlue.getText().length() > 0;
     }
 
     private void init() {
-
         final int textboxWidth = 16;
-        final int x1 = this.x + ScrollableField.arrowsWidth + this.fontrendererObj.getStringWidth(I18n.format(this.editGreen)) + 4;
+        String editGreen = "mw.gui.ScrollableColorSelector.Green";
+        final int x1 = this.x + ScrollableField.arrowsWidth + this.fontrendererObj.getStringWidth(I18n.format(editGreen)) + 4;
         final int w = ScrollableField.arrowsWidth * 2 + this.fontrendererObj.getStringWidth("999") + textboxWidth;
 
-        this.ScrollableNumericTextBoxColourRed = new ScrollableNumericTextBox(x1, this.y, w, I18n.format(this.editRed), this.fontrendererObj);
-        this.ScrollableNumericTextBoxColourRed.setDrawArrows(true);
-        this.ScrollableNumericTextBoxColourRed.setMaxValue(255);
-        this.ScrollableNumericTextBoxColourRed.setMinValue(0);
+        String editRed = "mw.gui.ScrollableColorSelector.Red";
+        this.colorComponentRed = new ScrollableNumericTextBox(x1, this.y, w, I18n.format(editRed), this.fontrendererObj);
+        this.colorComponentRed.setDrawArrows(true);
+        this.colorComponentRed.setMaxValue(255);
+        this.colorComponentRed.setMinValue(0);
 
-        this.ScrollableNumericTextBoxColourGreen = new ScrollableNumericTextBox(x1, this.y + GuiMarkerDialogNew.elementVSpacing, w, I18n.format(this.editGreen), this.fontrendererObj);
-        this.ScrollableNumericTextBoxColourGreen.setDrawArrows(true);
-        this.ScrollableNumericTextBoxColourGreen.setMaxValue(255);
-        this.ScrollableNumericTextBoxColourGreen.setMinValue(0);
+        this.colorComponentGreen = new ScrollableNumericTextBox(x1, this.y + GuiMarkerDialogNew.elementVSpacing, w, I18n.format(editGreen), this.fontrendererObj);
+        this.colorComponentGreen.setDrawArrows(true);
+        this.colorComponentGreen.setMaxValue(255);
+        this.colorComponentGreen.setMinValue(0);
 
-        this.ScrollableNumericTextBoxColourBlue = new ScrollableNumericTextBox(x1, this.y + GuiMarkerDialogNew.elementVSpacing * 2, w, I18n.format(this.editBlue), this.fontrendererObj);
-        this.ScrollableNumericTextBoxColourBlue.setDrawArrows(true);
-        this.ScrollableNumericTextBoxColourBlue.setMaxValue(255);
-        this.ScrollableNumericTextBoxColourBlue.setMinValue(0);
+        String editBlue = "mw.gui.ScrollableColorSelector.Blue";
+        this.colorComponentBlue = new ScrollableNumericTextBox(x1, this.y + GuiMarkerDialogNew.elementVSpacing * 2, w, I18n.format(editBlue), this.fontrendererObj);
+        this.colorComponentBlue.setDrawArrows(true);
+        this.colorComponentBlue.setMaxValue(255);
+        this.colorComponentBlue.setMinValue(0);
 
-        this.colourFieldX = x1 + w + 2;
-        this.colourFieldY = this.y + 6;
-        this.colourFieldW = this.width - w - ScrollableField.arrowsWidth * 2 - this.fontrendererObj.getStringWidth(I18n.format(this.editGreen)) - 8;
-        this.colourFieldH = GuiMarkerDialogNew.elementVSpacing * 2;
+        this.colorFieldX = x1 + w + 2;
+        this.colorFieldY = this.y + 6;
+        this.colorFieldW = this.width - w - ScrollableField.arrowsWidth * 2 - this.fontrendererObj.getStringWidth(I18n.format(editGreen)) - 8;
+        this.colorFieldH = GuiMarkerDialogNew.elementVSpacing * 2;
     }
 
-    private void UpdateColour() {
-
-        int colour = 0xff << 24;
-        colour += this.ScrollableNumericTextBoxColourRed.getTextFieldIntValue() << 16;
-        colour += this.ScrollableNumericTextBoxColourGreen.getTextFieldIntValue() << 8;
-        colour += this.ScrollableNumericTextBoxColourBlue.getTextFieldIntValue();
-        this.colour = colour;
+    private void updateColor() {
+        int color = 0xff << 24;
+        color += this.colorComponentRed.getTextFieldIntValue() << 16;
+        color += this.colorComponentGreen.getTextFieldIntValue() << 8;
+        color += this.colorComponentBlue.getTextFieldIntValue();
+        this.color = color;
     }
 }
