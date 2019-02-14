@@ -81,7 +81,7 @@ public class MarkerManager {
 
     public int delMarker(Predicate<Marker> filter, int max, boolean save) {
         int count = 0;
-        for (final Marker marker : this.markers.values()) {
+        for (final Marker marker : new ArrayList<>(this.markers.values())) {
             if (filter.test(marker)) {
                 if (count < max && this.delMarker(marker, save)) {
                     count++;
@@ -335,14 +335,17 @@ public class MarkerManager {
             this.visibleGroupName = config.get(category, "visibleGroup", "").getString();
 
             if (markerCount > 0) {
+                int i = 0;
                 for (Map.Entry<String, Property> entry : config.getCategory(category).getValues().entrySet()) {
-                    final UUID key = UUID.fromString(entry.getKey());
-                    final String value = entry.getValue().getString();
-                    final Marker marker = this.stringToMarker(key, value);
-                    if (marker != null) {
-                        this.addMarker(marker);
-                    } else {
-                        MapWriterForge.LOGGER.info("error: could not load {} from config file", key);
+                    if (i++ < markerCount) {
+                        final UUID key = UUID.fromString(entry.getKey());
+                        final String value = entry.getValue().getString();
+                        final Marker marker = this.stringToMarker(key, value);
+                        if (marker != null) {
+                            this.addMarker(marker);
+                        } else {
+                            MapWriterForge.LOGGER.info("error: could not load {} from config file", key);
+                        }
                     }
                 }
             }

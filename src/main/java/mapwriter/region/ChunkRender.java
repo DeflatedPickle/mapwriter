@@ -56,7 +56,7 @@ public class ChunkRender {
 
             // this is the color that gets returned for air, so set aplha to 0
             // so the game continues to the next block in the colum
-            if (c1 == -8650628) {
+            if (c1 == 0xff7c007c) {
                 alpha = 0;
             }
 

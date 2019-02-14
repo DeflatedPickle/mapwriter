@@ -174,7 +174,7 @@ public class MapWriterChunk implements MapChunk {
 
     @Override
     public IBlockState getBlockState(int x, int y, int z) {
-        final int yi = y >> 4 & 0xf;
+        final int yi = y >> 4 & 15;
         return this.dataArray != null && this.dataArray[yi] != null ? this.dataArray[yi].getData().get(x & 15, y & 15, z & 15) : Blocks.AIR.getDefaultState();
     }
 
